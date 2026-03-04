@@ -1,0 +1,67 @@
+{
+  "name": "Rahul Kavi",
+  "email": "rahulmonga@pm.me",
+  "phone": "+1 906 999 9785",
+  "location": "Seattle, WA",
+  "postalCode": "98121",
+  "linkedin": "https://www.linkedin.com/in/rahulkavi",
+  "github": "",
+
+  "experience": [
+    {
+      "company": "ServiceNow",
+      "title": "Staff Research Engineer / Scientist",
+      "location": "",
+      "start_date": "10/2022",
+      "end_date": "Present",
+      "skills": ["LLM", "MLOps", "AWS", "Azure", "AI/ML"]
+    },
+    {
+      "company": "ServiceNow",
+      "title": "Staff Data Scientist- ATG",
+      "location": "",
+      "start_date": "06/2022",
+      "end_date": "10/2022",
+      "skills": ["LLM", "MLOps", "AWS", "Azure", "AI/ML"]
+    },
+    {
+      "company": "KLA",
+      "title": "Senior AI Engineer",
+      "location": "",
+      "start_date": "03/2022",
+      "end_date": "05/2022",
+      "skills": ["LLM", "MLOps", "AWS", "Azure", "AI/ML"]
+    },
+    {
+      "company": "KLA",
+      "title": "Algorithm Engineer",
+      "location": "",
+      "start_date": "2018",
+      "end_date": "03/2022",
+      "skills": ["LLM", "MLOps", "AWS", "Azure", "AI/ML"]
+    },
+    {
+      "company": "KLA",
+      "title": "Research Scientist",
+      "location": "",
+      "start_date": "10/2016",
+      "end_date": "2018",
+      "skills": ["LLM", "MLOps", "AWS", "Azure", "AI/ML"]
+    }
+  ],
+
+  "education": [
+    {
+      "degree": "Doctor of Philosophy (Ph.D.), Computer Science",
+      "school": "West Virginia University",
+      "start_year": "",
+      "end_year": ""
+    },
+    {
+      "degree": "Bachelor of Technology (BTech), Computer Science and Engineering",
+      "school": "Jawaharlal Nehru Technological University",
+      "start_year": "",
+      "end_year": ""
+    }
+  ]
+}
