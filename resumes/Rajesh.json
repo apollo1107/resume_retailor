@@ -41,6 +41,14 @@
       "skills": ["Business Analysis", "Power BI", "MongoDB", "SQL"]
     },
     {
+      "company": "Western Union",
+      "title": "Senior Consultant",
+      "location": "",
+      "start_date": "05/2015",
+      "end_date": "10/2015",
+      "skills": ["Business Analysis", "Power BI", "MongoDB", "SQL"]
+    },
+    {
       "company": "AIG",
       "title": "Senior Consultant",
       "location": "",
@@ -77,7 +85,7 @@
   "education": [
     {
       "degree": "Master of Science - MS, Software Engineering",
-      "school": "Wright State University",
+      "school": "University of Bradford",
       "start_year": "2005",
       "end_year": "2007"
     },
