@@ -14,7 +14,7 @@
       "location": "",
       "start_date": "06/2022",
       "end_date": "Present",
-      "skills": []
+      "skills": [".Net", ".Net Core", "Java", "AI"]
     },
     {
       "company": "Rapid7",
@@ -22,7 +22,7 @@
       "location": "",
       "start_date": "01/2018",
       "end_date": "05/2022",
-      "skills": []
+      "skills": [".Net", ".Net Core", "Java", "AI"]
     },
     {
       "company": "Optoro",
@@ -30,7 +30,7 @@
       "location": "",
       "start_date": "08/2016",
       "end_date": "01/2018",
-      "skills": []
+      "skills": [".Net", ".Net Core", "Java", "AI"]
     },
     {
       "company": "Wedding Wire",
@@ -38,7 +38,7 @@
       "location": "",
       "start_date": "09/2013",
       "end_date": "08/2016",
-      "skills": []
+      "skills": [".Net", ".Net Core", "Java", "AI"]
     },
     {
       "company": "IBM",
@@ -46,7 +46,7 @@
       "location": "",
       "start_date": "06/2012",
       "end_date": "09/2013",
-      "skills": []
+      "skills": [".Net", ".Net Core", "Java", "AI"]
     },
     {
       "company": "Lockheed Martin",
@@ -54,7 +54,7 @@
       "location": "",
       "start_date": "06/2011",
       "end_date": "06/2012",
-      "skills": []
+      "skills": [".Net", ".Net Core", "Java", "AI"]
     },
     {
       "company": "NCR",
@@ -62,7 +62,7 @@
       "location": "",
       "start_date": "06/2010",
       "end_date": "08/2010",
-      "skills": []
+      "skills": [".Net", ".Net Core", "Java", "AI"]
     },
     {
       "company": "NIST",
@@ -70,7 +70,7 @@
       "location": "",
       "start_date": "08/2007",
       "end_date": "08/2009",
-      "skills": []
+      "skills": [".Net", ".Net Core", "Java", "AI"]
     }
   ],
 
