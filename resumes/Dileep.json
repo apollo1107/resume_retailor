@@ -1,0 +1,53 @@
+{
+  "name": "Dileep Kutumbaka",
+  "email": "dileepkutumbaka15@gmail.com",
+  "phone": "+1 906 999 9785",
+  "location": "Frederick, MD",
+  "postalCode": "21703",
+  "linkedin": "https://www.linkedin.com/in/dileep-kutumbaka-2b1206253/",
+  "github": "",
+
+  "experience": [
+    {
+      "company": "GEICO",
+      "title": "Staff Engineer",
+      "location": "",
+      "start_date": "06/2024",
+      "end_date": "Present",
+      "skills": []
+    },
+    {
+      "company": "MoxieIT Solutions INC",
+      "title": "Dotnet Developer",
+      "location": "",
+      "start_date": "02/2016",
+      "end_date": "04/2021",
+      "skills": []
+    },
+    {
+      "company": "IBM",
+      "title": "Software Engineer",
+      "location": "",
+      "start_date": "06/2014",
+      "end_date": "01/2016",
+      "skills": []
+    },
+    {
+      "company": "NTT DATA GLOBAL DELIVERY SERVICES PRIVATE LIMITED",
+      "title": "Software Engineer",
+      "location": "",
+      "start_date": "02/2013",
+      "end_date": "05/2014",
+      "skills": []
+    }
+  ],
+
+  "education": [
+    {
+      "degree": "Master's Degree in Computer Science",
+      "school": "Wright State University",
+      "start_year": "08/2014",
+      "end_year": "12/2015"
+    }
+  ]
+}
