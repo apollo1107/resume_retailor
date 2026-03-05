@@ -1,6 +1,6 @@
 {
   "name": "Dileep Kutumbaka",
-  "email": "dileepkutumbaka15@gmail.com",
+  "email": "dileepkutumbaka@proton.me",
   "phone": "+1 906 999 9785",
   "location": "Frederick, MD",
   "postalCode": "21703",
@@ -14,7 +14,7 @@
       "location": "",
       "start_date": "06/2024",
       "end_date": "Present",
-      "skills": [".Net", ".Net Core", "Java"]
+      "skills": [".Net", ".Net Core", "Java", "Angular", "C#"]
     },
     {
       "company": "MoxieIT Solutions INC",
@@ -22,7 +22,7 @@
       "location": "",
       "start_date": "02/2016",
       "end_date": "04/2021",
-      "skills": [".Net", ".Net Core", "Java"]
+      "skills": [".Net", ".Net Core", "Java", "Angular", "C#"]
     },
     {
       "company": "IBM",
@@ -30,7 +30,7 @@
       "location": "",
       "start_date": "06/2014",
       "end_date": "01/2016",
-      "skills": [".Net", ".Net Core", "Java"]
+      "skills": [".Net", ".Net Core", "Java", "Angular", "C#"]
     },
     {
       "company": "NTT DATA GLOBAL DELIVERY SERVICES PRIVATE LIMITED",
@@ -38,7 +38,7 @@
       "location": "",
       "start_date": "02/2013",
       "end_date": "05/2014",
-      "skills": [".Net", ".Net Core", "Java"]
+      "skills": [".Net", ".Net Core", "Java", "Angular", "C#"]
     }
   ],
 
