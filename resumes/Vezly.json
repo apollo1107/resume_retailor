@@ -1,0 +1,67 @@
+{
+  "name": "Vezly Francis Gracies",
+  "email": "vezlygracies@proton.me",
+  "phone": "+1 906 999 9785",
+  "location": "Shrewsbury, MA",
+  "postalCode": "01545",
+  "linkedin": "https://www.linkedin.com/in/vezly/",
+  "github": "",
+
+  "experience": [
+    {
+      "company": "UnitedHealth Group",
+      "title": "Sr. Principal AI/ML Engineer",
+      "location": "",
+      "start_date": "09/2018",
+      "end_date": "02/2026",
+      "skills": [".Net", ".Net Core", "Java", "Angular", "C#"]
+    },
+    {
+      "company": "Staples",
+      "title": "Sr. Principal ML & Data Engineer",
+      "location": "",
+      "start_date": "11/2014",
+      "end_date": "09/2018",
+      "skills": [".Net", ".Net Core", "Java", "Angular", "C#"]
+    },
+    {
+      "company": "CVS Caremark Corporation",
+      "title": "Lead Application Architect",
+      "location": "",
+      "start_date": "03/2014",
+      "end_date": "10/2014",
+      "skills": [".Net", ".Net Core", "Java", "Angular", "C#"]
+    },
+    {
+      "company": "Amway",
+      "title": "Lead Solutions Architect",
+      "location": "",
+      "start_date": "09/2013",
+      "end_date": "01/2014",
+      "skills": [".Net", ".Net Core", "Java", "Angular", "C#"]
+    },
+    {
+      "company": "AXA Insurance Company",
+      "title": "Lead Architect",
+      "location": "",
+      "start_date": "01/2006",
+      "end_date": "09/2012",
+      "skills": [".Net", ".Net Core", "Java", "Angular", "C#"]
+    }
+  ],
+
+  "education": [
+    {
+      "degree": "Master of Science - MS, Computer Information System",
+      "school": "Boston University",
+      "start_year": "",
+      "end_year": ""
+    },
+    {
+      "degree": "Bachelor of Business Administration - BBA, Marketing, Accounting & Finance",
+      "school": "University of Mumbai",
+      "start_year": "",
+      "end_year": ""
+    }
+  ]
+}
