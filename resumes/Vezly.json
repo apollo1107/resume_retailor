@@ -14,39 +14,39 @@
       "location": "",
       "start_date": "09/2018",
       "end_date": "03/2026",
-      "skills": [".Net", ".Net Core", "Java", "Angular", "C#"]
+      "skills": []
     },
     {
       "company": "Staples",
-      "title": "Sr. Principal ML & Data Engineer",
+      "title": "Director | Data & Analytics Solutions",
       "location": "",
       "start_date": "11/2014",
       "end_date": "09/2018",
-      "skills": [".Net", ".Net Core", "Java", "Angular", "C#"]
+      "skills": []
     },
     {
       "company": "CVS Caremark Corporation",
-      "title": "Lead Application Architect",
+      "title": "Solutions Architect | Software Engineering",
       "location": "",
-      "start_date": "03/2014",
-      "end_date": "10/2014",
-      "skills": [".Net", ".Net Core", "Java", "Angular", "C#"]
+      "start_date": "01/2014",
+      "end_date": "11/2014",
+      "skills": []
     },
     {
       "company": "Amway",
-      "title": "Lead Solutions Architect",
+      "title": "Solutions Architect | Software Engineering",
       "location": "",
-      "start_date": "09/2013",
+      "start_date": "09/2012",
       "end_date": "01/2014",
-      "skills": [".Net", ".Net Core", "Java", "Angular", "C#"]
+      "skills": []
     },
     {
       "company": "AXA Insurance Company",
-      "title": "Lead Architect",
+      "title": "Solutions Architect | Software Engineering",
       "location": "",
       "start_date": "01/2006",
       "end_date": "09/2012",
-      "skills": [".Net", ".Net Core", "Java", "Angular", "C#"]
+      "skills": []
     }
   ],
 
