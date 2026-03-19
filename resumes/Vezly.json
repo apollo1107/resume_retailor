@@ -42,7 +42,7 @@
     },
     {
       "company": "AXA Insurance Company",
-      "title": "Solutions Architect | Software Engineering",
+      "title": "Software Engineer",
       "location": "",
       "start_date": "01/2006",
       "end_date": "09/2012",
@@ -52,14 +52,14 @@
 
   "education": [
     {
-      "degree": "Master of Science - MS, Computer Information System",
+      "degree": "Master of Science - MS, Computer Information System",
       "school": "Boston University",
       "start_year": "",
       "end_year": ""
     },
     {
-      "degree": "Bachelor of Business Administration - BBA, Marketing, Accounting & Finance",
-      "school": "University of Mumbai",
+      "degree": "Master of Computer Science, Artificial Intelligence",
+      "school": "MIT Sloan Executive Education",
       "start_year": "",
       "end_year": ""
     }
