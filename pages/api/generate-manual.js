@@ -3,7 +3,10 @@ import path from "path";
 import React from "react";
 import { renderToStream } from "@react-pdf/renderer";
 import { getTemplate } from "../../lib/pdf-templates";
-import { getTemplateForProfile, getProfileBySlug } from "../../lib/profile-template-mapping";
+import {
+  getTemplateForProfile,
+  getProfileBySlug,
+} from "../../lib/profile-template-mapping";
 
 /**
  * Generate PDF from manually pasted ChatGPT response (no API key)
@@ -13,7 +16,11 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).send("Method not allowed");
 
   try {
-    const { profile: profileSlug, chatgptResponse: rawResponse, companyName = null } = req.body;
+    const {
+      profile: profileSlug,
+      chatgptResponse: rawResponse,
+      companyName = null,
+    } = req.body;
 
     if (!profileSlug) return res.status(400).send("Profile slug required");
     if (!rawResponse || typeof rawResponse !== "string") {
@@ -27,10 +34,16 @@ export default async function handler(req, res) {
 
     const resumeName = profileConfig.resume;
     const templateName = getTemplateForProfile(profileSlug) || "Resume";
-    const profilePath = path.join(process.cwd(), "resumes", `${resumeName}.json`);
+    const profilePath = path.join(
+      process.cwd(),
+      "resumes",
+      `${resumeName}.json`
+    );
 
     if (!fs.existsSync(profilePath)) {
-      return res.status(404).send(`Profile file "${resumeName}.json" not found`);
+      return res
+        .status(404)
+        .send(`Profile file "${resumeName}.json" not found`);
     }
 
     const profileData = JSON.parse(fs.readFileSync(profilePath, "utf-8"));
@@ -44,7 +57,10 @@ export default async function handler(req, res) {
     content = content.replace(/```\s*/g, "");
 
     // Remove common prefixes
-    content = content.replace(/^(here is|here's|this is|the json is):?\s*/gi, "");
+    content = content.replace(
+      /^(here is|here's|this is|the json is):?\s*/gi,
+      ""
+    );
 
     // Extract content between first { and last }
     const firstBrace = content.indexOf("{");
@@ -53,7 +69,9 @@ export default async function handler(req, res) {
     if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
       content = content.substring(firstBrace, lastBrace + 1);
     } else {
-      throw new Error("No JSON object found. Please paste the full JSON from ChatGPT.");
+      throw new Error(
+        "No JSON object found. Please paste the full JSON from ChatGPT."
+      );
     }
 
     content = content.trim();
@@ -67,7 +85,9 @@ export default async function handler(req, res) {
         const fixedContent = content.replace(/,(\s*[}\]])/g, "$1");
         resumeContent = JSON.parse(fixedContent);
       } catch (secondError) {
-        throw new Error(`Invalid JSON: ${parseError.message}. Check the pasted response.`);
+        throw new Error(
+          `Invalid JSON: ${parseError.message}. Check the pasted response.`
+        );
       }
     }
 
@@ -87,15 +107,14 @@ export default async function handler(req, res) {
     if (!TemplateComponent) {
       return res.status(404).send(`Template "${templateName}" not found`);
     }
-
     const templateData = {
       name: profileData.name,
       title: profileData.title,
       email: profileData.email,
-      phone: null,
+      phone: profileData.phone,
       location: profileData.location,
-      linkedin: null,
-      website: null,
+      linkedin: profileData.linkedin,
+      website: profileData.website,
       summary: resumeContent.summary,
       skills: resumeContent.skills,
       experience: profileData.experience.map((job, idx) => ({
@@ -109,7 +128,9 @@ export default async function handler(req, res) {
       education: profileData.education,
     };
 
-    const pdfDocument = React.createElement(TemplateComponent, { data: templateData });
+    const pdfDocument = React.createElement(TemplateComponent, {
+      data: templateData,
+    });
     const pdfStream = await renderToStream(pdfDocument);
 
     const chunks = [];
@@ -126,7 +147,10 @@ export default async function handler(req, res) {
     baseName = baseName.replace(/\s+/g, "_").replace(/[^A-Za-z0-9_-]/g, "");
 
     if (companyName && companyName.trim()) {
-      const sanitized = companyName.trim().replace(/\s+/g, "_").replace(/[^A-Za-z0-9_-]/g, "");
+      const sanitized = companyName
+        .trim()
+        .replace(/\s+/g, "_")
+        .replace(/[^A-Za-z0-9_-]/g, "");
       baseName = `${baseName}_${sanitized}`;
     }
 
