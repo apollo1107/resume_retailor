@@ -327,7 +327,7 @@ export default function ProfilePage() {
                     <QuickCopyIcon
                       fieldKey={key}
                       size={48}
-                      color={copiedField === key ? colors.successText : "#22d3ee"}
+                      color={copiedField === key ? colors.successText : "#1e293b"}
                     />
                   </span>
                   <div className="rt-quick-copy-label">{copiedField === key ? "Copied!" : label}</div>
