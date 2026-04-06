@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
@@ -7,12 +7,19 @@ import { SPARKLE_LANDING_CSS } from "../lib/sparkle-ui-css";
 export default function Home() {
   const router = useRouter();
   const [profileSlug, setProfileSlug] = useState("");
-  const [theme, setTheme] = useState("dark");
 
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "dark";
-    setTheme(savedTheme);
-  }, []);
+  const colors = {
+    bg: "#0f172a",
+    cardBorder: "rgba(148, 163, 184, 0.28)",
+    text: "#f1f5f9",
+    textSecondary: "#cbd5e1",
+    inputBg: "rgba(30, 41, 59, 0.75)",
+    inputBorder: "rgba(148, 163, 184, 0.35)",
+    buttonBg: "#3b82f6",
+    buttonText: "#ffffff",
+    buttonHover: "#2563eb",
+    buttonDisabled: "#475569",
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -20,43 +27,6 @@ export default function Home() {
       router.push(`/${profileSlug.trim()}`);
     }
   };
-
-  const toggleTheme = () => {
-    const newTheme = theme === "dark" ? "light" : "dark";
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
-  };
-
-  const themeColors = {
-    dark: {
-      bg: "#1a1d24",
-      cardBorder: "rgba(255, 255, 255, 0.08)",
-      text: "#e4e7eb",
-      textSecondary: "#b0b5bb",
-      textMuted: "#8a8f95",
-      inputBg: "#23262d",
-      inputBorder: "rgba(255, 255, 255, 0.14)",
-      buttonBg: "#4a90e2",
-      buttonText: "#ffffff",
-      buttonHover: "#5aa0f2",
-      buttonDisabled: "#4a5568",
-    },
-    light: {
-      bg: "#f5f6f8",
-      cardBorder: "rgba(0, 0, 0, 0.1)",
-      text: "#2c3e50",
-      textSecondary: "#5a6c7d",
-      textMuted: "#7f8c9a",
-      inputBg: "#ffffff",
-      inputBorder: "#cbd5e1",
-      buttonBg: "#4a90e2",
-      buttonText: "#ffffff",
-      buttonHover: "#5aa0f2",
-      buttonDisabled: "#cbd5e1",
-    },
-  };
-
-  const colors = themeColors[theme];
 
   return (
     <>
@@ -67,16 +37,17 @@ export default function Home() {
       </Head>
 
       <div
-        className={`rt-landing-page${theme === "light" ? " rt-landing-page--light" : ""}`}
+        className="rt-landing-page"
         style={{
-          minHeight: "100vh",
+          minHeight: "100dvh",
+          display: "flex",
+          flexDirection: "column",
           background: colors.bg,
           color: colors.text,
           fontFamily:
             "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif",
-          padding: "20px",
+          padding: "16px",
           boxSizing: "border-box",
-          transition: "background 0.3s ease, color 0.3s ease",
         }}
       >
         <div className="rt-landing-ambient" aria-hidden>
@@ -90,31 +61,31 @@ export default function Home() {
         <div
           className="rt-landing-inner"
           style={{
+            flex: "1 1 auto",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
             maxWidth: "800px",
             width: "100%",
             margin: "0 auto",
-            padding: "32px 20px",
+            padding: "16px 4px",
             boxSizing: "border-box",
             minWidth: 0,
           }}
         >
           <div
-            className={`rt-landing-card${theme === "light" ? " rt-landing-card--light" : ""}`}
+            className="rt-landing-card"
             style={{
               width: "100%",
               maxWidth: "100%",
               minWidth: 0,
-              background:
-                theme === "dark"
-                  ? "rgba(22, 26, 34, 0.72)"
-                  : "rgba(255, 255, 255, 0.86)",
+              background: "rgba(15, 23, 42, 0.72)",
               backdropFilter: "blur(14px)",
               WebkitBackdropFilter: "blur(14px)",
               borderRadius: "12px",
               border: `1px solid ${colors.cardBorder}`,
-              padding: "clamp(24px, 4vw, 40px)",
+              padding: "clamp(22px, 4vw, 36px)",
               boxSizing: "border-box",
-              transition: "border-color 0.2s ease, background 0.3s ease",
             }}
           >
             <div className="rt-landing-card__glow" aria-hidden />
@@ -124,47 +95,17 @@ export default function Home() {
               ))}
             </div>
             <div className="rt-landing-card__content">
-              <div
+              <h1
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  gap: "12px",
-                  marginBottom: "32px",
+                  fontSize: "28px",
+                  fontWeight: "600",
+                  color: colors.text,
+                  margin: "0 0 28px 0",
                   minWidth: 0,
                 }}
               >
-                <h1
-                  style={{
-                    fontSize: "28px",
-                    fontWeight: "600",
-                    color: colors.text,
-                    margin: 0,
-                    minWidth: 0,
-                    flex: "1 1 auto",
-                  }}
-                >
-                  Resume Tailor
-                </h1>
-                <button
-                  onClick={toggleTheme}
-                  type="button"
-                  style={{
-                    padding: "8px 16px",
-                    fontSize: "14px",
-                    background: "transparent",
-                    border: `1px solid ${colors.cardBorder}`,
-                    borderRadius: "8px",
-                    color: colors.text,
-                    cursor: "pointer",
-                    boxSizing: "border-box",
-                    transition:
-                      "background 0.2s ease, border-color 0.2s ease, color 0.2s ease",
-                  }}
-                >
-                  {theme === "dark" ? "☀️ Light" : "🌙 Dark"}
-                </button>
-              </div>
+                Resume Tailor
+              </h1>
 
               <form
                 onSubmit={handleSubmit}
@@ -248,9 +189,9 @@ export default function Home() {
                 >
                   <Link
                     href="/manual"
-                    className={`rt-home-manual-link ${theme === "dark" ? "rt-home-manual-link--dark" : "rt-home-manual-link--light"}`}
+                    className="rt-home-manual-link rt-home-manual-link--dark"
                   >
-                    <span className="rt-home-manual-prefix">No API key?</span>
+                    <span className="rt-home-manual-prefix">No API key? &nbsp;</span>
                     <span className="rt-home-manual-rest"> Use manual mode →</span>
                   </Link>
                 </div>

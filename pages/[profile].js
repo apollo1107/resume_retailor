@@ -38,19 +38,12 @@ export default function ProfilePage() {
   const [generating, setGenerating] = useState(null); // null | "pdf" | "docx"
   const [elapsedTime, setElapsedTime] = useState(0);
   const [lastGenerationTime, setLastGenerationTime] = useState(null);
-  const [theme, setTheme] = useState("dark");
   const [selectedProfileData, setSelectedProfileData] = useState(null);
   const [profileName, setProfileName] = useState("");
   const [loading, setLoading] = useState(true);
   const [copiedField, setCopiedField] = useState(null);
   const timerIntervalRef = useRef(null);
   const startTimeRef = useRef(null);
-
-  // Load theme from localStorage on mount
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "dark";
-    setTheme(savedTheme);
-  }, []);
 
   // Lazy load profile data when profile slug changes
   useEffect(() => {
@@ -205,13 +198,6 @@ export default function ProfilePage() {
     }
   };
 
-  // Toggle theme
-  const toggleTheme = () => {
-    const newTheme = theme === "dark" ? "light" : "dark";
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
-  };
-
   // Cleanup timer on unmount
   useEffect(() => {
     return () => {
@@ -221,65 +207,36 @@ export default function ProfilePage() {
     };
   }, []);
 
-  // Professional theme colors
-  const themeColors = {
-    dark: {
-      bg: "#0f172a",
-      cardBg: "#1e293b",
-      cardBorder: "#334155",
-      text: "#f1f5f9",
-      textSecondary: "#cbd5e1",
-      textMuted: "#94a3b8",
-      inputBg: "#1e293b",
-      inputBorder: "#475569",
-      inputFocus: "#3b82f6",
-      textareaBg: "#1e293b",
-      buttonBg: "#3b82f6",
-      buttonHover: "#2563eb",
-      buttonText: "#ffffff",
-      buttonDisabled: "#475569",
-      wordButtonBg: "#0d9488",
-      wordButtonHover: "#0f766e",
-      successBg: "rgba(34, 197, 94, 0.1)",
-      successText: "#22c55e",
-      infoBg: "rgba(59, 130, 246, 0.1)",
-      infoText: "#3b82f6",
-      copyBg: "rgba(59, 130, 246, 0.15)",
-      copyHover: "rgba(59, 130, 246, 0.25)",
-    },
-    light: {
-      bg: "#ffffff",
-      cardBg: "#ffffff",
-      cardBorder: "#e2e8f0",
-      text: "#0f172a",
-      textSecondary: "#475569",
-      textMuted: "#64748b",
-      inputBg: "#ffffff",
-      inputBorder: "#cbd5e1",
-      inputFocus: "#3b82f6",
-      textareaBg: "#ffffff",
-      buttonBg: "#3b82f6",
-      buttonHover: "#2563eb",
-      buttonText: "#ffffff",
-      buttonDisabled: "#cbd5e1",
-      wordButtonBg: "#0f766e",
-      wordButtonHover: "#115e59",
-      successBg: "rgba(34, 197, 94, 0.1)",
-      successText: "#16a34a",
-      infoBg: "rgba(59, 130, 246, 0.1)",
-      infoText: "#2563eb",
-      copyBg: "#f1f5f9",
-      copyHover: "#e2e8f0",
-    }
+  const colors = {
+    bg: "#0f172a",
+    cardBg: "#1e293b",
+    cardBorder: "rgba(148, 163, 184, 0.28)",
+    text: "#f1f5f9",
+    textSecondary: "#cbd5e1",
+    textMuted: "#94a3b8",
+    inputBg: "rgba(30, 41, 59, 0.75)",
+    inputBorder: "rgba(148, 163, 184, 0.35)",
+    inputFocus: "#3b82f6",
+    textareaBg: "rgba(30, 41, 59, 0.85)",
+    buttonBg: "#3b82f6",
+    buttonHover: "#2563eb",
+    buttonText: "#ffffff",
+    buttonDisabled: "#475569",
+    wordButtonBg: "#0d9488",
+    wordButtonHover: "#0f766e",
+    successBg: "rgba(34, 197, 94, 0.1)",
+    successText: "#22c55e",
+    infoBg: "rgba(59, 130, 246, 0.1)",
+    infoText: "#3b82f6",
+    copyBg: "rgba(59, 130, 246, 0.15)",
+    copyHover: "rgba(59, 130, 246, 0.25)",
   };
-
-  const colors = themeColors[theme];
 
   if (!router.isReady || !profileSlug) {
     return (
       <div
         style={{
-          minHeight: "100vh",
+          minHeight: "100dvh",
           background: colors.bg,
           color: colors.text,
           display: "flex",
@@ -297,7 +254,7 @@ export default function ProfilePage() {
   if (loading || !selectedProfileData) {
     return (
       <div style={{
-        minHeight: "100vh",
+        minHeight: "100dvh",
         background: colors.bg,
         color: colors.text,
         display: "flex",
@@ -333,16 +290,15 @@ export default function ProfilePage() {
       </Head>
 
       <div
-        className={`rt-profile-page${theme === "light" ? " rt-profile-page--light" : ""}`}
+        className="rt-profile-page"
         style={{
-          minHeight: "100vh",
+          minHeight: "100dvh",
           display: "flex",
           flexDirection: "column",
           background: colors.bg,
           color: colors.text,
           fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif",
           boxSizing: "border-box",
-          transition: "background 0.3s ease, color 0.3s ease",
         }}
       >
         <div className="rt-profile-page-ambient" aria-hidden>
@@ -353,202 +309,70 @@ export default function ProfilePage() {
             ))}
           </div>
         </div>
+
+        {quickCopyFields.length > 0 && (
+          <div className="rt-top-copy-dock">
+            <div className="rt-top-copy-dock__hit" aria-hidden />
+            <div className="rt-top-copy-dock__panel">
+              {quickCopyFields.map(({ key, label, value }, index) => (
+                <button
+                  key={key}
+                  type="button"
+                  aria-label={copiedField === key ? `${label} copied` : `Copy ${label}`}
+                  className={`rt-quick-copy-btn rt-dock-copy-btn rt-qca-${quickCopyAnimSlot(key)}${copiedField === key ? " rt-quick-copy-btn--copied" : ""}`}
+                  onClick={() => copyToClipboard(value, key)}
+                  style={{ animationDelay: `${index * 45}ms` }}
+                >
+                  <span className="rt-quick-copy-icon-wrap">
+                    <QuickCopyIcon
+                      fieldKey={key}
+                      size={16}
+                      color={copiedField === key ? colors.successText : "#0f172a"}
+                    />
+                  </span>
+                  <div className="rt-quick-copy-label">{copiedField === key ? "Copied!" : label}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div
           className="rt-profile-page-fill"
           style={{
-            flex: "1 0 auto",
+            flex: "1 1 auto",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "center",
-            padding: "16px",
+            alignItems: "stretch",
+            padding: "20px 12px",
             boxSizing: "border-box",
-            minHeight: 0,
+            minHeight: "100dvh",
+            width: "100%",
           }}
         >
-        <div style={{
-          maxWidth: "min(1600px, 100%)",
-          width: "100%",
-          margin: "0 auto",
-          minWidth: 0,
-          boxSizing: "border-box"
-        }}>
-          {/* Header Card */}
+        <div
+          className="rt-main-group"
+          style={{
+            flex: "1 1 auto",
+            display: "flex",
+            flexDirection: "column",
+            minHeight: 0,
+            maxWidth: "min(1600px, 100%)",
+            width: "100%",
+            margin: "0 auto",
+            minWidth: 0,
+            boxSizing: "border-box",
+            overflow: "auto",
+          }}
+        >
           <div
-            className={`rt-profile-card rt-profile-card--header${theme === "light" ? " rt-profile-card--light" : ""}`}
+            className="rt-profile-card rt-profile-card--form"
             style={{
-              background:
-                theme === "dark"
-                  ? "rgba(30, 41, 59, 0.68)"
-                  : "rgba(255, 255, 255, 0.82)",
-              backdropFilter: "blur(12px)",
-              WebkitBackdropFilter: "blur(12px)",
-              borderRadius: "8px",
-              border: `1px solid ${colors.cardBorder}`,
-              padding: "16px",
-              marginBottom: "12px",
-              minWidth: 0,
-              maxWidth: "100%",
-              boxSizing: "border-box",
-              boxShadow: theme === 'dark' ? '0 2px 4px rgba(0, 0, 0, 0.2)' : '0 1px 2px rgba(0, 0, 0, 0.05)'
-            }}
-          >
-            <div className="rt-pcard-sparkle" aria-hidden>
-              <div className="rt-pcard-sparkle__glow" />
-              <div className="rt-pcard-sparkle__sparks">
-                {Array.from({ length: 5 }, (_, i) => (
-                  <span key={i} className="rt-spark" />
-                ))}
-              </div>
-            </div>
-            <div className="rt-pcard-inner">
-            <div style={{
+              flex: "1 1 auto",
               display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "12px"
-            }}>
-              <div>
-                <h1 style={{
-                  fontSize: "18px",
-                  fontWeight: "600",
-                  color: colors.text,
-                  margin: "0 0 2px 0"
-                }}>
-                  {profileName}
-                </h1>
-                {selectedProfileData.title && (
-                  <p style={{
-                    fontSize: "12px",
-                    color: colors.textSecondary,
-                    margin: 0
-                  }}>
-                    {selectedProfileData.title}
-                  </p>
-                )}
-              </div>
-              <button
-                onClick={toggleTheme}
-                style={{
-                  padding: "6px 12px",
-                  fontSize: "12px",
-                  fontWeight: "500",
-                  background: colors.inputBg,
-                  border: `1px solid ${colors.inputBorder}`,
-                  borderRadius: "6px",
-                  color: colors.text,
-                  cursor: "pointer",
-                  transition: "all 0.2s ease"
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = theme === 'dark' ? '#334155' : '#f8fafc';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = colors.inputBg;
-                }}
-              >
-                {theme === "dark" ? "☀️" : "🌙"}
-              </button>
-            </div>
-
-            {/* Quick Copy Buttons */}
-            {quickCopyFields.length > 0 && (
-              <div
-                style={{
-                  maxWidth: "100%",
-                  minWidth: 0,
-                  paddingTop: "12px",
-                  borderTop: `1px solid ${colors.cardBorder}`,
-                  marginLeft: "-4px",
-                  marginRight: "-4px",
-                  paddingLeft: "4px",
-                  paddingRight: "4px"
-                }}
-              >
-              <div
-                className="rt-quick-copy-grid"
-                style={{
-                  display: "grid",
-                  width: "100%",
-                  gridTemplateColumns: `repeat(${quickCopyFields.length}, minmax(0, 1fr))`,
-                  gap: "8px",
-                }}
-              >
-                {quickCopyFields.map(({ key, label, value }, index) => (
-                  <button
-                    key={key}
-                    type="button"
-                    aria-label={copiedField === key ? `${label} copied` : `Copy ${label}`}
-                    className={`rt-quick-copy-btn rt-qca-${quickCopyAnimSlot(key)}${copiedField === key ? " rt-quick-copy-btn--copied" : ""}`}
-                    onClick={() => copyToClipboard(value, key)}
-                    style={{
-                      padding: "8px 6px",
-                      background: copiedField === key ? colors.copyBg : colors.inputBg,
-                      border: `1px solid ${copiedField === key ? colors.infoText : colors.inputBorder}`,
-                      borderRadius: "6px",
-                      cursor: "pointer",
-                      boxSizing: "border-box",
-                      transition: "background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease",
-                      textAlign: "center",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      gap: 0,
-                      minHeight: "52px",
-                      justifyContent: "center",
-                      minWidth: 0,
-                      width: "100%",
-                      animationDelay: `${index * 45}ms`
-                    }}
-                    onMouseEnter={(e) => {
-                      if (copiedField !== key) {
-                        e.currentTarget.style.background = colors.copyHover;
-                        e.currentTarget.style.borderColor = colors.inputFocus;
-                        e.currentTarget.style.boxShadow = `0 4px 14px ${theme === "dark" ? "rgba(0,0,0,0.35)" : "rgba(15,23,42,0.08)"}`;
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (copiedField !== key) {
-                        e.currentTarget.style.background = colors.inputBg;
-                        e.currentTarget.style.borderColor = colors.inputBorder;
-                        e.currentTarget.style.boxShadow = "none";
-                      }
-                    }}
-                  >
-                    <span className="rt-quick-copy-icon-wrap">
-                      <QuickCopyIcon
-                        fieldKey={key}
-                        size={16}
-                        color={copiedField === key ? colors.successText : colors.textSecondary}
-                      />
-                    </span>
-                    <div
-                      className="rt-quick-copy-label"
-                      style={{
-                        fontWeight: "600",
-                        color: copiedField === key ? colors.successText : colors.textMuted,
-                        textTransform: "uppercase",
-                        letterSpacing: "0.02em",
-                        maxWidth: "100%",
-                      }}
-                    >
-                      {copiedField === key ? "Copied!" : label}
-                    </div>
-                  </button>
-                ))}
-              </div>
-              </div>
-            )}
-            </div>
-          </div>
-
-          {/* Form Card */}
-          <div
-            className={`rt-profile-card rt-profile-card--form${theme === "light" ? " rt-profile-card--light" : ""}`}
-            style={{
-              background:
-                theme === "dark"
-                  ? "rgba(30, 41, 59, 0.65)"
-                  : "rgba(255, 255, 255, 0.8)",
+              flexDirection: "column",
+              minHeight: 0,
+              background: "rgba(15, 23, 42, 0.72)",
               backdropFilter: "blur(12px)",
               WebkitBackdropFilter: "blur(12px)",
               borderRadius: "8px",
@@ -557,7 +381,7 @@ export default function ProfilePage() {
               minWidth: 0,
               maxWidth: "100%",
               boxSizing: "border-box",
-              boxShadow: theme === 'dark' ? '0 2px 4px rgba(0, 0, 0, 0.2)' : '0 1px 2px rgba(0, 0, 0, 0.05)'
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
             }}
           >
             <div className="rt-pcard-sparkle" aria-hidden>
@@ -568,20 +392,63 @@ export default function ProfilePage() {
                 ))}
               </div>
             </div>
-            <div className="rt-pcard-inner">
+            <div
+              className="rt-pcard-inner"
+              style={{
+                flex: "1 1 auto",
+                display: "flex",
+                flexDirection: "column",
+                minHeight: 0,
+              }}
+            >
             {/* Job Description */}
-            <div style={{ marginBottom: "16px" }}>
-              <label style={{
-                display: "block",
-                fontSize: "11px",
-                fontWeight: "600",
-                color: colors.textSecondary,
-                marginBottom: "6px",
-                textTransform: "uppercase",
-                letterSpacing: "0.3px"
-              }}>
+            <div
+              style={{
+                flex: "1 1 auto",
+                display: "flex",
+                flexDirection: "column",
+                minHeight: 0,
+                marginBottom: "16px",
+              }}
+            >
+              <div style={{ marginBottom: "10px" }}>
+                <h1
+                  style={{
+                    fontSize: "20px",
+                    fontWeight: "600",
+                    color: colors.text,
+                    margin: "0 0 4px 0",
+                    lineHeight: 1.25,
+                  }}
+                >
+                  {profileName}
+                </h1>
+                {selectedProfileData.title ? (
+                  <p
+                    style={{
+                      fontSize: "13px",
+                      color: colors.textSecondary,
+                      margin: 0,
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {selectedProfileData.title}
+                  </p>
+                ) : null}
+              </div>
+              <span
+                style={{
+                  display: "block",
+                  fontSize: "11px",
+                  fontWeight: "600",
+                  color: colors.textSecondary,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.3px",
+                  marginBottom: "6px",
+                }}
+              >
                 Job Description
-              </label>
+              </span>
               <textarea
                 value={jd}
                 onChange={(e) => setJd(e.target.value)}
@@ -590,6 +457,8 @@ export default function ProfilePage() {
                 style={{
                   width: "100%",
                   maxWidth: "100%",
+                  flex: "1 1 260px",
+                  minHeight: "min(52vh, 520px)",
                   padding: "10px 12px",
                   fontSize: "13px",
                   fontFamily: "inherit",
@@ -599,10 +468,9 @@ export default function ProfilePage() {
                   borderRadius: "6px",
                   outline: "none",
                   resize: "vertical",
-                  minHeight: "clamp(200px, 36vh, 520px)",
                   lineHeight: "1.5",
                   transition: "border-color 0.2s ease, box-shadow 0.2s ease",
-                  boxSizing: "border-box"
+                  boxSizing: "border-box",
                 }}
                 onFocus={(e) => {
                   e.currentTarget.style.borderColor = colors.inputFocus;
@@ -692,26 +560,20 @@ export default function ProfilePage() {
                   boxShadow:
                     generating !== null || !jd.trim()
                       ? "none"
-                      : theme === "dark"
-                        ? "0 2px 8px rgba(59, 130, 246, 0.3)"
-                        : "0 1px 4px rgba(59, 130, 246, 0.2)",
+                      : "0 2px 8px rgba(59, 130, 246, 0.3)",
                 }}
                 onMouseEnter={(e) => {
                   if (generating === null && jd.trim()) {
                     e.currentTarget.style.background = colors.buttonHover;
                     e.currentTarget.style.boxShadow =
-                      theme === "dark"
-                        ? "0 4px 12px rgba(59, 130, 246, 0.4)"
-                        : "0 2px 8px rgba(59, 130, 246, 0.3)";
+                      "0 4px 12px rgba(59, 130, 246, 0.4)";
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (generating === null && jd.trim()) {
                     e.currentTarget.style.background = colors.buttonBg;
                     e.currentTarget.style.boxShadow =
-                      theme === "dark"
-                        ? "0 2px 8px rgba(59, 130, 246, 0.3)"
-                        : "0 1px 4px rgba(59, 130, 246, 0.2)";
+                      "0 2px 8px rgba(59, 130, 246, 0.3)";
                   }
                 }}
               >
@@ -744,26 +606,20 @@ export default function ProfilePage() {
                   boxShadow:
                     generating !== null || !jd.trim()
                       ? "none"
-                      : theme === "dark"
-                        ? "0 2px 8px rgba(13, 148, 136, 0.35)"
-                        : "0 1px 4px rgba(13, 148, 136, 0.25)",
+                      : "0 2px 8px rgba(13, 148, 136, 0.35)",
                 }}
                 onMouseEnter={(e) => {
                   if (generating === null && jd.trim()) {
                     e.currentTarget.style.background = colors.wordButtonHover;
                     e.currentTarget.style.boxShadow =
-                      theme === "dark"
-                        ? "0 4px 12px rgba(13, 148, 136, 0.45)"
-                        : "0 2px 8px rgba(13, 148, 136, 0.35)";
+                      "0 4px 12px rgba(13, 148, 136, 0.45)";
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (generating === null && jd.trim()) {
                     e.currentTarget.style.background = colors.wordButtonBg;
                     e.currentTarget.style.boxShadow =
-                      theme === "dark"
-                        ? "0 2px 8px rgba(13, 148, 136, 0.35)"
-                        : "0 1px 4px rgba(13, 148, 136, 0.25)";
+                      "0 2px 8px rgba(13, 148, 136, 0.35)";
                   }
                 }}
               >
