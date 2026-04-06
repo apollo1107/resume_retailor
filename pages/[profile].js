@@ -273,7 +273,7 @@ export default function ProfilePage() {
     { key: 'email', label: 'Email', value: selectedProfileData.email },
     { key: 'phone', label: 'Phone', value: selectedProfileData.phone },
     { key: 'location', label: 'Address', value: selectedProfileData.location },
-    { key: 'postalCode', label: 'Postal Code', value: selectedProfileData.postalCode },
+    { key: 'zip', label: 'Zip', value: selectedProfileData.zip },
     { key: 'lastCompany', label: 'Last Company', value: getLastCompany() },
     { key: 'lastRole', label: 'Last Role', value: getLastRole() },
     { key: 'linkedin', label: 'LinkedIn', value: selectedProfileData.linkedin },
