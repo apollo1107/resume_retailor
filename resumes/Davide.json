@@ -1,12 +1,14 @@
 {
   "name": "Davide Giovanardi",
+  "title": "Senior Machine Learning Engineer",
   "email": "davidegiovanardi@proton.me",
   "phone": "+1 (360) 548-1455",
   "location": "Mountain View, CA",
   "postalCode": "94041",
   "linkedin": "https://www.linkedin.com/in/dgiova/",
+  "website": "",
   "github": "",
-
+  "base_skills": {},
   "experience": [
     {
       "company": "Robinhood",
@@ -14,7 +16,8 @@
       "location": "",
       "start_date": "09/2024",
       "end_date": "04/2026",
-      "skills": [""]
+      "skills": [""],
+      "base_bullets": [""]
     },
     {
       "company": "Zoom",
@@ -22,7 +25,8 @@
       "location": "",
       "start_date": "03/2021",
       "end_date": "09/2024",
-      "skills": [""]
+      "skills": [""],
+      "base_bullets": [""]
     },
     {
       "company": "Stanford University",
@@ -30,7 +34,8 @@
       "location": "",
       "start_date": "09/2020",
       "end_date": "03/2021",
-      "skills": [""]
+      "skills": [""],
+      "base_bullets": [""]
     },
     {
       "company": "JPMorgan Chase & Co",
@@ -38,7 +43,8 @@
       "location": "",
       "start_date": "06/2020",
       "end_date": "09/2020",
-      "skills": [""]
+      "skills": [""],
+      "base_bullets": [""]
     },
     {
       "company": "Intel Corporation",
@@ -46,10 +52,10 @@
       "location": "",
       "start_date": "01/2019",
       "end_date": "09/2019",
-      "skills": [""]
+      "skills": [""],
+      "base_bullets": [""]
     }
   ],
-
   "education": [
     {
       "degree": "MS Computational and Mathematical",

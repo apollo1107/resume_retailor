@@ -1,29 +1,33 @@
-import { useState, useEffect, useRef, lazy, Suspense } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { slugToProfileName } from "../lib/profile-template-mapping";
+import { QuickCopyIcon } from "../lib/quick-copy-icons";
+import { QUICK_COPY_ANIMATIONS_CSS, quickCopyAnimSlot } from "../lib/quick-copy-animations-css";
+import { SPARKLE_PROFILE_CSS } from "../lib/sparkle-ui-css";
 
-// Lazy load components for better performance
-const LoadingSpinner = lazy(() => Promise.resolve({
-  default: () => (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '40px' }}>
-      <div style={{
-        width: '40px',
-        height: '40px',
-        border: '3px solid rgba(74, 144, 226, 0.3)',
-        borderTop: '3px solid #4a90e2',
-        borderRadius: '50%',
-        animation: 'spin 1s linear infinite'
-      }}></div>
+function ProfileLoadingSpinner() {
+  return (
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "40px" }}>
       <style>{`
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-    `}</style>
+        @keyframes rtProfileSpin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
+      <div
+        style={{
+          width: "40px",
+          height: "40px",
+          border: "3px solid rgba(74, 144, 226, 0.3)",
+          borderTop: "3px solid #4a90e2",
+          borderRadius: "50%",
+          animation: "rtProfileSpin 1s linear infinite",
+        }}
+      />
     </div>
-  )
-}));
+  );
+}
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -31,7 +35,7 @@ export default function ProfilePage() {
 
   const [jd, setJd] = useState("");
   const [companyName, setCompanyName] = useState("");
-  const [disable, setDisable] = useState(false);
+  const [generating, setGenerating] = useState(null); // null | "pdf" | "docx"
   const [elapsedTime, setElapsedTime] = useState(0);
   const [lastGenerationTime, setLastGenerationTime] = useState(null);
   const [theme, setTheme] = useState("dark");
@@ -57,6 +61,7 @@ export default function ProfilePage() {
 
     if (!profileNameFromSlug) {
       console.error(`Profile not found for slug: ${profileSlug}`);
+      setLoading(false);
       router.push('/');
       return;
     }
@@ -123,8 +128,7 @@ export default function ProfilePage() {
     return selectedProfileData?.experience?.[0]?.title || null;
   };
 
-  // Generate PDF
-  const handleGenerate = async () => {
+  const handleGenerate = async (outputFormat) => {
     if (!jd.trim()) {
       alert("Please enter a job description");
       return;
@@ -135,11 +139,11 @@ export default function ProfilePage() {
       return;
     }
 
-    setDisable(true);
+    const fmt = outputFormat === "docx" ? "docx" : "pdf";
+    setGenerating(fmt);
     setElapsedTime(0);
     startTimeRef.current = Date.now();
 
-    // Start timer
     timerIntervalRef.current = setInterval(() => {
       if (startTimeRef.current) {
         setElapsedTime(Math.floor((Date.now() - startTimeRef.current) / 1000));
@@ -153,13 +157,14 @@ export default function ProfilePage() {
         body: JSON.stringify({
           profile: profileSlug,
           jd: jd,
-          companyName: companyName.trim() || null
-        })
+          companyName: companyName.trim() || null,
+          format: fmt,
+        }),
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(errorText || "Failed to generate PDF");
+        throw new Error(errorText || "Download failed");
       }
 
       const blob = await response.blob();
@@ -168,7 +173,8 @@ export default function ProfilePage() {
       a.href = url;
 
       const contentDisposition = response.headers.get("Content-Disposition");
-      let filename = `${profileName?.replace(/\s+/g, "_") || profileSlug}.pdf`;
+      const ext = fmt === "docx" ? ".docx" : ".pdf";
+      let filename = `${profileName?.replace(/\s+/g, "_") || profileSlug}${ext}`;
       if (contentDisposition) {
         const filenameMatch = contentDisposition.match(/filename="(.+)"/);
         if (filenameMatch) {
@@ -185,9 +191,12 @@ export default function ProfilePage() {
       setLastGenerationTime(Math.floor((Date.now() - startTimeRef.current) / 1000));
     } catch (error) {
       console.error("Generation error:", error);
-      alert("Failed to generate PDF: " + error.message);
+      alert(
+        (fmt === "docx" ? "Failed to generate Word file: " : "Failed to generate PDF: ") +
+          error.message
+      );
     } finally {
-      setDisable(false);
+      setGenerating(null);
       if (timerIntervalRef.current) {
         clearInterval(timerIntervalRef.current);
         timerIntervalRef.current = null;
@@ -229,6 +238,8 @@ export default function ProfilePage() {
       buttonHover: "#2563eb",
       buttonText: "#ffffff",
       buttonDisabled: "#475569",
+      wordButtonBg: "#0d9488",
+      wordButtonHover: "#0f766e",
       successBg: "rgba(34, 197, 94, 0.1)",
       successText: "#22c55e",
       infoBg: "rgba(59, 130, 246, 0.1)",
@@ -251,6 +262,8 @@ export default function ProfilePage() {
       buttonHover: "#2563eb",
       buttonText: "#ffffff",
       buttonDisabled: "#cbd5e1",
+      wordButtonBg: "#0f766e",
+      wordButtonHover: "#115e59",
       successBg: "rgba(34, 197, 94, 0.1)",
       successText: "#16a34a",
       infoBg: "rgba(59, 130, 246, 0.1)",
@@ -264,9 +277,20 @@ export default function ProfilePage() {
 
   if (!router.isReady || !profileSlug) {
     return (
-      <Suspense fallback={<div style={{ padding: '40px', textAlign: 'center', color: colors.text }}>Loading...</div>}>
-        <LoadingSpinner />
-      </Suspense>
+      <div
+        style={{
+          minHeight: "100vh",
+          background: colors.bg,
+          color: colors.text,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <ProfileLoadingSpinner />
+        <p style={{ marginTop: "12px", fontSize: "14px", color: colors.textSecondary }}>Loading…</p>
+      </div>
     );
   }
 
@@ -275,27 +299,28 @@ export default function ProfilePage() {
       <div style={{
         minHeight: "100vh",
         background: colors.bg,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
+        color: colors.text,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center"
       }}>
-        <Suspense fallback={<div style={{ color: colors.text }}>Loading...</div>}>
-          <LoadingSpinner />
-        </Suspense>
+        <ProfileLoadingSpinner />
+        <p style={{ marginTop: "12px", fontSize: "14px", color: colors.textSecondary }}>Loading profile…</p>
       </div>
     );
   }
 
   // Quick copy fields
   const quickCopyFields = [
-    { key: 'email', label: 'Email', value: selectedProfileData.email, icon: '📧' },
-    { key: 'phone', label: 'Phone', value: selectedProfileData.phone, icon: '📞' },
-    { key: 'location', label: 'Address', value: selectedProfileData.location, icon: '📍' },
-    { key: 'postalCode', label: 'Postal Code', value: selectedProfileData.postalCode, icon: '✉️' },
-    { key: 'lastCompany', label: 'Last Company', value: getLastCompany(), icon: '🏢' },
-    { key: 'lastRole', label: 'Last Role', value: getLastRole(), icon: '💼' },
-    { key: 'linkedin', label: 'LinkedIn', value: selectedProfileData.linkedin, icon: '💼' },
-    { key: 'github', label: 'GitHub', value: selectedProfileData.github, icon: '💻' },
+    { key: 'email', label: 'Email', value: selectedProfileData.email },
+    { key: 'phone', label: 'Phone', value: selectedProfileData.phone },
+    { key: 'location', label: 'Address', value: selectedProfileData.location },
+    { key: 'postalCode', label: 'Postal Code', value: selectedProfileData.postalCode },
+    { key: 'lastCompany', label: 'Last Company', value: getLastCompany() },
+    { key: 'lastRole', label: 'Last Role', value: getLastRole() },
+    { key: 'linkedin', label: 'LinkedIn', value: selectedProfileData.linkedin },
+    { key: 'github', label: 'GitHub', value: selectedProfileData.github },
   ].filter(field => field.value); // Only show fields with values
 
   return (
@@ -303,29 +328,79 @@ export default function ProfilePage() {
       <Head>
         <title>Resume Generator - {profileName}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <style>{QUICK_COPY_ANIMATIONS_CSS}</style>
+        <style>{SPARKLE_PROFILE_CSS}</style>
       </Head>
 
-      <div style={{
-        minHeight: "100vh",
-        background: colors.bg,
-        color: colors.text,
-        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif",
-        padding: "16px",
-        transition: "background 0.3s ease, color 0.3s ease"
-      }}>
+      <div
+        className={`rt-profile-page${theme === "light" ? " rt-profile-page--light" : ""}`}
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          background: colors.bg,
+          color: colors.text,
+          fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif",
+          boxSizing: "border-box",
+          transition: "background 0.3s ease, color 0.3s ease",
+        }}
+      >
+        <div className="rt-profile-page-ambient" aria-hidden>
+          <div className="rt-profile-page-ambient__glow" />
+          <div className="rt-profile-page-sparks">
+            {Array.from({ length: 8 }, (_, i) => (
+              <span key={i} className="rt-spark" />
+            ))}
+          </div>
+        </div>
+        <div
+          className="rt-profile-page-fill"
+          style={{
+            flex: "1 0 auto",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            padding: "16px",
+            boxSizing: "border-box",
+            minHeight: 0,
+          }}
+        >
         <div style={{
-          maxWidth: "800px",
-          margin: "0 auto"
+          maxWidth: "min(1600px, 100%)",
+          width: "100%",
+          margin: "0 auto",
+          minWidth: 0,
+          boxSizing: "border-box"
         }}>
           {/* Header Card */}
-          <div style={{
-            background: colors.cardBg,
-            borderRadius: "8px",
-            border: `1px solid ${colors.cardBorder}`,
-            padding: "16px",
-            marginBottom: "12px",
-            boxShadow: theme === 'dark' ? '0 2px 4px rgba(0, 0, 0, 0.2)' : '0 1px 2px rgba(0, 0, 0, 0.05)'
-          }}>
+          <div
+            className={`rt-profile-card rt-profile-card--header${theme === "light" ? " rt-profile-card--light" : ""}`}
+            style={{
+              background:
+                theme === "dark"
+                  ? "rgba(30, 41, 59, 0.68)"
+                  : "rgba(255, 255, 255, 0.82)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              borderRadius: "8px",
+              border: `1px solid ${colors.cardBorder}`,
+              padding: "16px",
+              marginBottom: "12px",
+              minWidth: 0,
+              maxWidth: "100%",
+              boxSizing: "border-box",
+              boxShadow: theme === 'dark' ? '0 2px 4px rgba(0, 0, 0, 0.2)' : '0 1px 2px rgba(0, 0, 0, 0.05)'
+            }}
+          >
+            <div className="rt-pcard-sparkle" aria-hidden>
+              <div className="rt-pcard-sparkle__glow" />
+              <div className="rt-pcard-sparkle__sparks">
+                {Array.from({ length: 5 }, (_, i) => (
+                  <span key={i} className="rt-spark" />
+                ))}
+              </div>
+            </div>
+            <div className="rt-pcard-inner">
             <div style={{
               display: "flex",
               justifyContent: "space-between",
@@ -377,16 +452,33 @@ export default function ProfilePage() {
 
             {/* Quick Copy Buttons */}
             {quickCopyFields.length > 0 && (
-              <div style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(90px, 1fr))",
-                gap: "8px",
-                paddingTop: "12px",
-                borderTop: `1px solid ${colors.cardBorder}`
-              }}>
-                {quickCopyFields.map(({ key, label, value, icon }) => (
+              <div
+                style={{
+                  maxWidth: "100%",
+                  minWidth: 0,
+                  paddingTop: "12px",
+                  borderTop: `1px solid ${colors.cardBorder}`,
+                  marginLeft: "-4px",
+                  marginRight: "-4px",
+                  paddingLeft: "4px",
+                  paddingRight: "4px"
+                }}
+              >
+              <div
+                className="rt-quick-copy-grid"
+                style={{
+                  display: "grid",
+                  width: "100%",
+                  gridTemplateColumns: `repeat(${quickCopyFields.length}, minmax(0, 1fr))`,
+                  gap: "8px",
+                }}
+              >
+                {quickCopyFields.map(({ key, label, value }, index) => (
                   <button
                     key={key}
+                    type="button"
+                    aria-label={copiedField === key ? `${label} copied` : `Copy ${label}`}
+                    className={`rt-quick-copy-btn rt-qca-${quickCopyAnimSlot(key)}${copiedField === key ? " rt-quick-copy-btn--copied" : ""}`}
                     onClick={() => copyToClipboard(value, key)}
                     style={{
                       padding: "8px 6px",
@@ -394,52 +486,89 @@ export default function ProfilePage() {
                       border: `1px solid ${copiedField === key ? colors.infoText : colors.inputBorder}`,
                       borderRadius: "6px",
                       cursor: "pointer",
-                      transition: "all 0.2s ease",
+                      boxSizing: "border-box",
+                      transition: "background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease",
                       textAlign: "center",
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
-                      gap: "4px",
-                      minHeight: "60px",
-                      justifyContent: "center"
+                      gap: 0,
+                      minHeight: "52px",
+                      justifyContent: "center",
+                      minWidth: 0,
+                      width: "100%",
+                      animationDelay: `${index * 45}ms`
                     }}
                     onMouseEnter={(e) => {
                       if (copiedField !== key) {
                         e.currentTarget.style.background = colors.copyHover;
                         e.currentTarget.style.borderColor = colors.inputFocus;
+                        e.currentTarget.style.boxShadow = `0 4px 14px ${theme === "dark" ? "rgba(0,0,0,0.35)" : "rgba(15,23,42,0.08)"}`;
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (copiedField !== key) {
                         e.currentTarget.style.background = colors.inputBg;
                         e.currentTarget.style.borderColor = colors.inputBorder;
+                        e.currentTarget.style.boxShadow = "none";
                       }
                     }}
                   >
-                    <span style={{ fontSize: "16px" }}>{icon}</span>
-                    <div style={{
-                      fontSize: "10px",
-                      fontWeight: "500",
-                      color: copiedField === key ? colors.successText : colors.textMuted,
-                      textTransform: "uppercase",
-                      letterSpacing: "0.3px"
-                    }}>
+                    <span className="rt-quick-copy-icon-wrap">
+                      <QuickCopyIcon
+                        fieldKey={key}
+                        size={16}
+                        color={copiedField === key ? colors.successText : colors.textSecondary}
+                      />
+                    </span>
+                    <div
+                      className="rt-quick-copy-label"
+                      style={{
+                        fontWeight: "600",
+                        color: copiedField === key ? colors.successText : colors.textMuted,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.02em",
+                        maxWidth: "100%",
+                      }}
+                    >
                       {copiedField === key ? "Copied!" : label}
                     </div>
                   </button>
                 ))}
               </div>
+              </div>
             )}
+            </div>
           </div>
 
           {/* Form Card */}
-          <div style={{
-            background: colors.cardBg,
-            borderRadius: "8px",
-            border: `1px solid ${colors.cardBorder}`,
-            padding: "16px",
-            boxShadow: theme === 'dark' ? '0 2px 4px rgba(0, 0, 0, 0.2)' : '0 1px 2px rgba(0, 0, 0, 0.05)'
-          }}>
+          <div
+            className={`rt-profile-card rt-profile-card--form${theme === "light" ? " rt-profile-card--light" : ""}`}
+            style={{
+              background:
+                theme === "dark"
+                  ? "rgba(30, 41, 59, 0.65)"
+                  : "rgba(255, 255, 255, 0.8)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              borderRadius: "8px",
+              border: `1px solid ${colors.cardBorder}`,
+              padding: "16px",
+              minWidth: 0,
+              maxWidth: "100%",
+              boxSizing: "border-box",
+              boxShadow: theme === 'dark' ? '0 2px 4px rgba(0, 0, 0, 0.2)' : '0 1px 2px rgba(0, 0, 0, 0.05)'
+            }}
+          >
+            <div className="rt-pcard-sparkle" aria-hidden>
+              <div className="rt-pcard-sparkle__glow" />
+              <div className="rt-pcard-sparkle__sparks">
+                {Array.from({ length: 6 }, (_, i) => (
+                  <span key={i} className="rt-spark" />
+                ))}
+              </div>
+            </div>
+            <div className="rt-pcard-inner">
             {/* Job Description */}
             <div style={{ marginBottom: "16px" }}>
               <label style={{
@@ -457,9 +586,10 @@ export default function ProfilePage() {
                 value={jd}
                 onChange={(e) => setJd(e.target.value)}
                 placeholder="Paste the job description here..."
-                rows="10"
+                rows="12"
                 style={{
                   width: "100%",
+                  maxWidth: "100%",
                   padding: "10px 12px",
                   fontSize: "13px",
                   fontFamily: "inherit",
@@ -469,9 +599,9 @@ export default function ProfilePage() {
                   borderRadius: "6px",
                   outline: "none",
                   resize: "vertical",
-                  minHeight: "180px",
+                  minHeight: "clamp(200px, 36vh, 520px)",
                   lineHeight: "1.5",
-                  transition: "all 0.2s ease",
+                  transition: "border-color 0.2s ease, box-shadow 0.2s ease",
                   boxSizing: "border-box"
                 }}
                 onFocus={(e) => {
@@ -505,6 +635,7 @@ export default function ProfilePage() {
                 placeholder="Enter company name for filename..."
                 style={{
                   width: "100%",
+                  maxWidth: "100%",
                   padding: "8px 12px",
                   fontSize: "13px",
                   fontFamily: "inherit",
@@ -513,7 +644,7 @@ export default function ProfilePage() {
                   border: `1px solid ${colors.inputBorder}`,
                   borderRadius: "6px",
                   outline: "none",
-                  transition: "all 0.2s ease",
+                  transition: "border-color 0.2s ease, box-shadow 0.2s ease",
                   boxSizing: "border-box"
                 }}
                 onFocus={(e) => {
@@ -527,41 +658,120 @@ export default function ProfilePage() {
               />
             </div>
 
-            {/* Generate Button */}
-            <button
-              onClick={handleGenerate}
-              disabled={disable || !jd.trim()}
+            <div
               style={{
-                width: "100%",
-                padding: "10px 16px",
-                fontSize: "14px",
-                fontWeight: "600",
-                color: colors.buttonText,
-                background: disable || !jd.trim() ? colors.buttonDisabled : colors.buttonBg,
-                border: "none",
-                borderRadius: "6px",
-                cursor: disable || !jd.trim() ? "not-allowed" : "pointer",
-                transition: "all 0.2s ease",
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "10px",
                 marginBottom: "12px",
-                boxShadow: disable || !jd.trim() ? "none" : theme === 'dark' ? "0 2px 8px rgba(59, 130, 246, 0.3)" : "0 1px 4px rgba(59, 130, 246, 0.2)"
-              }}
-              onMouseEnter={(e) => {
-                if (!disable && jd.trim()) {
-                  e.currentTarget.style.background = colors.buttonHover;
-                  e.currentTarget.style.transform = "translateY(-1px)";
-                  e.currentTarget.style.boxShadow = theme === 'dark' ? "0 4px 12px rgba(59, 130, 246, 0.4)" : "0 2px 8px rgba(59, 130, 246, 0.3)";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!disable && jd.trim()) {
-                  e.currentTarget.style.background = colors.buttonBg;
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = theme === 'dark' ? "0 2px 8px rgba(59, 130, 246, 0.3)" : "0 1px 4px rgba(59, 130, 246, 0.2)";
-                }
+                minWidth: 0,
               }}
             >
-              {disable ? `Generating... (${elapsedTime}s)` : "Generate Resume PDF"}
-            </button>
+              <button
+                type="button"
+                onClick={() => handleGenerate("pdf")}
+                disabled={generating !== null || !jd.trim()}
+                style={{
+                  width: "100%",
+                  maxWidth: "100%",
+                  minWidth: 0,
+                  padding: "10px 12px",
+                  fontSize: "13px",
+                  fontWeight: "600",
+                  color: colors.buttonText,
+                  background:
+                    generating !== null || !jd.trim()
+                      ? colors.buttonDisabled
+                      : colors.buttonBg,
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor:
+                    generating !== null || !jd.trim() ? "not-allowed" : "pointer",
+                  boxSizing: "border-box",
+                  transition: "background 0.2s ease, box-shadow 0.2s ease",
+                  boxShadow:
+                    generating !== null || !jd.trim()
+                      ? "none"
+                      : theme === "dark"
+                        ? "0 2px 8px rgba(59, 130, 246, 0.3)"
+                        : "0 1px 4px rgba(59, 130, 246, 0.2)",
+                }}
+                onMouseEnter={(e) => {
+                  if (generating === null && jd.trim()) {
+                    e.currentTarget.style.background = colors.buttonHover;
+                    e.currentTarget.style.boxShadow =
+                      theme === "dark"
+                        ? "0 4px 12px rgba(59, 130, 246, 0.4)"
+                        : "0 2px 8px rgba(59, 130, 246, 0.3)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (generating === null && jd.trim()) {
+                    e.currentTarget.style.background = colors.buttonBg;
+                    e.currentTarget.style.boxShadow =
+                      theme === "dark"
+                        ? "0 2px 8px rgba(59, 130, 246, 0.3)"
+                        : "0 1px 4px rgba(59, 130, 246, 0.2)";
+                  }
+                }}
+              >
+                {generating === "pdf"
+                  ? `Generating… (${elapsedTime}s)`
+                  : "Download as PDF file"}
+              </button>
+              <button
+                type="button"
+                onClick={() => handleGenerate("docx")}
+                disabled={generating !== null || !jd.trim()}
+                style={{
+                  width: "100%",
+                  maxWidth: "100%",
+                  minWidth: 0,
+                  padding: "10px 12px",
+                  fontSize: "13px",
+                  fontWeight: "600",
+                  color: colors.buttonText,
+                  background:
+                    generating !== null || !jd.trim()
+                      ? colors.buttonDisabled
+                      : colors.wordButtonBg,
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor:
+                    generating !== null || !jd.trim() ? "not-allowed" : "pointer",
+                  boxSizing: "border-box",
+                  transition: "background 0.2s ease, box-shadow 0.2s ease",
+                  boxShadow:
+                    generating !== null || !jd.trim()
+                      ? "none"
+                      : theme === "dark"
+                        ? "0 2px 8px rgba(13, 148, 136, 0.35)"
+                        : "0 1px 4px rgba(13, 148, 136, 0.25)",
+                }}
+                onMouseEnter={(e) => {
+                  if (generating === null && jd.trim()) {
+                    e.currentTarget.style.background = colors.wordButtonHover;
+                    e.currentTarget.style.boxShadow =
+                      theme === "dark"
+                        ? "0 4px 12px rgba(13, 148, 136, 0.45)"
+                        : "0 2px 8px rgba(13, 148, 136, 0.35)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (generating === null && jd.trim()) {
+                    e.currentTarget.style.background = colors.wordButtonBg;
+                    e.currentTarget.style.boxShadow =
+                      theme === "dark"
+                        ? "0 2px 8px rgba(13, 148, 136, 0.35)"
+                        : "0 1px 4px rgba(13, 148, 136, 0.25)";
+                  }
+                }}
+              >
+                {generating === "docx"
+                  ? `Generating… (${elapsedTime}s)`
+                  : "Download as Word file"}
+              </button>
+            </div>
 
             {/* Status Messages */}
             {lastGenerationTime && (
@@ -578,7 +788,9 @@ export default function ProfilePage() {
                 ✓ Resume generated successfully in {lastGenerationTime}s
               </div>
             )}
+            </div>
           </div>
+        </div>
         </div>
       </div>
     </>

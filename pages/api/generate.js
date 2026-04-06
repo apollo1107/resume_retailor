@@ -10,6 +10,16 @@ import {
   getProfileBySlug,
 } from "../../lib/profile-template-mapping";
 import { loadPromptForProfile } from "../../lib/prompt-loader";
+import {
+  buildResumeDocxBuffer,
+  computeResumeBaseFileName,
+} from "../../lib/resume-to-docx";
+import {
+  formatPermanentContextForPrompt,
+  mergeBaseSkillsIntoAi,
+  mergeExperienceDetails,
+  profileHasPermanentContent,
+} from "../../lib/merge-resume-base";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).send("Method not allowed");
@@ -22,6 +32,7 @@ export default async function handler(req, res) {
       provider = "openai",
       model = null,
       companyName = null,
+      format = "pdf",
     } = req.body;
 
     if (!profileSlug) return res.status(400).send("Profile slug required");
@@ -103,6 +114,13 @@ export default async function handler(req, res) {
       })
       .join("\n");
 
+    const hasPermanent = profileHasPermanentContent(profileData);
+    const permanentResumeContext =
+      formatPermanentContextForPrompt(profileData);
+    const experienceBulletGuidance = hasPermanent
+      ? "Generate **4-6 NEW** bullets per role in `experience[].details` (25-35 words each). These are **in addition to** the permanent base bullets above (prepended automatically). Do **not** repeat those permanent bullets in your JSON."
+      : "Generate **6-8** bullets per role in `experience[].details` (25-35 words each).";
+
     // Load prompt template for this profile (using slug)
     const prompt = loadPromptForProfile(profileSlug, {
       name: profileData.name,
@@ -114,6 +132,8 @@ export default async function handler(req, res) {
       jobDescription: jd,
       experienceCount: profileData.experience.length,
       resumeTitle: profileData.title || "Senior Software Engineer",
+      permanentResumeContext,
+      experienceBulletGuidance,
     });
 
     const aiResponse = await callAI(prompt, provider, model);
@@ -263,15 +283,16 @@ export default async function handler(req, res) {
       }
     });
 
-    // Get React PDF template component
-    const TemplateComponent = getTemplate(templateName);
-
-    if (!TemplateComponent) {
-      console.error(`Template not found: ${templateName}`);
-      return res.status(404).send(`Template "${templateName}" not found`);
-    }
-
     console.log(`Using template: ${templateName}`);
+
+    const mergedDetails = mergeExperienceDetails(
+      profileData.experience,
+      resumeContent.experience
+    );
+    const mergedSkills = mergeBaseSkillsIntoAi(
+      profileData.base_skills,
+      resumeContent.skills
+    );
 
     // Prepare data for template
     const templateData = {
@@ -283,17 +304,45 @@ export default async function handler(req, res) {
       linkedin: profileData.linkedin, // Excluded from resume
       website: null, // Excluded from resume (may contain GitHub)
       summary: resumeContent.summary,
-      skills: resumeContent.skills,
+      skills: mergedSkills,
       experience: profileData.experience.map((job, idx) => ({
         title: job.title || resumeContent.experience[idx]?.title || "Engineer",
         company: job.company,
         location: job.location,
         start_date: job.start_date,
         end_date: job.end_date,
-        details: resumeContent.experience[idx]?.details || [],
+        details: mergedDetails[idx] || [],
       })),
       education: profileData.education,
     };
+
+    const baseName = computeResumeBaseFileName(resumeName, companyName);
+    const outFormat =
+      format === "docx" || format === "word" ? "docx" : "pdf";
+
+    if (outFormat === "docx") {
+      const docxBuffer = await buildResumeDocxBuffer(templateData);
+      const fileName = `${baseName}.docx`;
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      );
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${fileName}"`
+      );
+      res.end(docxBuffer);
+      console.log("Word document generated successfully!");
+      return;
+    }
+
+    // Get React PDF template component
+    const TemplateComponent = getTemplate(templateName);
+
+    if (!TemplateComponent) {
+      console.error(`Template not found: ${templateName}`);
+      return res.status(404).send(`Template "${templateName}" not found`);
+    }
 
     // Render PDF with React PDF
     const pdfDocument = React.createElement(TemplateComponent, {
@@ -309,23 +358,6 @@ export default async function handler(req, res) {
     const pdfBuffer = Buffer.concat(chunks);
 
     console.log("PDF generated successfully!");
-
-    // Generate filename from resume name + company name (if provided)
-    const nameParts = resumeName ? resumeName.trim().split(/\s+/) : [];
-    let baseName;
-    if (!nameParts || nameParts.length === 0) baseName = "resume";
-    else if (nameParts.length === 1) baseName = nameParts[0];
-    else baseName = `${nameParts[0]}_${nameParts[nameParts.length - 1]}`;
-    baseName = baseName.replace(/\s+/g, "_").replace(/[^A-Za-z0-9_-]/g, "");
-
-    // Append company name if provided
-    if (companyName && companyName.trim()) {
-      const sanitizedCompanyName = companyName
-        .trim()
-        .replace(/\s+/g, "_")
-        .replace(/[^A-Za-z0-9_-]/g, "");
-      baseName = `${baseName}_${sanitizedCompanyName}`;
-    }
 
     const fileName = `${baseName}.pdf`;
 

@@ -2,6 +2,10 @@ import fs from "fs";
 import path from "path";
 import { getProfileBySlug } from "../../lib/profile-template-mapping";
 import { loadPromptForProfile } from "../../lib/prompt-loader";
+import {
+  formatPermanentContextForPrompt,
+  profileHasPermanentContent,
+} from "../../lib/merge-resume-base";
 
 /**
  * Build the full prompt for manual ChatGPT use (no API key)
@@ -64,6 +68,13 @@ export default async function handler(req, res) {
       })
       .join("\n");
 
+    const hasPermanent = profileHasPermanentContent(profileData);
+    const permanentResumeContext =
+      formatPermanentContextForPrompt(profileData);
+    const experienceBulletGuidance = hasPermanent
+      ? "Generate **4-6 NEW** bullets per role in `experience[].details` (25-35 words each). These are **in addition to** the permanent base bullets above (prepended automatically). Do **not** repeat those permanent bullets in your JSON."
+      : "Generate **6-8** bullets per role in `experience[].details` (25-35 words each).";
+
     const prompt = loadPromptForProfile(profileSlug, {
       name: profileData.name,
       email: profileData.email,
@@ -74,6 +85,8 @@ export default async function handler(req, res) {
       jobDescription: jd,
       experienceCount: profileData.experience.length,
       resumeTitle: profileData.title || "Senior Software Engineer",
+      permanentResumeContext,
+      experienceBulletGuidance,
     });
 
     res.setHeader("Content-Type", "application/json");

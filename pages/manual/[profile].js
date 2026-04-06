@@ -1,40 +1,34 @@
-import { useState, useEffect, useRef, lazy, Suspense } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import { slugToProfileName } from "../../lib/profile-template-mapping";
+import { QuickCopyIcon } from "../../lib/quick-copy-icons";
+import { QUICK_COPY_ANIMATIONS_CSS, quickCopyAnimSlot } from "../../lib/quick-copy-animations-css";
+import { SPARKLE_PROFILE_CSS } from "../../lib/sparkle-ui-css";
 
-const LoadingSpinner = lazy(() =>
-  Promise.resolve({
-    default: () => (
+function ManualProfileLoadingSpinner() {
+  return (
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "40px" }}>
+      <style>{`
+        @keyframes rtManualProfileSpin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
       <div
         style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "40px",
+          width: "40px",
+          height: "40px",
+          border: "3px solid rgba(74, 144, 226, 0.3)",
+          borderTop: "3px solid #4a90e2",
+          borderRadius: "50%",
+          animation: "rtManualProfileSpin 1s linear infinite",
         }}
-      >
-        <div
-          style={{
-            width: "40px",
-            height: "40px",
-            border: "3px solid rgba(74, 144, 226, 0.3)",
-            borderTop: "3px solid #4a90e2",
-            borderRadius: "50%",
-            animation: "spin 1s linear infinite",
-          }}
-        />
-        <style>{`
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}</style>
-      </div>
-    ),
-  })
-);
+      />
+    </div>
+  );
+}
 
 export default function ManualProfilePage() {
   const router = useRouter();
@@ -43,7 +37,7 @@ export default function ManualProfilePage() {
   const [jd, setJd] = useState("");
   const [chatgptResponse, setChatgptResponse] = useState("");
   const [companyName, setCompanyName] = useState("");
-  const [disable, setDisable] = useState(false);
+  const [generating, setGenerating] = useState(null); // null | "pdf" | "docx"
   const [elapsedTime, setElapsedTime] = useState(0);
   const [lastGenerationTime, setLastGenerationTime] = useState(null);
   const [theme, setTheme] = useState("dark");
@@ -65,6 +59,7 @@ export default function ManualProfilePage() {
 
     const profileNameFromSlug = slugToProfileName(profileSlug);
     if (!profileNameFromSlug) {
+      setLoading(false);
       router.push("/manual");
       return;
     }
@@ -154,7 +149,7 @@ export default function ManualProfilePage() {
     }
   };
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (outputFormat) => {
     if (!chatgptResponse.trim()) {
       alert("Please paste the ChatGPT response (JSON) first");
       return;
@@ -165,7 +160,8 @@ export default function ManualProfilePage() {
       return;
     }
 
-    setDisable(true);
+    const fmt = outputFormat === "docx" ? "docx" : "pdf";
+    setGenerating(fmt);
     setElapsedTime(0);
     startTimeRef.current = Date.now();
 
@@ -183,12 +179,13 @@ export default function ManualProfilePage() {
           profile: profileSlug,
           chatgptResponse: chatgptResponse.trim(),
           companyName: companyName.trim() || null,
+          format: fmt,
         }),
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(errorText || "Failed to generate PDF");
+        throw new Error(errorText || "Download failed");
       }
 
       const blob = await response.blob();
@@ -197,7 +194,8 @@ export default function ManualProfilePage() {
       a.href = url;
 
       const contentDisposition = response.headers.get("Content-Disposition");
-      let filename = `${profileName?.replace(/\s+/g, "_") || profileSlug}.pdf`;
+      const ext = fmt === "docx" ? ".docx" : ".pdf";
+      let filename = `${profileName?.replace(/\s+/g, "_") || profileSlug}${ext}`;
       if (contentDisposition) {
         const filenameMatch = contentDisposition.match(/filename="(.+)"/);
         if (filenameMatch) filename = filenameMatch[1];
@@ -214,9 +212,12 @@ export default function ManualProfilePage() {
       );
     } catch (error) {
       console.error("Generation error:", error);
-      alert("Failed to generate PDF: " + error.message);
+      alert(
+        (fmt === "docx" ? "Failed to generate Word file: " : "Failed to generate PDF: ") +
+          error.message
+      );
     } finally {
-      setDisable(false);
+      setGenerating(null);
       if (timerIntervalRef.current) {
         clearInterval(timerIntervalRef.current);
         timerIntervalRef.current = null;
@@ -253,6 +254,8 @@ export default function ManualProfilePage() {
       buttonHover: "#2563eb",
       buttonText: "#ffffff",
       buttonDisabled: "#475569",
+      wordButtonBg: "#0d9488",
+      wordButtonHover: "#0f766e",
       successBg: "rgba(34, 197, 94, 0.1)",
       successText: "#22c55e",
       infoBg: "rgba(59, 130, 246, 0.1)",
@@ -275,6 +278,8 @@ export default function ManualProfilePage() {
       buttonHover: "#2563eb",
       buttonText: "#ffffff",
       buttonDisabled: "#cbd5e1",
+      wordButtonBg: "#0f766e",
+      wordButtonHover: "#115e59",
       successBg: "rgba(34, 197, 94, 0.1)",
       successText: "#16a34a",
       infoBg: "rgba(59, 130, 246, 0.1)",
@@ -286,34 +291,22 @@ export default function ManualProfilePage() {
 
   const colors = themeColors[theme];
 
-  const quickCopyFields = [
-    { key: "email", label: "Email", value: selectedProfileData?.email, icon: "📧" },
-    { key: "phone", label: "Phone", value: selectedProfileData?.phone, icon: "📞" },
-    { key: "location", label: "Address", value: selectedProfileData?.location, icon: "📍" },
-    { key: "postalCode", label: "Postal Code", value: selectedProfileData?.postalCode, icon: "✉️" },
-    { key: "lastCompany", label: "Last Company", value: getLastCompany(), icon: "🏢" },
-    { key: "lastRole", label: "Last Role", value: getLastRole(), icon: "💼" },
-    { key: "linkedin", label: "LinkedIn", value: selectedProfileData?.linkedin, icon: "💼" },
-    { key: "github", label: "GitHub", value: selectedProfileData?.github, icon: "💻" },
-  ].filter((f) => f.value);
-
   if (!router.isReady || !profileSlug) {
     return (
-      <Suspense
-        fallback={
-          <div
-            style={{
-              padding: "40px",
-              textAlign: "center",
-              color: colors.text,
-            }}
-          >
-            Loading...
-          </div>
-        }
+      <div
+        style={{
+          minHeight: "100vh",
+          background: colors.bg,
+          color: colors.text,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
       >
-        <LoadingSpinner />
-      </Suspense>
+        <ManualProfileLoadingSpinner />
+        <p style={{ marginTop: "12px", fontSize: "14px", color: colors.textSecondary }}>Loading…</p>
+      </div>
     );
   }
 
@@ -323,51 +316,106 @@ export default function ManualProfilePage() {
         style={{
           minHeight: "100vh",
           background: colors.bg,
+          color: colors.text,
           display: "flex",
+          flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
         }}
       >
-        <Suspense fallback={<div style={{ color: colors.text }}>Loading...</div>}>
-          <LoadingSpinner />
-        </Suspense>
+        <ManualProfileLoadingSpinner />
+        <p style={{ marginTop: "12px", fontSize: "14px", color: colors.textSecondary }}>Loading profile…</p>
       </div>
     );
   }
+
+  const quickCopyFields = [
+    { key: "email", label: "Email", value: selectedProfileData?.email },
+    { key: "phone", label: "Phone", value: selectedProfileData?.phone },
+    { key: "location", label: "Address", value: selectedProfileData?.location },
+    { key: "postalCode", label: "Postal Code", value: selectedProfileData?.postalCode },
+    { key: "lastCompany", label: "Last Company", value: getLastCompany() },
+    { key: "lastRole", label: "Last Role", value: getLastRole() },
+    { key: "linkedin", label: "LinkedIn", value: selectedProfileData?.linkedin },
+    { key: "github", label: "GitHub", value: selectedProfileData?.github },
+  ].filter((f) => f.value);
 
   return (
     <>
       <Head>
         <title>Manual Resume - {profileName}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <style>{QUICK_COPY_ANIMATIONS_CSS}</style>
+        <style>{SPARKLE_PROFILE_CSS}</style>
       </Head>
 
       <div
+        className={`rt-profile-page${theme === "light" ? " rt-profile-page--light" : ""}`}
         style={{
           minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
           background: colors.bg,
           color: colors.text,
           fontFamily:
             "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif",
-          padding: "16px",
+          boxSizing: "border-box",
           transition: "background 0.3s ease, color 0.3s ease",
         }}
       >
-        <div style={{ maxWidth: "800px", margin: "0 auto" }}>
+        <div className="rt-profile-page-ambient" aria-hidden>
+          <div className="rt-profile-page-ambient__glow" />
+          <div className="rt-profile-page-sparks">
+            {Array.from({ length: 8 }, (_, i) => (
+              <span key={i} className="rt-spark" />
+            ))}
+          </div>
+        </div>
+        <div
+          className="rt-profile-page-fill"
+          style={{
+            flex: "1 0 auto",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            padding: "16px",
+            boxSizing: "border-box",
+            minHeight: 0,
+          }}
+        >
+        <div style={{ maxWidth: "min(1600px, 100%)", width: "100%", margin: "0 auto", minWidth: 0, boxSizing: "border-box" }}>
           {/* Header Card */}
           <div
+            className={`rt-profile-card rt-profile-card--header${theme === "light" ? " rt-profile-card--light" : ""}`}
             style={{
-              background: colors.cardBg,
+              background:
+                theme === "dark"
+                  ? "rgba(30, 41, 59, 0.68)"
+                  : "rgba(255, 255, 255, 0.82)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
               borderRadius: "8px",
               border: `1px solid ${colors.cardBorder}`,
               padding: "16px",
               marginBottom: "12px",
+              minWidth: 0,
+              maxWidth: "100%",
+              boxSizing: "border-box",
               boxShadow:
                 theme === "dark"
                   ? "0 2px 4px rgba(0, 0, 0, 0.2)"
                   : "0 1px 2px rgba(0, 0, 0, 0.05)",
             }}
           >
+            <div className="rt-pcard-sparkle" aria-hidden>
+              <div className="rt-pcard-sparkle__glow" />
+              <div className="rt-pcard-sparkle__sparks">
+                {Array.from({ length: 5 }, (_, i) => (
+                  <span key={i} className="rt-spark" />
+                ))}
+              </div>
+            </div>
+            <div className="rt-pcard-inner">
             <div
               style={{
                 display: "flex",
@@ -376,7 +424,27 @@ export default function ManualProfilePage() {
                 marginBottom: "12px",
               }}
             >
-              <div>
+              <div style={{ minWidth: 0 }}>
+                <span
+                  style={{
+                    display: "inline-block",
+                    fontSize: "10px",
+                    fontWeight: "600",
+                    letterSpacing: "0.05em",
+                    textTransform: "uppercase",
+                    color: colors.infoText,
+                    background:
+                      theme === "dark"
+                        ? "rgba(59, 130, 246, 0.12)"
+                        : "rgba(59, 130, 246, 0.1)",
+                    border: `1px solid ${theme === "dark" ? "rgba(96, 165, 250, 0.3)" : "rgba(37, 99, 235, 0.22)"}`,
+                    borderRadius: "4px",
+                    padding: "3px 8px",
+                    marginBottom: "6px",
+                  }}
+                >
+                  Manual mode
+                </span>
                 <h1
                   style={{
                     fontSize: "18px",
@@ -385,7 +453,7 @@ export default function ManualProfilePage() {
                     margin: "0 0 2px 0",
                   }}
                 >
-                  Manual Resume — {profileName}
+                  {profileName}
                 </h1>
                 <p
                   style={{
@@ -394,7 +462,7 @@ export default function ManualProfilePage() {
                     margin: 0,
                   }}
                 >
-                  No API key • Use ChatGPT manually
+                  Copy prompt → ChatGPT → paste JSON → download
                 </p>
               </div>
               <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
@@ -430,53 +498,84 @@ export default function ManualProfilePage() {
             {quickCopyFields.length > 0 && (
               <div
                 style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(90px, 1fr))",
-                  gap: "6px",
+                  maxWidth: "100%",
+                  minWidth: 0,
                   paddingTop: "10px",
                   borderTop: `1px solid ${colors.cardBorder}`,
+                  marginLeft: "-4px",
+                  marginRight: "-4px",
+                  paddingLeft: "4px",
+                  paddingRight: "4px",
                 }}
               >
-                {quickCopyFields.map(({ key, label, value, icon }) => (
+              <div
+                className="rt-quick-copy-grid"
+                style={{
+                  display: "grid",
+                  width: "100%",
+                  gridTemplateColumns: `repeat(${quickCopyFields.length}, minmax(0, 1fr))`,
+                  gap: "8px",
+                }}
+              >
+                {quickCopyFields.map(({ key, label, value }, index) => (
                   <button
                     key={key}
+                    type="button"
+                    aria-label={copiedField === key ? `${label} copied` : `Copy ${label}`}
+                    className={`rt-quick-copy-btn rt-qca-${quickCopyAnimSlot(key)}${copiedField === key ? " rt-quick-copy-btn--copied" : ""}`}
                     onClick={() => copyToClipboard(value, key)}
                     style={{
-                      padding: "6px 4px",
+                      padding: "8px 6px",
                       background: copiedField === key ? colors.copyBg : colors.inputBg,
                       border: `1px solid ${copiedField === key ? colors.infoText : colors.inputBorder}`,
                       borderRadius: "6px",
                       cursor: "pointer",
-                      transition: "all 0.2s ease",
+                      boxSizing: "border-box",
+                      transition: "background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease",
                       textAlign: "center",
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
-                      gap: "2px",
-                      minHeight: "44px",
+                      gap: 0,
+                      minHeight: "52px",
                       justifyContent: "center",
+                      minWidth: 0,
+                      width: "100%",
+                      animationDelay: `${index * 45}ms`,
                     }}
                     onMouseEnter={(e) => {
                       if (copiedField !== key) {
                         e.currentTarget.style.background = colors.copyHover;
                         e.currentTarget.style.borderColor = colors.inputFocus;
+                        e.currentTarget.style.boxShadow =
+                          theme === "dark"
+                            ? "0 4px 14px rgba(0,0,0,0.35)"
+                            : "0 4px 14px rgba(15,23,42,0.08)";
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (copiedField !== key) {
                         e.currentTarget.style.background = colors.inputBg;
                         e.currentTarget.style.borderColor = colors.inputBorder;
+                        e.currentTarget.style.boxShadow = "none";
                       }
                     }}
                   >
-                    <span style={{ fontSize: "14px" }}>{icon}</span>
+                    <span className="rt-quick-copy-icon-wrap">
+                      <QuickCopyIcon
+                        fieldKey={key}
+                        size={16}
+                        color={copiedField === key ? colors.successText : colors.textSecondary}
+                      />
+                    </span>
                     <div
+                      className="rt-quick-copy-label"
                       style={{
-                        fontSize: "9px",
-                        fontWeight: "500",
+                        fontWeight: "600",
                         color: copiedField === key ? colors.successText : colors.textMuted,
                         textTransform: "uppercase",
-                        letterSpacing: "0.3px",
+                        letterSpacing: "0.02em",
+                        maxWidth: "100%",
                       }}
                     >
                       {copiedField === key ? "Copied!" : label}
@@ -484,22 +583,42 @@ export default function ManualProfilePage() {
                   </button>
                 ))}
               </div>
+              </div>
             )}
+            </div>
           </div>
 
           {/* Form Card */}
           <div
+            className={`rt-profile-card rt-profile-card--form${theme === "light" ? " rt-profile-card--light" : ""}`}
             style={{
-              background: colors.cardBg,
+              background:
+                theme === "dark"
+                  ? "rgba(30, 41, 59, 0.65)"
+                  : "rgba(255, 255, 255, 0.8)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
               borderRadius: "8px",
               border: `1px solid ${colors.cardBorder}`,
               padding: "16px",
+              minWidth: 0,
+              maxWidth: "100%",
+              boxSizing: "border-box",
               boxShadow:
                 theme === "dark"
                   ? "0 2px 4px rgba(0, 0, 0, 0.2)"
                   : "0 1px 2px rgba(0, 0, 0, 0.05)",
             }}
           >
+            <div className="rt-pcard-sparkle" aria-hidden>
+              <div className="rt-pcard-sparkle__glow" />
+              <div className="rt-pcard-sparkle__sparks">
+                {Array.from({ length: 6 }, (_, i) => (
+                  <span key={i} className="rt-spark" />
+                ))}
+              </div>
+            </div>
+            <div className="rt-pcard-inner">
             {/* Step 1: Job Description */}
             <div style={{ marginBottom: "12px" }}>
               <label
@@ -519,9 +638,10 @@ export default function ManualProfilePage() {
                 value={jd}
                 onChange={(e) => setJd(e.target.value)}
                 placeholder="Paste the job description here..."
-                rows="5"
+                rows="8"
                 style={{
                   width: "100%",
+                  maxWidth: "100%",
                   padding: "8px 10px",
                   fontSize: "13px",
                   fontFamily: "inherit",
@@ -531,9 +651,9 @@ export default function ManualProfilePage() {
                   borderRadius: "6px",
                   outline: "none",
                   resize: "vertical",
-                  minHeight: "90px",
+                  minHeight: "clamp(140px, 28vh, 400px)",
                   lineHeight: "1.5",
-                  transition: "all 0.2s ease",
+                  transition: "border-color 0.2s ease, box-shadow 0.2s ease",
                   boxSizing: "border-box",
                 }}
               />
@@ -560,6 +680,7 @@ export default function ManualProfilePage() {
                 disabled={copyPromptLoading || !jd.trim()}
                 style={{
                   width: "100%",
+                  maxWidth: "100%",
                   padding: "8px 12px",
                   fontSize: "14px",
                   fontWeight: "600",
@@ -574,7 +695,8 @@ export default function ManualProfilePage() {
                     copyPromptLoading || !jd.trim()
                       ? "not-allowed"
                       : "pointer",
-                  transition: "all 0.2s ease",
+                  boxSizing: "border-box",
+                  transition: "background 0.2s ease, opacity 0.2s ease",
                 }}
               >
                 {copiedField === "prompt"
@@ -614,9 +736,10 @@ export default function ManualProfilePage() {
                 value={chatgptResponse}
                 onChange={(e) => setChatgptResponse(e.target.value)}
                 placeholder='Paste the JSON from ChatGPT here (e.g. {"title":"...","summary":"...","skills":{...},"experience":[...]})'
-                rows="8"
+                rows="10"
                 style={{
                   width: "100%",
+                  maxWidth: "100%",
                   padding: "8px 10px",
                   fontSize: "13px",
                   fontFamily: "monospace",
@@ -626,9 +749,9 @@ export default function ManualProfilePage() {
                   borderRadius: "6px",
                   outline: "none",
                   resize: "vertical",
-                  minHeight: "130px",
+                  minHeight: "clamp(160px, 26vh, 420px)",
                   lineHeight: "1.5",
-                  transition: "all 0.2s ease",
+                  transition: "border-color 0.2s ease, box-shadow 0.2s ease",
                   boxSizing: "border-box",
                 }}
               />
@@ -670,32 +793,76 @@ export default function ManualProfilePage() {
               />
             </div>
 
-            {/* Generate Button */}
-            <button
-              onClick={handleGenerate}
-              disabled={disable || !chatgptResponse.trim()}
+            <div
               style={{
-                width: "100%",
-                padding: "8px 12px",
-                fontSize: "14px",
-                fontWeight: "600",
-                color: colors.buttonText,
-                background:
-                  disable || !chatgptResponse.trim()
-                    ? colors.buttonDisabled
-                    : colors.buttonBg,
-                border: "none",
-                borderRadius: "6px",
-                cursor:
-                  disable || !chatgptResponse.trim() ? "not-allowed" : "pointer",
-                transition: "all 0.2s ease",
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "10px",
                 marginBottom: "12px",
+                minWidth: 0,
               }}
             >
-              {disable
-                ? `Generating... (${elapsedTime}s)`
-                : "Generate Resume PDF"}
-            </button>
+              <button
+                type="button"
+                onClick={() => handleGenerate("pdf")}
+                disabled={generating !== null || !chatgptResponse.trim()}
+                style={{
+                  width: "100%",
+                  maxWidth: "100%",
+                  minWidth: 0,
+                  padding: "8px 10px",
+                  fontSize: "13px",
+                  fontWeight: "600",
+                  color: colors.buttonText,
+                  background:
+                    generating !== null || !chatgptResponse.trim()
+                      ? colors.buttonDisabled
+                      : colors.buttonBg,
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor:
+                    generating !== null || !chatgptResponse.trim()
+                      ? "not-allowed"
+                      : "pointer",
+                  boxSizing: "border-box",
+                  transition: "background 0.2s ease, opacity 0.2s ease",
+                }}
+              >
+                {generating === "pdf"
+                  ? `Generating… (${elapsedTime}s)`
+                  : "Download as PDF file"}
+              </button>
+              <button
+                type="button"
+                onClick={() => handleGenerate("docx")}
+                disabled={generating !== null || !chatgptResponse.trim()}
+                style={{
+                  width: "100%",
+                  maxWidth: "100%",
+                  minWidth: 0,
+                  padding: "8px 10px",
+                  fontSize: "13px",
+                  fontWeight: "600",
+                  color: colors.buttonText,
+                  background:
+                    generating !== null || !chatgptResponse.trim()
+                      ? colors.buttonDisabled
+                      : colors.wordButtonBg,
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor:
+                    generating !== null || !chatgptResponse.trim()
+                      ? "not-allowed"
+                      : "pointer",
+                  boxSizing: "border-box",
+                  transition: "background 0.2s ease, opacity 0.2s ease",
+                }}
+              >
+                {generating === "docx"
+                  ? `Generating… (${elapsedTime}s)`
+                  : "Download as Word file"}
+              </button>
+            </div>
 
             {lastGenerationTime && (
               <div
@@ -713,7 +880,9 @@ export default function ManualProfilePage() {
                 ✓ Resume generated successfully in {lastGenerationTime}s
               </div>
             )}
+            </div>
           </div>
+        </div>
         </div>
       </div>
     </>

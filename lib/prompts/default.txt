@@ -16,6 +16,13 @@ Format: {"title":"...","summary":"...","skills":{...},"experience":[...]}
 
 ---
 
+## PERMANENT BASE CONTENT (from profile JSON)
+{{permanentResumeContext}}
+
+**Bullet counts for experience JSON:** {{experienceBulletGuidance}}
+
+---
+
 ## JOB DESCRIPTION:
 {{jobDescription}}
 
@@ -56,6 +63,7 @@ Analyze JD "About Us" section for **10-15 keywords** specific to company's produ
 ### **4. SKILLS** (60–75 total skills across 6–7 categories, prioritizing JD keywords over breadth.)
 
 **Rules:**
+- If the profile defines **base_skills**, your JSON `skills` is merged with them (base entries are kept first). Add JD-focused skills and categories; do not remove the intent of base categories.
 - Create categories based on JD focus (Frontend, Backend, Cloud, DevOps, Security, etc.)
 - 5-8 skills per category
 - Capitalize first letter of each skill
@@ -85,11 +93,12 @@ Total: ~40 skills (scannable and professional)
 
 ---
 
-### **5. EXPERIENCE** ({{experienceCount}} entries, 6-8 bullets each)
+### **5. EXPERIENCE** ({{experienceCount}} entries — follow bullet count guidance above)
 
 **STRICT Requirements (must be followed):**
 - Generate exactly {{experienceCount}} job entries; one entry per job in the work history—no more, no fewer.
 - Word count per bullet: every bullet MUST be 25–35 words. Count words; do not write short 1-line bullets or run-on sentences.
+- If permanent base bullets exist for a role, your `details` array is **only** the extra JD-tailored bullets; base bullets are prepended by the system.
 - For each work experience, ensure all technologies listed were widely available and commonly used in production during that role's time period; do not include tools, frameworks, or practices released after the role ended or unlikely to have been adopted in that era.
 - Include 2-4 JD keywords per bullet
 

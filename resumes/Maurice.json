@@ -1,11 +1,14 @@
 {
   "name": "Maurice C Williams",
+  "title": "Senior Full Stack Engineer",
   "email": "mauricewilliams800913@gmail.com",
   "phone": "+1 (346) 355 6022",
   "location": "Brooklyn, New York",
   "postalCode": "11212",
   "linkedin": "https://linkedin.com/in/maurice-williams-2a958a3a8",
+  "website": "",
   "github": "",
+  "base_skills": {},
   "experience": [
     {
       "company": "Raia Labs",
@@ -28,7 +31,8 @@
         "Redux",
         "Jest",
         "Cypress"
-      ]
+      ],
+      "base_bullets": [""]
     },
     {
       "company": "StackOverdrive",
@@ -51,7 +55,8 @@
         "Cypress",
         "GraphQL",
         "RESTful APIs"
-      ]
+      ],
+      "base_bullets": [""]
     },
     {
       "company": "TechWize",
@@ -73,7 +78,8 @@
         "Cypress",
         "GraphQL",
         "RESTful APIs"
-      ]
+      ],
+      "base_bullets": [""]
     }
   ],
   "education": [

@@ -1,19 +1,23 @@
 {
   "name": "Matthew Miranda Francisco",
+  "title": "Senior Full Stack & AI Engineer",
   "email": "mattfrancisco@proton.me",
   "phone": "+63 9120531864",
   "location": "Porac, Pampanga, Philippines",
   "postalCode": "2008",
   "linkedin": "",
+  "website": "",
   "github": "",
+  "base_skills": {},
   "experience": [
     {
       "company": "Aptlytech",
-      "title": "Senior Full Stack Engineer",
+      "title": "Senior Full Stack & AI Engineer",
       "location": "",
       "start_date": "06/2022",
       "end_date": "03/2026",
-      "skills": []
+      "skills": [],
+      "base_bullets": [""]
     },
     {
       "company": "Glitchy.ai",
@@ -21,7 +25,8 @@
       "location": "",
       "start_date": "01/2021",
       "end_date": "04/2022",
-      "skills": []
+      "skills": [],
+      "base_bullets": [""]
     },
     {
       "company": "cosmicforces",
@@ -29,7 +34,8 @@
       "location": "",
       "start_date": "04/2017",
       "end_date": "11/2020",
-      "skills": []
+      "skills": [],
+      "base_bullets": [""]
     },
     {
       "company": "DGN Technologies",
@@ -37,7 +43,8 @@
       "location": "",
       "start_date": "05/2014",
       "end_date": "12/2016",
-      "skills": []
+      "skills": [],
+      "base_bullets": [""]
     }
   ],
   "education": [

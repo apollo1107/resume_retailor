@@ -7,6 +7,14 @@ import {
   getTemplateForProfile,
   getProfileBySlug,
 } from "../../lib/profile-template-mapping";
+import {
+  buildResumeDocxBuffer,
+  computeResumeBaseFileName,
+} from "../../lib/resume-to-docx";
+import {
+  mergeBaseSkillsIntoAi,
+  mergeExperienceDetails,
+} from "../../lib/merge-resume-base";
 
 /**
  * Generate PDF from manually pasted ChatGPT response (no API key)
@@ -20,6 +28,7 @@ export default async function handler(req, res) {
       profile: profileSlug,
       chatgptResponse: rawResponse,
       companyName = null,
+      format = "pdf",
     } = req.body;
 
     if (!profileSlug) return res.status(400).send("Profile slug required");
@@ -103,10 +112,15 @@ export default async function handler(req, res) {
       );
     }
 
-    const TemplateComponent = getTemplate(templateName);
-    if (!TemplateComponent) {
-      return res.status(404).send(`Template "${templateName}" not found`);
-    }
+    const mergedDetails = mergeExperienceDetails(
+      profileData.experience,
+      resumeContent.experience
+    );
+    const mergedSkills = mergeBaseSkillsIntoAi(
+      profileData.base_skills,
+      resumeContent.skills
+    );
+
     const templateData = {
       name: profileData.name,
       title: profileData.title,
@@ -116,17 +130,41 @@ export default async function handler(req, res) {
       linkedin: profileData.linkedin,
       website: profileData.website,
       summary: resumeContent.summary,
-      skills: resumeContent.skills,
+      skills: mergedSkills,
       experience: profileData.experience.map((job, idx) => ({
         title: job.title || resumeContent.experience[idx]?.title || "Engineer",
         company: job.company,
         location: job.location,
         start_date: job.start_date,
         end_date: job.end_date,
-        details: resumeContent.experience[idx]?.details || [],
+        details: mergedDetails[idx] || [],
       })),
       education: profileData.education,
     };
+
+    const baseName = computeResumeBaseFileName(resumeName, companyName);
+    const outFormat =
+      format === "docx" || format === "word" ? "docx" : "pdf";
+
+    if (outFormat === "docx") {
+      const docxBuffer = await buildResumeDocxBuffer(templateData);
+      const fileName = `${baseName}.docx`;
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      );
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${fileName}"`
+      );
+      res.end(docxBuffer);
+      return;
+    }
+
+    const TemplateComponent = getTemplate(templateName);
+    if (!TemplateComponent) {
+      return res.status(404).send(`Template "${templateName}" not found`);
+    }
 
     const pdfDocument = React.createElement(TemplateComponent, {
       data: templateData,
@@ -138,21 +176,6 @@ export default async function handler(req, res) {
       chunks.push(chunk);
     }
     const pdfBuffer = Buffer.concat(chunks);
-
-    const nameParts = resumeName ? resumeName.trim().split(/\s+/) : [];
-    let baseName;
-    if (!nameParts || nameParts.length === 0) baseName = "resume";
-    else if (nameParts.length === 1) baseName = nameParts[0];
-    else baseName = `${nameParts[0]}_${nameParts[nameParts.length - 1]}`;
-    baseName = baseName.replace(/\s+/g, "_").replace(/[^A-Za-z0-9_-]/g, "");
-
-    if (companyName && companyName.trim()) {
-      const sanitized = companyName
-        .trim()
-        .replace(/\s+/g, "_")
-        .replace(/[^A-Za-z0-9_-]/g, "");
-      baseName = `${baseName}_${sanitized}`;
-    }
 
     const fileName = `${baseName}.pdf`;
 

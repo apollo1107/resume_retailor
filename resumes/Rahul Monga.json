@@ -1,12 +1,14 @@
 {
   "name": "Rahul Sushank Monga",
+  "title": "Senior Software Engineer - Tech Lead",
   "email": "rahulmonga113@gmail.com",
   "phone": "+1 906 999 9785",
   "location": "Austin, TX",
   "postalCode": "78704",
   "linkedin": "https://www.linkedin.com/in/rahulm5000",
+  "website": "",
   "github": "",
-
+  "base_skills": {},
   "experience": [
     {
       "company": "Dropbox",
@@ -14,7 +16,8 @@
       "location": "",
       "start_date": "06/2022",
       "end_date": "03/2026",
-      "skills": [".Net", ".Net Core", "Java", "AI"]
+      "skills": [".Net", ".Net Core", "Java", "AI"],
+      "base_bullets": [""]
     },
     {
       "company": "Rapid7",
@@ -22,7 +25,8 @@
       "location": "",
       "start_date": "01/2018",
       "end_date": "05/2022",
-      "skills": [".Net", ".Net Core", "Java", "AI"]
+      "skills": [".Net", ".Net Core", "Java", "AI"],
+      "base_bullets": [""]
     },
     {
       "company": "Optoro",
@@ -30,7 +34,8 @@
       "location": "",
       "start_date": "08/2016",
       "end_date": "01/2018",
-      "skills": [".Net", ".Net Core", "Java", "AI"]
+      "skills": [".Net", ".Net Core", "Java", "AI"],
+      "base_bullets": [""]
     },
     {
       "company": "Wedding Wire",
@@ -38,7 +43,8 @@
       "location": "",
       "start_date": "09/2013",
       "end_date": "08/2016",
-      "skills": [".Net", ".Net Core", "Java", "AI"]
+      "skills": [".Net", ".Net Core", "Java", "AI"],
+      "base_bullets": [""]
     },
     {
       "company": "IBM",
@@ -46,7 +52,8 @@
       "location": "",
       "start_date": "06/2012",
       "end_date": "09/2013",
-      "skills": [".Net", ".Net Core", "Java", "AI"]
+      "skills": [".Net", ".Net Core", "Java", "AI"],
+      "base_bullets": [""]
     },
     {
       "company": "Lockheed Martin",
@@ -54,7 +61,8 @@
       "location": "",
       "start_date": "06/2011",
       "end_date": "06/2012",
-      "skills": [".Net", ".Net Core", "Java", "AI"]
+      "skills": [".Net", ".Net Core", "Java", "AI"],
+      "base_bullets": [""]
     },
     {
       "company": "NCR",
@@ -62,7 +70,8 @@
       "location": "",
       "start_date": "06/2010",
       "end_date": "08/2010",
-      "skills": [".Net", ".Net Core", "Java", "AI"]
+      "skills": [".Net", ".Net Core", "Java", "AI"],
+      "base_bullets": [""]
     },
     {
       "company": "NIST",
@@ -70,10 +79,10 @@
       "location": "",
       "start_date": "08/2007",
       "end_date": "08/2009",
-      "skills": [".Net", ".Net Core", "Java", "AI"]
+      "skills": [".Net", ".Net Core", "Java", "AI"],
+      "base_bullets": [""]
     }
   ],
-
   "education": [
     {
       "degree": "Master of Science (MS), Computer Science",
