@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { RESUMES_DIR } from "@/lib/server-paths";
 
 export default function handler(req, res) {
   if (req.method !== "GET") {
@@ -12,7 +13,7 @@ export default function handler(req, res) {
       return res.status(400).json({ error: "Profile ID required" });
     }
 
-    const profilePath = path.join(process.cwd(), "resumes", `${id}.json`);
+    const profilePath = path.join(RESUMES_DIR, `${id}.json`);
 
     if (!fs.existsSync(profilePath)) {
       return res.status(404).json({ error: "Profile not found" });

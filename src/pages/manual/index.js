@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
-import { SPARKLE_LANDING_CSS } from "../lib/sparkle-ui-css";
+import { SPARKLE_LANDING_CSS } from "@/lib/ui/sparkle-ui-css";
 
-export default function Home() {
+export default function ManualIndex() {
   const router = useRouter();
   const [profileSlug, setProfileSlug] = useState("");
 
@@ -13,25 +13,28 @@ export default function Home() {
     cardBorder: "rgba(148, 163, 184, 0.28)",
     text: "#f1f5f9",
     textSecondary: "#cbd5e1",
+    textMuted: "#94a3b8",
     inputBg: "rgba(30, 41, 59, 0.75)",
     inputBorder: "rgba(148, 163, 184, 0.35)",
     buttonBg: "#3b82f6",
     buttonText: "#ffffff",
-    buttonHover: "#2563eb",
     buttonDisabled: "#475569",
+    linkColor: "#60a5fa",
+    badgeBg: "rgba(59, 130, 246, 0.12)",
+    badgeBorder: "rgba(96, 165, 250, 0.3)",
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (profileSlug.trim()) {
-      router.push(`/${profileSlug.trim()}`);
+      router.push(`/manual/${profileSlug.trim()}`);
     }
   };
 
   return (
     <>
       <Head>
-        <title>Resume Tailor</title>
+        <title>Manual Resume — Resume Tailor</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <style>{SPARKLE_LANDING_CSS}</style>
       </Head>
@@ -95,17 +98,59 @@ export default function Home() {
               ))}
             </div>
             <div className="rt-landing-card__content">
-              <h1
+              <div style={{ marginBottom: "12px", minWidth: 0 }}>
+                <span
+                  style={{
+                    display: "inline-block",
+                    fontSize: "11px",
+                    fontWeight: "600",
+                    letterSpacing: "0.06em",
+                    textTransform: "uppercase",
+                    color: colors.linkColor,
+                    background: colors.badgeBg,
+                    border: `1px solid ${colors.badgeBorder}`,
+                    borderRadius: "6px",
+                    padding: "4px 10px",
+                    marginBottom: "10px",
+                  }}
+                >
+                  Manual mode
+                </span>
+                <h1
+                  style={{
+                    fontSize: "28px",
+                    fontWeight: "600",
+                    color: colors.text,
+                    margin: 0,
+                    lineHeight: 1.2,
+                  }}
+                >
+                  Resume Tailor
+                </h1>
+                <p
+                  style={{
+                    margin: "6px 0 0 0",
+                    fontSize: "14px",
+                    color: colors.textMuted,
+                  }}
+                >
+                  No API key — use ChatGPT in the browser
+                </p>
+              </div>
+
+              <p
                 style={{
-                  fontSize: "28px",
-                  fontWeight: "600",
-                  color: colors.text,
-                  margin: "0 0 28px 0",
-                  minWidth: 0,
+                  color: colors.textSecondary,
+                  marginBottom: "24px",
+                  fontSize: "15px",
+                  lineHeight: 1.65,
                 }}
               >
-                Resume Tailor
-              </h1>
+                Enter your profile ID, open the manual workflow, copy the prompt
+                into ChatGPT, paste the JSON response back, then download your
+                resume as PDF or Word — same layout as API mode, without server-side
+                AI.
+              </p>
 
               <form
                 onSubmit={handleSubmit}
@@ -133,6 +178,7 @@ export default function Home() {
                     type="text"
                     value={profileSlug}
                     onChange={(e) => setProfileSlug(e.target.value)}
+                    placeholder="e.g. as1, js1, lm1"
                     style={{
                       width: "100%",
                       maxWidth: "100%",
@@ -144,8 +190,8 @@ export default function Home() {
                       border: `1px solid ${colors.inputBorder}`,
                       borderRadius: "8px",
                       outline: "none",
-                      boxSizing: "border-box",
                       transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+                      boxSizing: "border-box",
                     }}
                     onFocus={(e) => {
                       e.currentTarget.style.borderColor = colors.buttonBg;
@@ -176,26 +222,26 @@ export default function Home() {
                     transition: "background 0.2s ease, opacity 0.2s ease",
                   }}
                 >
-                  Go to Profile
+                  Go to manual workflow
                 </button>
-
-                <div
-                  style={{
-                    marginTop: "20px",
-                    paddingTop: "20px",
-                    borderTop: `1px solid ${colors.cardBorder}`,
-                    textAlign: "center",
-                  }}
-                >
-                  <Link
-                    href="/manual"
-                    className="rt-home-manual-link rt-home-manual-link--dark"
-                  >
-                    <span className="rt-home-manual-prefix">No API key? &nbsp;</span>
-                    <span className="rt-home-manual-rest"> Use manual mode →</span>
-                  </Link>
-                </div>
               </form>
+
+              <div
+                style={{
+                  marginTop: "24px",
+                  paddingTop: "24px",
+                  borderTop: `1px solid ${colors.cardBorder}`,
+                  textAlign: "center",
+                }}
+              >
+                <Link
+                  href="/"
+                  className="rt-landing-back-link rt-home-manual-link--dark"
+                  style={{ color: colors.linkColor }}
+                >
+                  ← Back to API mode
+                </Link>
+              </div>
             </div>
           </div>
         </div>

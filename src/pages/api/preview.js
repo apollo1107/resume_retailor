@@ -1,6 +1,6 @@
 import React from "react";
 import { renderToStream } from "@react-pdf/renderer";
-import { getTemplate } from "../../lib/pdf-templates";
+import { getTemplate } from "@/lib/pdf-templates";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {

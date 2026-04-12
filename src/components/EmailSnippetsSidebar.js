@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { DockPinIcon } from "../lib/quick-copy-icons";
-import { EMAIL_SNIPPET_TOPIC_ORDER } from "../lib/email-snippet-topics";
+import { DockPinIcon } from "@/lib/ui/quick-copy-icons";
+import { EMAIL_SNIPPET_TOPIC_ORDER } from "@/lib/email/email-snippet-topics";
 
 function buildSnippetClipboardText(snippet, replyFirstName) {
   const body = snippet != null ? String(snippet) : "";

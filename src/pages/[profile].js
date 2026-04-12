@@ -1,19 +1,21 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import Link from "next/link";
-import { slugToProfileName } from "../../lib/profile-template-mapping";
-import { firstNameFromFullName } from "../../lib/profile-utils";
-import { QuickCopyIcon, DockPinIcon } from "../../lib/quick-copy-icons";
-import { QUICK_COPY_ANIMATIONS_CSS, quickCopyAnimSlot } from "../../lib/quick-copy-animations-css";
-import { SPARKLE_PROFILE_CSS } from "../../lib/sparkle-ui-css";
-import { EmailSnippetsSidebar } from "../../components/EmailSnippetsSidebar";
+import { slugToProfileName } from "@/lib/profile/profile-template-mapping";
+import { firstNameFromFullName } from "@/lib/profile/profile-utils";
+import { QuickCopyIcon, DockPinIcon } from "@/lib/ui/quick-copy-icons";
+import {
+  QUICK_COPY_ANIMATIONS_CSS,
+  quickCopyAnimSlot,
+} from "@/lib/ui/quick-copy-animations-css";
+import { SPARKLE_PROFILE_CSS } from "@/lib/ui/sparkle-ui-css";
+import { EmailSnippetsSidebar } from "@/components/EmailSnippetsSidebar";
 
-function ManualProfileLoadingSpinner() {
+function ProfileLoadingSpinner() {
   return (
     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "40px" }}>
       <style>{`
-        @keyframes rtManualProfileSpin {
+        @keyframes rtProfileSpin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
         }
@@ -25,53 +27,57 @@ function ManualProfileLoadingSpinner() {
           border: "3px solid rgba(74, 144, 226, 0.3)",
           borderTop: "3px solid #4a90e2",
           borderRadius: "50%",
-          animation: "rtManualProfileSpin 1s linear infinite",
+          animation: "rtProfileSpin 1s linear infinite",
         }}
       />
     </div>
   );
 }
 
-export default function ManualProfilePage() {
+export default function ProfilePage() {
   const router = useRouter();
   const { profile: profileSlug } = router.query;
 
   const [jd, setJd] = useState("");
-  const [chatgptResponse, setChatgptResponse] = useState("");
   const [companyName, setCompanyName] = useState("");
-  const [generating, setGenerating] = useState(null); // null | "pdf" | "docx"
+  const [targetRole, setTargetRole] = useState("");
+  const [generating, setGenerating] = useState(null);
+  /** null | "resume-pdf" | "resume-docx" | "cover-pdf" | "cover-docx" */
   const [elapsedTime, setElapsedTime] = useState(0);
   const [lastGenerationTime, setLastGenerationTime] = useState(null);
+  const [lastGenerationWasCover, setLastGenerationWasCover] = useState(false);
   const [selectedProfileData, setSelectedProfileData] = useState(null);
   const [profileName, setProfileName] = useState("");
   const [loading, setLoading] = useState(true);
   const [copiedField, setCopiedField] = useState(null);
   const [quickCopyDockPinned, setQuickCopyDockPinned] = useState(false);
-  const [copyPromptLoading, setCopyPromptLoading] = useState(false);
   const timerIntervalRef = useRef(null);
   const startTimeRef = useRef(null);
 
+  // Lazy load profile data when profile slug changes
   useEffect(() => {
     if (!profileSlug) return;
 
+    setLoading(true);
     const profileNameFromSlug = slugToProfileName(profileSlug);
+
     if (!profileNameFromSlug) {
+      console.error(`Profile not found for slug: ${profileSlug}`);
       setLoading(false);
-      router.push("/manual");
+      router.push('/');
       return;
     }
 
     setProfileName(profileNameFromSlug);
-    setLoading(true);
 
+    // Lazy load profile data with delay to show loading state
     const loadData = async () => {
       try {
-        const response = await fetch(
-          `/api/profiles/${encodeURIComponent(profileNameFromSlug)}`
-        );
+        const response = await fetch(`/api/profiles/${encodeURIComponent(profileNameFromSlug)}`);
         if (!response.ok) {
           if (response.status === 404) {
-            router.push("/manual");
+            console.error(`Profile file not found: ${profileNameFromSlug}`);
+            router.push('/');
             return;
           }
           throw new Error(`Failed to fetch profile: ${response.statusText}`);
@@ -80,23 +86,28 @@ export default function ManualProfilePage() {
         setSelectedProfileData(data);
       } catch (err) {
         console.error("Failed to load profile data:", err);
-        router.push("/manual");
+        router.push('/');
       } finally {
         setLoading(false);
       }
     };
 
+    // Small delay for better UX (allows loading state to show)
     const timer = setTimeout(loadData, 100);
     return () => clearTimeout(timer);
   }, [profileSlug, router]);
 
+  // Copy to clipboard function
   const copyToClipboard = async (text, fieldName) => {
     if (!text) return;
+
     try {
       await navigator.clipboard.writeText(text);
       setCopiedField(fieldName);
       setTimeout(() => setCopiedField(null), 2000);
     } catch (err) {
+      console.error("Failed to copy:", err);
+      // Fallback for older browsers
       const textArea = document.createElement("textarea");
       textArea.value = text;
       textArea.style.position = "fixed";
@@ -110,45 +121,18 @@ export default function ManualProfilePage() {
     }
   };
 
-  const getLastCompany = () =>
-    selectedProfileData?.experience?.[0]?.company || null;
-  const getLastRole = () =>
-    selectedProfileData?.experience?.[0]?.title || null;
+  // Get last company and role
+  const getLastCompany = () => {
+    return selectedProfileData?.experience?.[0]?.company || null;
+  };
 
-  const copyPromptToClipboard = async () => {
-    if (!jd.trim()) {
-      alert("Please enter a job description first");
-      return;
-    }
-
-    setCopyPromptLoading(true);
-    try {
-      const response = await fetch("/api/manual-prompt", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profile: profileSlug, jd }),
-      });
-
-      if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error || "Failed to build prompt");
-      }
-
-      const { prompt } = await response.json();
-      await navigator.clipboard.writeText(prompt);
-      setCopiedField("prompt");
-      setTimeout(() => setCopiedField(null), 2000);
-    } catch (err) {
-      console.error("Copy prompt error:", err);
-      alert("Failed to copy prompt: " + err.message);
-    } finally {
-      setCopyPromptLoading(false);
-    }
+  const getLastRole = () => {
+    return selectedProfileData?.experience?.[0]?.title || null;
   };
 
   const handleGenerate = async (outputFormat) => {
-    if (!chatgptResponse.trim()) {
-      alert("Please paste the ChatGPT response (JSON) first");
+    if (!jd.trim()) {
+      alert("Please enter a job description");
       return;
     }
 
@@ -158,7 +142,7 @@ export default function ManualProfilePage() {
     }
 
     const fmt = outputFormat === "docx" ? "docx" : "pdf";
-    setGenerating(fmt);
+    setGenerating(fmt === "docx" ? "resume-docx" : "resume-pdf");
     setElapsedTime(0);
     startTimeRef.current = Date.now();
 
@@ -169,12 +153,12 @@ export default function ManualProfilePage() {
     }, 1000);
 
     try {
-      const response = await fetch("/api/generate-manual", {
+      const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           profile: profileSlug,
-          chatgptResponse: chatgptResponse.trim(),
+          jd: jd,
           companyName: companyName.trim() || null,
           format: fmt,
         }),
@@ -195,7 +179,9 @@ export default function ManualProfilePage() {
       let filename = `${profileName?.replace(/\s+/g, "_") || profileSlug}${ext}`;
       if (contentDisposition) {
         const filenameMatch = contentDisposition.match(/filename="(.+)"/);
-        if (filenameMatch) filename = filenameMatch[1];
+        if (filenameMatch) {
+          filename = filenameMatch[1];
+        }
       }
 
       a.download = filename;
@@ -204,9 +190,8 @@ export default function ManualProfilePage() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
-      setLastGenerationTime(
-        Math.floor((Date.now() - startTimeRef.current) / 1000)
-      );
+      setLastGenerationWasCover(false);
+      setLastGenerationTime(Math.floor((Date.now() - startTimeRef.current) / 1000));
     } catch (error) {
       console.error("Generation error:", error);
       alert(
@@ -223,9 +208,92 @@ export default function ManualProfilePage() {
     }
   };
 
+  const handleCoverLetterGenerate = async (outputFormat) => {
+    if (!jd.trim()) {
+      alert("Please enter a job description");
+      return;
+    }
+
+    if (!selectedProfileData || !profileSlug) {
+      alert("Profile data not loaded");
+      return;
+    }
+
+    const fmt = outputFormat === "docx" ? "docx" : "pdf";
+    setGenerating(fmt === "docx" ? "cover-docx" : "cover-pdf");
+    setElapsedTime(0);
+    startTimeRef.current = Date.now();
+
+    timerIntervalRef.current = setInterval(() => {
+      if (startTimeRef.current) {
+        setElapsedTime(Math.floor((Date.now() - startTimeRef.current) / 1000));
+      }
+    }, 1000);
+
+    try {
+      const response = await fetch("/api/generate-cover-letter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          profile: profileSlug,
+          jd: jd,
+          companyName: companyName.trim() || null,
+          targetRole: targetRole.trim() || null,
+          format: fmt,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Download failed");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+
+      const contentDisposition = response.headers.get("Content-Disposition");
+      const ext = fmt === "docx" ? ".docx" : ".pdf";
+      let filename = `${profileName?.replace(/\s+/g, "_") || profileSlug}_cover_letter${ext}`;
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+        if (filenameMatch) {
+          filename = filenameMatch[1];
+        }
+      }
+
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      setLastGenerationWasCover(true);
+      setLastGenerationTime(Math.floor((Date.now() - startTimeRef.current) / 1000));
+    } catch (error) {
+      console.error("Cover letter error:", error);
+      alert(
+        (fmt === "docx"
+          ? "Failed to generate cover letter Word file: "
+          : "Failed to generate cover letter PDF: ") + error.message
+      );
+    } finally {
+      setGenerating(null);
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+        timerIntervalRef.current = null;
+      }
+      startTimeRef.current = null;
+    }
+  };
+
+  // Cleanup timer on unmount
   useEffect(() => {
     return () => {
-      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+      }
     };
   }, []);
 
@@ -246,6 +314,10 @@ export default function ManualProfilePage() {
     buttonDisabled: "#475569",
     wordButtonBg: "#0d9488",
     wordButtonHover: "#0f766e",
+    coverPdfBg: "#7c3aed",
+    coverPdfHover: "#6d28d9",
+    coverWordBg: "#6366f1",
+    coverWordHover: "#4f46e5",
     successBg: "rgba(34, 197, 94, 0.1)",
     successText: "#22c55e",
     infoBg: "rgba(59, 130, 246, 0.1)",
@@ -267,7 +339,7 @@ export default function ManualProfilePage() {
           justifyContent: "center",
         }}
       >
-        <ManualProfileLoadingSpinner />
+        <ProfileLoadingSpinner />
         <p style={{ marginTop: "12px", fontSize: "14px", color: colors.textSecondary }}>Loading…</p>
       </div>
     );
@@ -275,40 +347,39 @@ export default function ManualProfilePage() {
 
   if (loading || !selectedProfileData) {
     return (
-      <div
-        style={{
-          minHeight: "100dvh",
-          background: colors.bg,
-          color: colors.text,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <ManualProfileLoadingSpinner />
+      <div style={{
+        minHeight: "100dvh",
+        background: colors.bg,
+        color: colors.text,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center"
+      }}>
+        <ProfileLoadingSpinner />
         <p style={{ marginTop: "12px", fontSize: "14px", color: colors.textSecondary }}>Loading profile…</p>
       </div>
     );
   }
 
+  // Quick copy fields
   const quickCopyFields = [
-    { key: "email", label: "Email", value: selectedProfileData?.email },
-    { key: "phone", label: "Phone", value: selectedProfileData?.phone },
-    { key: "location", label: "Address", value: selectedProfileData?.location },
-    { key: "zip", label: "Zip", value: selectedProfileData?.zip },
-    { key: "lastCompany", label: "Last Company", value: getLastCompany() },
-    { key: "lastRole", label: "Last Role", value: getLastRole() },
-    { key: "linkedin", label: "LinkedIn", value: selectedProfileData?.linkedin },
-    { key: "github", label: "GitHub", value: selectedProfileData?.github },
-  ].filter((f) => f.value);
+    { key: 'email', label: 'Email', value: selectedProfileData.email },
+    { key: 'phone', label: 'Phone', value: selectedProfileData.phone },
+    { key: 'location', label: 'Address', value: selectedProfileData.location },
+    { key: 'zip', label: 'Zip', value: selectedProfileData.zip },
+    { key: 'lastCompany', label: 'Last Company', value: getLastCompany() },
+    { key: 'lastRole', label: 'Last Role', value: getLastRole() },
+    { key: 'linkedin', label: 'LinkedIn', value: selectedProfileData.linkedin },
+    { key: 'github', label: 'GitHub', value: selectedProfileData.github },
+  ].filter(field => field.value); // Only show fields with values
 
   const replyFirstName = firstNameFromFullName(selectedProfileData?.name);
 
   return (
     <>
       <Head>
-        <title>Manual Resume - {profileName}</title>
+        <title>Resume Generator - {profileName}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <style>{QUICK_COPY_ANIMATIONS_CSS}</style>
         <style>{SPARKLE_PROFILE_CSS}</style>
@@ -322,8 +393,7 @@ export default function ManualProfilePage() {
           flexDirection: "column",
           background: colors.bg,
           color: colors.text,
-          fontFamily:
-            "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif",
+          fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif",
           boxSizing: "border-box",
         }}
       >
@@ -438,7 +508,7 @@ export default function ManualProfilePage() {
                 minHeight: 0,
               }}
             >
-            {/* Step 1: Job Description — layout matches API profile page */}
+            {/* Job Description */}
             <div
               style={{
                 flex: "1 1 auto",
@@ -449,43 +519,6 @@ export default function ManualProfilePage() {
               }}
             >
               <div style={{ marginBottom: "10px" }}>
-                <div
-                  style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: "8px 12px",
-                    marginBottom: "8px",
-                  }}
-                >
-                  <span
-                    style={{
-                      display: "inline-block",
-                      fontSize: "10px",
-                      fontWeight: "600",
-                      letterSpacing: "0.05em",
-                      textTransform: "uppercase",
-                      color: colors.infoText,
-                      background: "rgba(59, 130, 246, 0.12)",
-                      border: "1px solid rgba(96, 165, 250, 0.3)",
-                      borderRadius: "4px",
-                      padding: "3px 8px",
-                    }}
-                  >
-                    Manual mode
-                  </span>
-                  <Link
-                    href="/manual"
-                    style={{
-                      fontSize: "12px",
-                      color: colors.infoText,
-                      textDecoration: "none",
-                    }}
-                  >
-                    ← Manual
-                  </Link>
-                </div>
                 <h1
                   style={{
                     fontSize: "20px",
@@ -497,7 +530,7 @@ export default function ManualProfilePage() {
                 >
                   {profileName}
                 </h1>
-                {selectedProfileData?.title ? (
+                {selectedProfileData.title ? (
                   <p
                     style={{
                       fontSize: "13px",
@@ -521,7 +554,7 @@ export default function ManualProfilePage() {
                   marginBottom: "6px",
                 }}
               >
-                Step 1 — Job Description
+                Job Description
               </span>
               <textarea
                 value={jd}
@@ -557,127 +590,28 @@ export default function ManualProfilePage() {
               />
             </div>
 
-            {/* Step 2: Copy Prompt */}
-            <div style={{ marginBottom: "12px" }}>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "11px",
-                  fontWeight: "600",
-                  color: colors.textSecondary,
-                  marginBottom: "4px",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.3px",
-                }}
-              >
-                Step 2 — Copy Prompt for ChatGPT
-              </label>
-              <button
-                type="button"
-                onClick={copyPromptToClipboard}
-                disabled={copyPromptLoading || !jd.trim()}
-                style={{
-                  width: "100%",
-                  maxWidth: "100%",
-                  padding: "8px 12px",
-                  fontSize: "14px",
-                  fontWeight: "600",
-                  color: colors.buttonText,
-                  background:
-                    copyPromptLoading || !jd.trim()
-                      ? colors.buttonDisabled
-                      : colors.buttonBg,
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor:
-                    copyPromptLoading || !jd.trim()
-                      ? "not-allowed"
-                      : "pointer",
-                  boxSizing: "border-box",
-                  transition: "background 0.2s ease, opacity 0.2s ease",
-                }}
-              >
-                {copiedField === "prompt"
-                  ? "✓ Copied! Paste into ChatGPT"
-                  : copyPromptLoading
-                    ? "Building prompt..."
-                    : "Copy Prompt (Profile + JD) → Paste in ChatGPT"}
-              </button>
-              <p
-                style={{
-                  fontSize: "11px",
-                  color: colors.textMuted,
-                  marginTop: "4px",
-                  marginBottom: 0,
-                }}
-              >
-                Paste the copied text into ChatGPT. Copy the JSON response back below.
-              </p>
-            </div>
-
-            {/* Step 3: ChatGPT Response */}
-            <div style={{ marginBottom: "12px" }}>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "11px",
-                  fontWeight: "600",
-                  color: colors.textSecondary,
-                  marginBottom: "4px",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.3px",
-                }}
-              >
-                Step 3 — Paste ChatGPT Response (JSON)
-              </label>
-              <textarea
-                value={chatgptResponse}
-                onChange={(e) => setChatgptResponse(e.target.value)}
-                placeholder='Paste the JSON from ChatGPT here (e.g. {"title":"...","summary":"...","skills":{...},"experience":[...]})'
-                rows="10"
-                style={{
-                  width: "100%",
-                  maxWidth: "100%",
-                  padding: "8px 10px",
-                  fontSize: "13px",
-                  fontFamily: "monospace",
-                  color: colors.text,
-                  background: colors.textareaBg,
-                  border: `1px solid ${colors.inputBorder}`,
-                  borderRadius: "6px",
-                  outline: "none",
-                  resize: "vertical",
-                  minHeight: "clamp(200px, min(36vh, 480px), 560px)",
-                  lineHeight: "1.5",
-                  transition: "border-color 0.2s ease, box-shadow 0.2s ease",
-                  boxSizing: "border-box",
-                }}
-              />
-            </div>
-
             {/* Company Name */}
-            <div style={{ marginBottom: "12px" }}>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "11px",
-                  fontWeight: "600",
-                  color: colors.textSecondary,
-                  marginBottom: "4px",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.3px",
-                }}
-              >
+            <div style={{ marginBottom: "16px" }}>
+              <label style={{
+                display: "block",
+                fontSize: "11px",
+                fontWeight: "600",
+                color: colors.textSecondary,
+                marginBottom: "6px",
+                textTransform: "uppercase",
+                letterSpacing: "0.3px"
+              }}>
                 Company Name <span style={{ fontWeight: "400", textTransform: "none" }}>(Optional)</span>
               </label>
               <input
                 type="text"
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
-                placeholder="Enter company name for filename..."
+                placeholder="Company name (used in filenames and in the letter when provided)…"
                 style={{
                   width: "100%",
-                  padding: "6px 10px",
+                  maxWidth: "100%",
+                  padding: "8px 12px",
                   fontSize: "13px",
                   fontFamily: "inherit",
                   color: colors.text,
@@ -685,12 +619,78 @@ export default function ManualProfilePage() {
                   border: `1px solid ${colors.inputBorder}`,
                   borderRadius: "6px",
                   outline: "none",
-                  transition: "all 0.2s ease",
-                  boxSizing: "border-box",
+                  transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+                  boxSizing: "border-box"
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = colors.inputFocus;
+                  e.currentTarget.style.boxShadow = `0 0 0 2px ${colors.infoBg}`;
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = colors.inputBorder;
+                  e.currentTarget.style.boxShadow = "none";
                 }}
               />
             </div>
 
+            <div style={{ marginBottom: "16px" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "11px",
+                  fontWeight: "600",
+                  color: colors.textSecondary,
+                  marginBottom: "6px",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.3px",
+                }}
+              >
+                Role you&apos;re applying for{" "}
+                <span style={{ fontWeight: "400", textTransform: "none" }}>(Optional)</span>
+              </label>
+              <input
+                type="text"
+                value={targetRole}
+                onChange={(e) => setTargetRole(e.target.value)}
+                placeholder={`Defaults to profile headline: ${selectedProfileData.title || "your headline"}`}
+                style={{
+                  width: "100%",
+                  maxWidth: "100%",
+                  padding: "8px 12px",
+                  fontSize: "13px",
+                  fontFamily: "inherit",
+                  color: colors.text,
+                  background: colors.inputBg,
+                  border: `1px solid ${colors.inputBorder}`,
+                  borderRadius: "6px",
+                  outline: "none",
+                  transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+                  boxSizing: "border-box",
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = colors.inputFocus;
+                  e.currentTarget.style.boxShadow = `0 0 0 2px ${colors.infoBg}`;
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = colors.inputBorder;
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              />
+            </div>
+
+            <span
+              style={{
+                display: "block",
+                fontSize: "11px",
+                fontWeight: "600",
+                color: colors.textMuted,
+                textTransform: "uppercase",
+                letterSpacing: "0.3px",
+                marginBottom: "8px",
+              }}
+            >
+              Résumé
+            </span>
             <div
               style={{
                 display: "grid",
@@ -703,79 +703,228 @@ export default function ManualProfilePage() {
               <button
                 type="button"
                 onClick={() => handleGenerate("pdf")}
-                disabled={generating !== null || !chatgptResponse.trim()}
+                disabled={generating !== null || !jd.trim()}
                 style={{
                   width: "100%",
                   maxWidth: "100%",
                   minWidth: 0,
-                  padding: "8px 10px",
+                  padding: "10px 12px",
                   fontSize: "13px",
                   fontWeight: "600",
                   color: colors.buttonText,
                   background:
-                    generating !== null || !chatgptResponse.trim()
+                    generating !== null || !jd.trim()
                       ? colors.buttonDisabled
                       : colors.buttonBg,
                   border: "none",
                   borderRadius: "6px",
                   cursor:
-                    generating !== null || !chatgptResponse.trim()
-                      ? "not-allowed"
-                      : "pointer",
+                    generating !== null || !jd.trim() ? "not-allowed" : "pointer",
                   boxSizing: "border-box",
-                  transition: "background 0.2s ease, opacity 0.2s ease",
+                  transition: "background 0.2s ease, box-shadow 0.2s ease",
+                  boxShadow:
+                    generating !== null || !jd.trim()
+                      ? "none"
+                      : "0 2px 8px rgba(59, 130, 246, 0.3)",
+                }}
+                onMouseEnter={(e) => {
+                  if (generating === null && jd.trim()) {
+                    e.currentTarget.style.background = colors.buttonHover;
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 12px rgba(59, 130, 246, 0.4)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (generating === null && jd.trim()) {
+                    e.currentTarget.style.background = colors.buttonBg;
+                    e.currentTarget.style.boxShadow =
+                      "0 2px 8px rgba(59, 130, 246, 0.3)";
+                  }
                 }}
               >
-                {generating === "pdf"
+                {generating === "resume-pdf"
                   ? `Generating… (${elapsedTime}s)`
                   : "Download as PDF file"}
               </button>
               <button
                 type="button"
                 onClick={() => handleGenerate("docx")}
-                disabled={generating !== null || !chatgptResponse.trim()}
+                disabled={generating !== null || !jd.trim()}
                 style={{
                   width: "100%",
                   maxWidth: "100%",
                   minWidth: 0,
-                  padding: "8px 10px",
+                  padding: "10px 12px",
                   fontSize: "13px",
                   fontWeight: "600",
                   color: colors.buttonText,
                   background:
-                    generating !== null || !chatgptResponse.trim()
+                    generating !== null || !jd.trim()
                       ? colors.buttonDisabled
                       : colors.wordButtonBg,
                   border: "none",
                   borderRadius: "6px",
                   cursor:
-                    generating !== null || !chatgptResponse.trim()
-                      ? "not-allowed"
-                      : "pointer",
+                    generating !== null || !jd.trim() ? "not-allowed" : "pointer",
                   boxSizing: "border-box",
-                  transition: "background 0.2s ease, opacity 0.2s ease",
+                  transition: "background 0.2s ease, box-shadow 0.2s ease",
+                  boxShadow:
+                    generating !== null || !jd.trim()
+                      ? "none"
+                      : "0 2px 8px rgba(13, 148, 136, 0.35)",
+                }}
+                onMouseEnter={(e) => {
+                  if (generating === null && jd.trim()) {
+                    e.currentTarget.style.background = colors.wordButtonHover;
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 12px rgba(13, 148, 136, 0.45)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (generating === null && jd.trim()) {
+                    e.currentTarget.style.background = colors.wordButtonBg;
+                    e.currentTarget.style.boxShadow =
+                      "0 2px 8px rgba(13, 148, 136, 0.35)";
+                  }
                 }}
               >
-                {generating === "docx"
+                {generating === "resume-docx"
                   ? `Generating… (${elapsedTime}s)`
                   : "Download as Word file"}
               </button>
             </div>
 
-            {lastGenerationTime && (
-              <div
+            <span
+              style={{
+                display: "block",
+                fontSize: "11px",
+                fontWeight: "600",
+                color: colors.textMuted,
+                textTransform: "uppercase",
+                letterSpacing: "0.3px",
+                marginBottom: "8px",
+                marginTop: "4px",
+              }}
+            >
+              Cover letter
+            </span>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "10px",
+                marginBottom: "12px",
+                minWidth: 0,
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => handleCoverLetterGenerate("pdf")}
+                disabled={generating !== null || !jd.trim()}
                 style={{
+                  width: "100%",
+                  maxWidth: "100%",
+                  minWidth: 0,
                   padding: "10px 12px",
-                  background: colors.successBg,
-                  border: `1px solid ${colors.successText}`,
+                  fontSize: "13px",
+                  fontWeight: "600",
+                  color: colors.buttonText,
+                  background:
+                    generating !== null || !jd.trim()
+                      ? colors.buttonDisabled
+                      : colors.coverPdfBg,
+                  border: "none",
                   borderRadius: "6px",
-                  color: colors.successText,
-                  fontSize: "12px",
-                  textAlign: "center",
-                  fontWeight: "500",
+                  cursor:
+                    generating !== null || !jd.trim() ? "not-allowed" : "pointer",
+                  boxSizing: "border-box",
+                  transition: "background 0.2s ease, box-shadow 0.2s ease",
+                  boxShadow:
+                    generating !== null || !jd.trim()
+                      ? "none"
+                      : "0 2px 8px rgba(124, 58, 237, 0.35)",
+                }}
+                onMouseEnter={(e) => {
+                  if (generating === null && jd.trim()) {
+                    e.currentTarget.style.background = colors.coverPdfHover;
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 12px rgba(124, 58, 237, 0.45)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (generating === null && jd.trim()) {
+                    e.currentTarget.style.background = colors.coverPdfBg;
+                    e.currentTarget.style.boxShadow =
+                      "0 2px 8px rgba(124, 58, 237, 0.35)";
+                  }
                 }}
               >
-                ✓ Resume generated successfully in {lastGenerationTime}s
+                {generating === "cover-pdf"
+                  ? `Generating… (${elapsedTime}s)`
+                  : "Download Cover Letter as PDF file"}
+              </button>
+              <button
+                type="button"
+                onClick={() => handleCoverLetterGenerate("docx")}
+                disabled={generating !== null || !jd.trim()}
+                style={{
+                  width: "100%",
+                  maxWidth: "100%",
+                  minWidth: 0,
+                  padding: "10px 12px",
+                  fontSize: "13px",
+                  fontWeight: "600",
+                  color: colors.buttonText,
+                  background:
+                    generating !== null || !jd.trim()
+                      ? colors.buttonDisabled
+                      : colors.coverWordBg,
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor:
+                    generating !== null || !jd.trim() ? "not-allowed" : "pointer",
+                  boxSizing: "border-box",
+                  transition: "background 0.2s ease, box-shadow 0.2s ease",
+                  boxShadow:
+                    generating !== null || !jd.trim()
+                      ? "none"
+                      : "0 2px 8px rgba(99, 102, 241, 0.35)",
+                }}
+                onMouseEnter={(e) => {
+                  if (generating === null && jd.trim()) {
+                    e.currentTarget.style.background = colors.coverWordHover;
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 12px rgba(99, 102, 241, 0.45)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (generating === null && jd.trim()) {
+                    e.currentTarget.style.background = colors.coverWordBg;
+                    e.currentTarget.style.boxShadow =
+                      "0 2px 12px rgba(99, 102, 241, 0.35)";
+                  }
+                }}
+              >
+                {generating === "cover-docx"
+                  ? `Generating… (${elapsedTime}s)`
+                  : "Download Cover Letter as Word file"}
+              </button>
+            </div>
+
+            {/* Status Messages */}
+            {lastGenerationTime && (
+              <div style={{
+                padding: "10px 12px",
+                background: colors.successBg,
+                border: `1px solid ${colors.successText}`,
+                borderRadius: "6px",
+                color: colors.successText,
+                fontSize: "12px",
+                textAlign: "center",
+                fontWeight: "500"
+              }}>
+                ✓ {lastGenerationWasCover ? "Cover letter" : "Résumé"} generated successfully in{" "}
+                {lastGenerationTime}s
               </div>
             )}
             </div>

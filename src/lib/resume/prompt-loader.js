@@ -1,5 +1,6 @@
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
+import { RESUME_PROMPTS_DIR } from "@/lib/server-paths";
 
 /**
  * Load and process a prompt template file
@@ -10,11 +11,10 @@ import path from 'path';
 export const loadPrompt = (promptName, variables = {}) => {
   try {
     // Try to load the specific prompt file
-    const promptPath = path.join(process.cwd(), 'lib', 'prompts', `${promptName}.txt`);
-    
+    const promptPath = path.join(RESUME_PROMPTS_DIR, `${promptName}.txt`);
+
     if (!fs.existsSync(promptPath)) {
-      // Fallback to default prompt
-      const defaultPath = path.join(process.cwd(), 'lib', 'prompts', 'default.txt');
+      const defaultPath = path.join(RESUME_PROMPTS_DIR, "default.txt");
       if (!fs.existsSync(defaultPath)) {
         throw new Error(`Prompt file not found: ${promptName}.txt and default.txt not found`);
       }

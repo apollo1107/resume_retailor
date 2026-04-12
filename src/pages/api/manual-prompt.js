@@ -1,11 +1,12 @@
 import fs from "fs";
 import path from "path";
-import { getProfileBySlug } from "../../lib/profile-template-mapping";
-import { loadPromptForProfile } from "../../lib/prompt-loader";
+import { getProfileBySlug } from "@/lib/profile/profile-template-mapping";
+import { loadPromptForProfile } from "@/lib/resume/prompt-loader";
 import {
   formatPermanentContextForPrompt,
   profileHasPermanentContent,
-} from "../../lib/merge-resume-base";
+} from "@/lib/resume/merge-resume-base";
+import { RESUMES_DIR } from "@/lib/server-paths";
 
 /**
  * Build the full prompt for manual ChatGPT use (no API key)
@@ -26,7 +27,7 @@ export default async function handler(req, res) {
     }
 
     const resumeName = profileConfig.resume;
-    const profilePath = path.join(process.cwd(), "resumes", `${resumeName}.json`);
+    const profilePath = path.join(RESUMES_DIR, `${resumeName}.json`);
 
     if (!fs.existsSync(profilePath)) {
       return res.status(404).json({ error: `Profile file "${resumeName}.json" not found` });
@@ -72,8 +73,8 @@ export default async function handler(req, res) {
     const permanentResumeContext =
       formatPermanentContextForPrompt(profileData);
     const experienceBulletGuidance = hasPermanent
-      ? "Generate **4-6 NEW** bullets per role in `experience[].details` (25-35 words each). These are **in addition to** the permanent base bullets (prepended automatically). **Never delete or replace** base bullets or `base_skills`—only add JD-specific bullets and skills. Do **not** repeat permanent bullets in your JSON."
-      : "Generate **6-8** bullets per role in `experience[].details` (25-35 words each). **Additive only:** do not remove or contradict facts from the profile work history.";
+      ? "Generate **4-6 NEW** bullets per role in `experience[].details` (25-35 words each)—use **5-6** when the JD is detailed; **do not** shrink to 1-3 bullets to save tokens. These **add** to permanent base bullets (prepended automatically) so merged roles stay **JD-rich**. **Never delete or replace** base bullets or `base_skills`—only add JD-specific bullets and skills. Do **not** repeat permanent bullets in your JSON. Prioritize **work history #1** (most recent role) for the strongest JD alignment."
+      : "Generate **6-8** bullets per role in `experience[].details` (25-35 words each)—stay at **7-8** for dense JDs; **do not** reduce counts. **Additive only:** do not remove or contradict facts from the profile work history. Put the **tightest JD match** in **work history #1** (most recent).";
 
     const prompt = loadPromptForProfile(profileSlug, {
       name: profileData.name,

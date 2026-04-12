@@ -2,19 +2,20 @@ import fs from "fs";
 import path from "path";
 import React from "react";
 import { renderToStream } from "@react-pdf/renderer";
-import { getTemplate } from "../../lib/pdf-templates";
+import { getTemplate } from "@/lib/pdf-templates";
 import {
   getTemplateForProfile,
   getProfileBySlug,
-} from "../../lib/profile-template-mapping";
+} from "@/lib/profile/profile-template-mapping";
 import {
   buildResumeDocxBuffer,
   computeResumeBaseFileName,
-} from "../../lib/resume-to-docx";
+} from "@/lib/resume/resume-to-docx";
 import {
   mergeBaseSkillsIntoAi,
   mergeExperienceDetails,
-} from "../../lib/merge-resume-base";
+} from "@/lib/resume/merge-resume-base";
+import { RESUMES_DIR } from "@/lib/server-paths";
 
 /**
  * Generate PDF from manually pasted ChatGPT response (no API key)
@@ -43,11 +44,7 @@ export default async function handler(req, res) {
 
     const resumeName = profileConfig.resume;
     const templateName = getTemplateForProfile(profileSlug) || "Resume";
-    const profilePath = path.join(
-      process.cwd(),
-      "resumes",
-      `${resumeName}.json`
-    );
+    const profilePath = path.join(RESUMES_DIR, `${resumeName}.json`);
 
     if (!fs.existsSync(profilePath)) {
       return res

@@ -42,14 +42,23 @@ If no permanent block is shown above, generate a full resume from the profile + 
 
 ---
 
+### **0a. COUNTS, JD FIT, AND CREDIBILITY (non-negotiable)**
+
+- **Do not reduce bullets or skills to “save space.”** Follow **Bullet counts for experience JSON** above for every role. When base bullets exist, your `details` arrays are **additive only**—still output the **full** number of **new** bullets that block specifies (prefer the **upper** end when the JD is long or technical). After merge, each role should read as **fully JD-aligned**, not thinned out.
+- **Skills:** Meet the **§4** category and total targets. Never replace the profile’s permanent/base skills with a shorter list, and do not return a **skimpy** `skills` object versus those targets. Additive JD keywords should **expand** coverage, not **shrink** it.
+- **JD skills you “miss” on purpose:** If the JD asks for a tool, stack, license, or domain that is **not credible** from **base_skills + WORK HISTORY + EDUCATION** (no adjacent transfer, no stack overlap, would imply work or credentials the profile does not support), **do not add it** to `skills` or experience bullets. **Never fabricate** experience to cover a JD gap.
+- **Most recent role first:** **WORK HISTORY item #1** is the **first** entry in the numbered list (same order as `experience[0]` in your JSON). Put the **strongest JD alignment** there—dense JD keywords and outcomes that match the posting—while keeping older roles accurate to their dates and plausible tech for each era (see §5).
+
+---
+
 ### **1. EXTRACT DOMAIN KEYWORDS** (Critical for 98%+ score)
 
 Analyze JD "About Us" section for **10-15 keywords** specific to company's product/industry:
 
 **WHERE TO USE:**
 - Summary: 3-5 keywords (lines 2-4)
-- Skills: 10-15s keywords
-- Experience: Each role must include 6–8 bullets total that naturally incorporate keywords.
+- Skills: 10-15 JD-aligned keywords (only where **§0a** credibility allows)
+- Experience: Each role must land at the **total bullet counts** required by **Bullet counts for experience JSON** + §5, with keywords woven in naturally.
 
 ---
 
@@ -76,6 +85,8 @@ Analyze JD "About Us" section for **10-15 keywords** specific to company's produ
 
 **Rules:**
 - If the profile defines **base_skills**, your JSON `skills` is merged with them (**base entries are always kept first; nothing from base is deleted**). Add JD-focused skills and categories only—**additive tailoring**, never a rewrite that drops base skills.
+- **Minimum footprint:** Aim for the **60–75** total (count individual skills, not category headers). Do **not** slash categories or list lengths versus that band to keep the JSON short.
+- **Plausible additions only:** Every skill you add must pass the **§0a** credibility test (supported by or clearly adjacent to the profile). Skip JD buzzwords that would misrepresent the candidate.
 - Create categories based on JD focus (Frontend, Backend, Cloud, DevOps, Security, etc.)
 - 5-8 skills per category
 - Capitalize first letter of each skill
@@ -111,13 +122,14 @@ Total: ~40 skills (scannable and professional)
 - Generate exactly {{experienceCount}} job entries; one entry per job in the work history—no more, no fewer.
 - Word count per bullet: every bullet MUST be 25–35 words. Count words; do not write short 1-line bullets or run-on sentences.
 - If permanent base bullets exist for a role, your `details` array is **only** the extra JD-tailored bullets; **all** base bullets are prepended by the system and **must never be removed or replaced** by anything you output.
+- **JD density:** For **work history #1** (most recent), maximize JD-relevant phrasing and outcomes **without** breaking **§0a** credibility or date-appropriate tech below.
 - For each work experience, ensure all technologies listed were widely available and commonly used in production during that role's time period; do not include tools, frameworks, or practices released after the role ended or unlikely to have been adopted in that era.
-- Include 2-4 JD keywords per bullet
+- Include 2-4 JD keywords per bullet where **§0a** allows; do not force keywords from unrelated JD requirements into older roles if it would read false.
 
 **Example Bullet (with domain keywords):**
 "Architected secure payment processing system using PCI-DSS compliant infrastructure with Node.js 20, PostgreSQL, and Redis, implementing fraud detection algorithms and tokenization that processed $500M+ annually while reducing chargebacks by 40% and maintaining 99.99% uptime for 2M+ users."
 
 
 Return ONLY valid JSON: {"title":"...","summary":"...","skills":{"Category":["Skill1","Skill2"]},"experience":[{"title":"...","details":["bullet1","bullet2",...]}]}
-Each experience entry must have 6-8 bullets in "details"; each bullet must be 25-35 words.
+**Final bullet rule:** If the profile has **no** permanent base bullets, each `experience[].details` must contain **6–8** bullets. If permanent base bullets exist, each `details` must follow **Bullet counts for experience JSON** (your output is **new** bullets only; merged totals must stay **full**, never pared down). Every bullet must be **25–35** words.
 

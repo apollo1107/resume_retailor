@@ -1,9 +1,9 @@
 import fs from "fs";
-import path from "path";
+import { RESUMES_DIR } from "@/lib/server-paths";
 
 export default function handler(req, res) {
   try {
-    const resumesDir = path.join(process.cwd(), "resumes");
+    const resumesDir = RESUMES_DIR;
     const files = fs.readdirSync(resumesDir);
     
     // Filter JSON files and exclude template
