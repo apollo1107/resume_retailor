@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import { slugToProfileName } from "../../lib/profile-template-mapping";
-import { QuickCopyIcon } from "../../lib/quick-copy-icons";
+import { QuickCopyIcon, DockPinIcon } from "../../lib/quick-copy-icons";
 import { QUICK_COPY_ANIMATIONS_CSS, quickCopyAnimSlot } from "../../lib/quick-copy-animations-css";
 import { SPARKLE_PROFILE_CSS } from "../../lib/sparkle-ui-css";
 
@@ -44,6 +44,7 @@ export default function ManualProfilePage() {
   const [profileName, setProfileName] = useState("");
   const [loading, setLoading] = useState(true);
   const [copiedField, setCopiedField] = useState(null);
+  const [quickCopyDockPinned, setQuickCopyDockPinned] = useState(false);
   const [copyPromptLoading, setCopyPromptLoading] = useState(false);
   const timerIntervalRef = useRef(null);
   const startTimeRef = useRef(null);
@@ -332,7 +333,7 @@ export default function ManualProfilePage() {
         </div>
 
         {quickCopyFields.length > 0 && (
-          <div className="rt-top-copy-dock">
+          <div className={`rt-top-copy-dock${quickCopyDockPinned ? " rt-top-copy-dock--pinned" : ""}`}>
             <div className="rt-top-copy-dock__hit" aria-hidden />
             <div className="rt-top-copy-dock__panel">
               {quickCopyFields.map(({ key, label, value }, index) => (
@@ -354,6 +355,15 @@ export default function ManualProfilePage() {
                   <div className="rt-quick-copy-label">{copiedField === key ? "Copied!" : label}</div>
                 </button>
               ))}
+              <button
+                type="button"
+                className={`rt-top-copy-dock__pin${quickCopyDockPinned ? " rt-top-copy-dock__pin--active" : ""}`}
+                aria-pressed={quickCopyDockPinned}
+                aria-label={quickCopyDockPinned ? "Unpin quick-copy bar" : "Pin quick-copy bar open"}
+                onClick={() => setQuickCopyDockPinned((p) => !p)}
+              >
+                <DockPinIcon size={16} color="#0f172a" />
+              </button>
             </div>
           </div>
         )}
