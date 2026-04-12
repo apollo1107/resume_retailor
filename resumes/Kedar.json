@@ -1,0 +1,67 @@
+{
+  "name": "Kedar Nanda",
+  "title": "Senior AI & Data Engineer",
+  "email": "kedarnanda@proton.me",
+  "phone": "(360) 548-1455",
+  "location": "Queen Creek, AZ",
+  "zip": "85142",
+  "linkedin": "https://www.linkedin.com/in/kedarnanda",
+  "website": "",
+  "github": "",
+  "base_skills": {},
+  "experience": [
+    {
+      "company": "PRA Health Sciences",
+      "title": "Sr Enterprise Data Architect/Data Engineer",
+      "location": "",
+      "start_date": "01/2021",
+      "end_date": "04/2026",
+      "skills": [""],
+      "base_bullets": [""]
+    },
+    {
+      "company": "SAMSUNG SDS",
+      "title": "Technical Architect/Data Engineer",
+      "location": "",
+      "start_date": "07/2013",
+      "end_date": "01/2021",
+      "skills": [""],
+      "base_bullets": [""]
+    },
+    {
+      "company": "Sonata Software",
+      "title": "Senior Software Engineer",
+      "location": "",
+      "start_date": "07/2012",
+      "end_date": "07/2013",
+      "skills": [""],
+      "base_bullets": [""]
+    },
+    {
+      "company": "Federal Bank",
+      "title": "Software Engineer",
+      "location": "",
+      "start_date": "04/2010",
+      "end_date": "06/2012",
+      "skills": [""],
+      "base_bullets": [""]
+    },
+    {
+      "company": "Tata Consultancy Services",
+      "title": "Asst Systems Engineer",
+      "location": "",
+      "start_date": "07/2007",
+      "end_date": "11/2009",
+      "skills": [""],
+      "base_bullets": [""]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Bachelor of Technology - BTech",
+      "school": "Biju Patnaik University of Technology, Odisha",
+      "start_year": "06/2013",
+      "end_year": "06/2007"
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "name": "Praveen Chaulagain",
+  "title": "Senior Data Engineer",
+  "email": "praveenchaulagain@proton.me",
+  "phone": "(360) 548-1455",
+  "location": "Justin, TX",
+  "zip": "76247",
+  "linkedin": "https://www.linkedin.com/in/praveen-chaulagain-850266273/",
+  "website": "",
+  "github": "",
+  "base_skills": {},
+  "experience": [
+    {
+      "company": "NaviHealth",
+      "title": "Data Engineer",
+      "location": "",
+      "start_date": "2021",
+      "end_date": "2026",
+      "skills": [""],
+      "base_bullets": [""]
+    },
+    {
+      "company": "T. Rowe Price",
+      "title": "Data Engineer",
+      "location": "",
+      "start_date": "2020",
+      "end_date": "2021",
+      "skills": [""],
+      "base_bullets": [""]
+    },
+    {
+      "company": "Lifetouch",
+      "title": "Data Engineer AWS",
+      "location": "",
+      "start_date": "2020",
+      "end_date": "2020",
+      "skills": [""],
+      "base_bullets": [""]
+    },
+    {
+      "company": "Essilor Group",
+      "title": "Data Engineer",
+      "location": "",
+      "start_date": "2017",
+      "end_date": "2019",
+      "skills": [""],
+      "base_bullets": [""]
+    },
+    {
+      "company": "Essilor Group",
+      "title": "Data Engineer",
+      "location": "",
+      "start_date": "2016",
+      "end_date": "2016",
+      "skills": [""],
+      "base_bullets": [""]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Bachelor's degree, Business Analytics",
+      "school": "University of North Texas",
+      "start_year": "",
+      "end_year": ""
+    }
+  ]
+}

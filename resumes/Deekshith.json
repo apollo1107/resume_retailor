@@ -1,0 +1,58 @@
+{
+  "name": "Deekshith Gopidi",
+  "title": "Senior Data Engineer | GCP & AWS Cloud Data Specialist | Big Data & Distributed System Expert",
+  "email": "deekshithgopidi@proton.me",
+  "phone": "(360) 548-1455",
+  "location": "Jacksonville, FL",
+  "zip": "32256",
+  "linkedin": "https://www.linkedin.com/in/deekshith-reddy-gopidi-21b9a22a9/",
+  "website": "",
+  "github": "",
+  "base_skills": {},
+  "experience": [
+    {
+      "company": "Deutsche Bank",
+      "title": "Senior Data Engineer",
+      "location": "",
+      "start_date": "09/2023",
+      "end_date": "04/2026",
+      "skills": [""],
+      "base_bullets": [""]
+    },
+    {
+      "company": "Ford Motor Company",
+      "title": "GCP Data Engineer",
+      "location": "",
+      "start_date": "06/2021",
+      "end_date": "09/2023",
+      "skills": [""],
+      "base_bullets": [""]
+    },
+    {
+      "company": "MetLife",
+      "title": "Data Engineer",
+      "location": "",
+      "start_date": "10/2018",
+      "end_date": "06/2021",
+      "skills": [""],
+      "base_bullets": [""]
+    },
+    {
+      "company": "Anthem, Inc.",
+      "title": "Data Engineer",
+      "location": "",
+      "start_date": "08/2017",
+      "end_date": "10/2018",
+      "skills": [""],
+      "base_bullets": [""]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Master's degree, Computer and Information Sciences, General",
+      "school": "Kent State University",
+      "start_year": "2016",
+      "end_year": "2017"
+    }
+  ]
+}

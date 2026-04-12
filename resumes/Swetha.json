@@ -1,0 +1,106 @@
+{
+  "name": "Swetha Bezawada",
+  "title": "Senior AI Product Manager | Data Scientist",
+  "email": "swethabezawada@proton.me",
+  "phone": "(872) 627 5760 ",
+  "location": "Fishers, IN ",
+  "zip": "46037",
+  "linkedin": "https://www.linkedin.com/in/swethabez/",
+  "website": "",
+  "github": "",
+  "base_skills": {},
+  "experience": [
+    {
+      "company": "Salesforce",
+      "title": "Product Manager & Senior Data Scientist",
+      "location": "",
+      "start_date": "05/2021",
+      "end_date": "04/2026",
+      "skills": [""],
+      "base_bullets": [""]
+    },
+    {
+      "company": "Salesforce",
+      "title": "Data Scientist",
+      "location": "",
+      "start_date": "02/2018",
+      "end_date": "05/2021",
+      "skills": [""],
+      "base_bullets": [""]
+    },
+    {
+      "company": "Fuzion Analytics",
+      "title": "Data Scientist",
+      "location": "",
+      "start_date": "06/2013",
+      "end_date": "02/2018",
+      "skills": [""],
+      "base_bullets": [""]
+    },
+    {
+      "company": "dunnhumby USA",
+      "title": "Sr. Associate Analyst",
+      "location": "",
+      "start_date": "06/2012",
+      "end_date": "03/2013",
+      "skills": [""],
+      "base_bullets": [""]
+    },
+    {
+      "company": "NCI Information Systems, Inc.",
+      "title": "QA Statistician",
+      "location": "",
+      "start_date": "08/2010",
+      "end_date": "07/2012",
+      "skills": [""],
+      "base_bullets": [""]
+    },
+    {
+      "company": "OSU",
+      "title": "Teaching Assistant",
+      "location": "",
+      "start_date": "08/2009",
+      "end_date": "05/2010",
+      "skills": [""],
+      "base_bullets": [""]
+    },
+    {
+      "company": "ECEN, OSU",
+      "title": "Data Analyst",
+      "location": "",
+      "start_date": "01/2008",
+      "end_date": "08/2009",
+      "skills": [""],
+      "base_bullets": [""]
+    },
+    {
+      "company": "HRAD, OSU",
+      "title": "Web Developer",
+      "location": "",
+      "start_date": "08/2008",
+      "end_date": "05/2009",
+      "skills": [""],
+      "base_bullets": [""]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Machine Learning Engineer",
+      "school": "FourthBrain",
+      "start_year": "2022",
+      "end_year": "2022"
+    },
+    {
+      "degree": "MS, Management Science & Information Systems",
+      "school": "Oklahoma State University",
+      "start_year": "2007",
+      "end_year": "2010"
+    },
+    {
+      "degree": "MS, Electrical Engineering",
+      "school": "Oklahoma State University",
+      "start_year": "2007",
+      "end_year": "2008"
+    }
+  ]
+}
