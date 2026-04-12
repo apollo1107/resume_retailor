@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import { slugToProfileName } from "../../lib/profile-template-mapping";
+import { firstNameFromFullName } from "../../lib/profile-utils";
 import { QuickCopyIcon, DockPinIcon } from "../../lib/quick-copy-icons";
 import { QUICK_COPY_ANIMATIONS_CSS, quickCopyAnimSlot } from "../../lib/quick-copy-animations-css";
 import { SPARKLE_PROFILE_CSS } from "../../lib/sparkle-ui-css";
@@ -302,6 +303,8 @@ export default function ManualProfilePage() {
     { key: "github", label: "GitHub", value: selectedProfileData?.github },
   ].filter((f) => f.value);
 
+  const replyFirstName = firstNameFromFullName(selectedProfileData?.name);
+
   return (
     <>
       <Head>
@@ -333,7 +336,7 @@ export default function ManualProfilePage() {
           </div>
         </div>
 
-        <EmailSnippetsSidebar />
+        <EmailSnippetsSidebar replyFirstName={replyFirstName} />
 
         {quickCopyFields.length > 0 && (
           <div className={`rt-top-copy-dock${quickCopyDockPinned ? " rt-top-copy-dock--pinned" : ""}`}>

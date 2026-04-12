@@ -2,7 +2,18 @@ import { useState, useEffect, useCallback } from "react";
 import { DockPinIcon } from "../lib/quick-copy-icons";
 import { EMAIL_SNIPPET_TOPIC_ORDER } from "../lib/email-snippet-topics";
 
-export function EmailSnippetsSidebar() {
+function buildSnippetClipboardText(snippet, replyFirstName) {
+  const body = snippet != null ? String(snippet) : "";
+  const first = (replyFirstName || "").trim();
+  if (first && body) return `${body}\n${first}`;
+  if (first && !body) return first;
+  return body;
+}
+
+/**
+ * @param {{ replyFirstName?: string }} props — first name appended on a new line after the snippet when copying
+ */
+export function EmailSnippetsSidebar({ replyFirstName = "" }) {
   const [snippets, setSnippets] = useState({});
   const [pinned, setPinned] = useState(false);
   const [copiedTopic, setCopiedTopic] = useState(null);
@@ -32,7 +43,7 @@ export function EmailSnippetsSidebar() {
 
   const copyTopic = useCallback(async (topic) => {
     const raw = snippets[topic];
-    const text = raw != null ? String(raw) : "";
+    const text = buildSnippetClipboardText(raw, replyFirstName);
     try {
       await navigator.clipboard.writeText(text);
       setCopiedTopic(topic);
@@ -54,14 +65,14 @@ export function EmailSnippetsSidebar() {
       }
       document.body.removeChild(textArea);
     }
-  }, [snippets]);
+  }, [snippets, replyFirstName]);
 
   return (
     <div className={`rt-left-email-dock${pinned ? " rt-left-email-dock--pinned" : ""}`}>
       <div className="rt-left-email-dock__hit" aria-hidden />
-      <aside className="rt-left-email-dock__panel" aria-label="Email templates">
+      <aside className="rt-left-email-dock__panel" aria-label="Email reply templates">
         <div className="rt-left-email-dock__head">
-          <span className="rt-left-email-dock__title">Email</span>
+          <span className="rt-left-email-dock__title">Email Reply</span>
           <button
             type="button"
             className={`rt-left-email-dock__pin${pinned ? " rt-left-email-dock__pin--active" : ""}`}
