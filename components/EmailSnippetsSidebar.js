@@ -68,14 +68,14 @@ export function EmailSnippetsSidebar({ replyFirstName = "" }) {
   }, [snippets, replyFirstName]);
 
   return (
-    <div className={`rt-left-email-dock${pinned ? " rt-left-email-dock--pinned" : ""}`}>
-      <div className="rt-left-email-dock__hit" aria-hidden />
-      <aside className="rt-left-email-dock__panel" aria-label="Email reply templates">
-        <div className="rt-left-email-dock__head">
-          <span className="rt-left-email-dock__title">Email Reply</span>
+    <div className={`rt-right-email-dock${pinned ? " rt-right-email-dock--pinned" : ""}`}>
+      <div className="rt-right-email-dock__hit" aria-hidden />
+      <aside className="rt-right-email-dock__panel" aria-label="Email reply templates">
+        <div className="rt-right-email-dock__head">
+          <span className="rt-right-email-dock__title">Email Reply</span>
           <button
             type="button"
-            className={`rt-left-email-dock__pin${pinned ? " rt-left-email-dock__pin--active" : ""}`}
+            className={`rt-right-email-dock__pin${pinned ? " rt-right-email-dock__pin--active" : ""}`}
             aria-pressed={pinned}
             aria-label={pinned ? "Unpin email templates" : "Pin email templates open"}
             onClick={() => setPinned((p) => !p)}
@@ -84,16 +84,16 @@ export function EmailSnippetsSidebar({ replyFirstName = "" }) {
           </button>
         </div>
         {loadError ? (
-          <p className="rt-left-email-dock__error" role="status">
+          <p className="rt-right-email-dock__error" role="status">
             {loadError}
           </p>
         ) : null}
-        <div className="rt-left-email-dock__topics">
+        <div className="rt-right-email-dock__topics">
           {EMAIL_SNIPPET_TOPIC_ORDER.map((topic) => (
             <button
               key={topic}
               type="button"
-              className={`rt-left-email-dock__topic${copiedTopic === topic ? " rt-left-email-dock__topic--copied" : ""}`}
+              className={`rt-right-email-dock__topic${copiedTopic === topic ? " rt-right-email-dock__topic--copied" : ""}`}
               aria-label={
                 copiedTopic === topic
                   ? `${topic} copied to clipboard`
