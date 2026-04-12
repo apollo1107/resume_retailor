@@ -5,7 +5,8 @@
     "scripts": {
         "dev": "next dev",
         "build": "next build",
-        "start": "next start -p $PORT"
+        "start": "next start -p $PORT",
+        "flowcv-text": "node scripts/flowcv-resume-text.mjs"
     },
     "dependencies": {
         "@anthropic-ai/sdk": "^0.32.1",

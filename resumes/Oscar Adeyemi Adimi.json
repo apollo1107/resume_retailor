@@ -1,14 +1,14 @@
 {
   "name": "Oscar Adimi",
   "title": "Senior Data Scientist | Full stack AI Engineer | AI Content Creator",
-  "email": "",
+  "email": "oscaradimi@proton.me",
   "phone": "",
   "location": "Johns Creek, GA",
   "zip": "30022",
   "linkedin": "https://www.linkedin.com/in/oscar-adimi/",
   "website": "",
   "github": "",
-  "base_skills": {},
+  "base_skills": [],
   "experience": [
     {
       "company": "Microsoft",
@@ -16,8 +16,9 @@
       "location": "",
       "start_date": "11/2022",
       "end_date": "04/2026",
-      "skills": [""],
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     },
     {
       "company": "Microsoft",
@@ -25,8 +26,9 @@
       "location": "",
       "start_date": "09/2018",
       "end_date": "10/2022",
-      "skills": [""],
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     },
     {
       "company": "Zurich Insurance Company Ltd",
@@ -34,8 +36,9 @@
       "location": "",
       "start_date": "12/2013",
       "end_date": "08/2018",
-      "skills": [""],
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     },
     {
       "company": "Zurich Insurance Company Ltd",
@@ -43,8 +46,9 @@
       "location": "",
       "start_date": "12/2013",
       "end_date": "12/2015",
-      "skills": [""],
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     }
   ],
   "education": [

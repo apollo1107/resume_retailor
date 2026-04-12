@@ -8,7 +8,7 @@
   "linkedin": "https://www.linkedin.com/in/dgiova/",
   "website": "",
   "github": "",
-  "base_skills": {},
+  "base_skills": [],
   "experience": [
     {
       "company": "Robinhood",
@@ -16,8 +16,9 @@
       "location": "",
       "start_date": "09/2024",
       "end_date": "04/2026",
-      "skills": [""],
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     },
     {
       "company": "Zoom",
@@ -25,8 +26,9 @@
       "location": "",
       "start_date": "03/2021",
       "end_date": "09/2024",
-      "skills": [""],
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     },
     {
       "company": "Stanford University",
@@ -34,8 +36,9 @@
       "location": "",
       "start_date": "09/2020",
       "end_date": "03/2021",
-      "skills": [""],
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     },
     {
       "company": "JPMorgan Chase & Co",
@@ -43,8 +46,9 @@
       "location": "",
       "start_date": "06/2020",
       "end_date": "09/2020",
-      "skills": [""],
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     },
     {
       "company": "Intel Corporation",
@@ -52,8 +56,9 @@
       "location": "",
       "start_date": "01/2019",
       "end_date": "09/2019",
-      "skills": [""],
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     }
   ],
   "education": [

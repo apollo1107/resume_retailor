@@ -72,8 +72,8 @@ export default async function handler(req, res) {
     const permanentResumeContext =
       formatPermanentContextForPrompt(profileData);
     const experienceBulletGuidance = hasPermanent
-      ? "Generate **4-6 NEW** bullets per role in `experience[].details` (25-35 words each). These are **in addition to** the permanent base bullets above (prepended automatically). Do **not** repeat those permanent bullets in your JSON."
-      : "Generate **6-8** bullets per role in `experience[].details` (25-35 words each).";
+      ? "Generate **4-6 NEW** bullets per role in `experience[].details` (25-35 words each). These are **in addition to** the permanent base bullets (prepended automatically). **Never delete or replace** base bullets or `base_skills`—only add JD-specific bullets and skills. Do **not** repeat permanent bullets in your JSON."
+      : "Generate **6-8** bullets per role in `experience[].details` (25-35 words each). **Additive only:** do not remove or contradict facts from the profile work history.";
 
     const prompt = loadPromptForProfile(profileSlug, {
       name: profileData.name,

@@ -30,6 +30,18 @@ Format: {"title":"...","summary":"...","skills":{...},"experience":[...]}
 
 ## INSTRUCTIONS:
 
+### **0. NEVER DELETE BASE SKILLS OR BASE BULLETS (tailor by adding only)**
+
+The profile JSON supplies **permanent** content: `base_skills` as a **JSON array** of freeform lines (**first colon** separates the group label from comma-separated skills), e.g. `"Languages and frameworks: Python, JavaScript, React"` and `"Version control: Git, GitHub"`. Legacy object-shaped `base_skills` is still accepted. Also **`base_bullets`** (or `base_details`) per job. The application **merges** your JSON with that data using **append-only** rules:
+
+- **Every** base skill and **every** base bullet **always** appears on the final resume. You **must not** remove, omit, shorten, or replace them via your output.
+- In **`skills`**: output **only JD-tailored additions** (new categories and/or new skills). Base categories are merged **first**; your lists are **appended** per category. Do **not** try to “refresh” or re-specify base skills—add complementary JD keywords only.
+- In **`experience[].details`**: output **only new bullets** (25–35 words each) that **add** to the role. Base bullets are **prepended automatically**. Do **not** repeat base bullets in `details`, and do **not** write bullets that would supersede or contradict base facts.
+
+If no permanent block is shown above, generate a full resume from the profile + JD as usual.
+
+---
+
 ### **1. EXTRACT DOMAIN KEYWORDS** (Critical for 98%+ score)
 
 Analyze JD "About Us" section for **10-15 keywords** specific to company's product/industry:
@@ -63,7 +75,7 @@ Analyze JD "About Us" section for **10-15 keywords** specific to company's produ
 ### **4. SKILLS** (60–75 total skills across 6–7 categories, prioritizing JD keywords over breadth.)
 
 **Rules:**
-- If the profile defines **base_skills**, your JSON `skills` is merged with them (base entries are kept first). Add JD-focused skills and categories; do not remove the intent of base categories.
+- If the profile defines **base_skills**, your JSON `skills` is merged with them (**base entries are always kept first; nothing from base is deleted**). Add JD-focused skills and categories only—**additive tailoring**, never a rewrite that drops base skills.
 - Create categories based on JD focus (Frontend, Backend, Cloud, DevOps, Security, etc.)
 - 5-8 skills per category
 - Capitalize first letter of each skill
@@ -98,7 +110,7 @@ Total: ~40 skills (scannable and professional)
 **STRICT Requirements (must be followed):**
 - Generate exactly {{experienceCount}} job entries; one entry per job in the work history—no more, no fewer.
 - Word count per bullet: every bullet MUST be 25–35 words. Count words; do not write short 1-line bullets or run-on sentences.
-- If permanent base bullets exist for a role, your `details` array is **only** the extra JD-tailored bullets; base bullets are prepended by the system.
+- If permanent base bullets exist for a role, your `details` array is **only** the extra JD-tailored bullets; **all** base bullets are prepended by the system and **must never be removed or replaced** by anything you output.
 - For each work experience, ensure all technologies listed were widely available and commonly used in production during that role's time period; do not include tools, frameworks, or practices released after the role ended or unlikely to have been adopted in that era.
 - Include 2-4 JD keywords per bullet
 

@@ -8,7 +8,7 @@
   "linkedin": "https://linkedin.com/in/maurice-williams-2a958a3a8",
   "website": "",
   "github": "",
-  "base_skills": {},
+  "base_skills": [],
   "experience": [
     {
       "company": "Raia Labs",
@@ -16,23 +16,9 @@
       "location": "Sarasota, FL",
       "start_date": "08/2020",
       "end_date": "01/2026",
-      "skills": [
-        " Node.js",
-        "Express.js",
-        "React.js",
-        "MongoDB",
-        "SQL",
-        "Vue",
-        "Typescript",
-        "AWS",
-        "Docker",
-        "Git",
-        "CI/CD",
-        "Redux",
-        "Jest",
-        "Cypress"
-      ],
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     },
     {
       "company": "StackOverdrive",
@@ -40,23 +26,9 @@
       "location": "New York, NY",
       "start_date": "05/2016",
       "end_date": "06/2020",
-      "skills": [
-        "Node.js",
-        "Express.js",
-        "MongoDB",
-        "SQL",
-        "Typescript",
-        "AWS",
-        "Docker",
-        "Git",
-        "CI/CD",
-        "Redux",
-        "Jest",
-        "Cypress",
-        "GraphQL",
-        "RESTful APIs"
-      ],
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     },
     {
       "company": "TechWize",
@@ -64,22 +36,9 @@
       "location": "New York, NY",
       "start_date": "08/2013",
       "end_date": "04/2016",
-      "skills": [
-        "React.js",
-        "Next.js",
-        "Tailwind CSS",
-        "Typescript",
-        "AWS",
-        "Docker",
-        "Git",
-        "CI/CD",
-        "Redux",
-        "Jest",
-        "Cypress",
-        "GraphQL",
-        "RESTful APIs"
-      ],
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     }
   ],
   "education": [

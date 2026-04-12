@@ -8,7 +8,7 @@
   "linkedin": "",
   "website": "",
   "github": "",
-  "base_skills": {},
+  "base_skills": [],
   "experience": [
     {
       "company": "Aptlytech",
@@ -16,8 +16,9 @@
       "location": "",
       "start_date": "06/2022",
       "end_date": "03/2026",
-      "skills": [],
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     },
     {
       "company": "Glitchy.ai",
@@ -25,8 +26,9 @@
       "location": "",
       "start_date": "01/2021",
       "end_date": "04/2022",
-      "skills": [],
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     },
     {
       "company": "cosmicforces",
@@ -34,8 +36,9 @@
       "location": "",
       "start_date": "04/2017",
       "end_date": "11/2020",
-      "skills": [],
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     },
     {
       "company": "DGN Technologies",
@@ -43,8 +46,9 @@
       "location": "",
       "start_date": "05/2014",
       "end_date": "12/2016",
-      "skills": [],
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     }
   ],
   "education": [

@@ -8,7 +8,7 @@
   "linkedin": "https://www.linkedin.com/in/kedarnanda",
   "website": "",
   "github": "",
-  "base_skills": {},
+  "base_skills": [],
   "experience": [
     {
       "company": "PRA Health Sciences",
@@ -16,8 +16,9 @@
       "location": "",
       "start_date": "01/2021",
       "end_date": "04/2026",
-      "skills": [""],
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     },
     {
       "company": "SAMSUNG SDS",
@@ -25,8 +26,9 @@
       "location": "",
       "start_date": "07/2013",
       "end_date": "01/2021",
-      "skills": [""],
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     },
     {
       "company": "Sonata Software",
@@ -34,8 +36,9 @@
       "location": "",
       "start_date": "07/2012",
       "end_date": "07/2013",
-      "skills": [""],
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     },
     {
       "company": "Federal Bank",
@@ -43,8 +46,9 @@
       "location": "",
       "start_date": "04/2010",
       "end_date": "06/2012",
-      "skills": [""],
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     },
     {
       "company": "Tata Consultancy Services",
@@ -52,8 +56,9 @@
       "location": "",
       "start_date": "07/2007",
       "end_date": "11/2009",
-      "skills": [""],
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     }
   ],
   "education": [

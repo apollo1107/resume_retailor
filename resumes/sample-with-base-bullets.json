@@ -8,13 +8,11 @@
   "linkedin": "https://www.linkedin.com/in/example",
   "website": "",
   "github": "https://github.com/example",
-
-  "base_skills": {
-    "Languages & runtimes": ["C#", ".NET 8", "TypeScript", "SQL"],
-    "Architecture & delivery": ["Microservices", "REST APIs", "CI/CD", "System design"],
-    "Leadership": ["Technical mentoring", "Code review culture", "Stakeholder communication"]
-  },
-
+  "base_skills": [
+    "Languages & runtimes: C#, .NET 8, TypeScript, SQL",
+    "Architecture & delivery: Microservices, REST APIs, CI/CD, System design",
+    "Leadership: Technical mentoring, Code review culture, Stakeholder communication"
+  ],
   "experience": [
     {
       "company": "Acme Corp",
@@ -22,7 +20,6 @@
       "location": "Austin, TX",
       "start_date": "01/2022",
       "end_date": "Present",
-      "skills": ["C#", "AWS"],
       "base_bullets": [
         "Owned the payments reconciliation pipeline processing $400M+ annually with 99.99% uptime targets and PCI-aligned controls.",
         "Led a team of five engineers through cloud migration from on-prem .NET monolith to containerized services on AWS.",
@@ -35,14 +32,12 @@
       "location": "Remote",
       "start_date": "06/2018",
       "end_date": "12/2021",
-      "skills": [".NET Core", "React"],
       "base_bullets": [
         "Shipped customer-facing analytics dashboards used by 50k+ weekly active users with role-based access and export tooling.",
         "Reduced P1 incidents by 40% year over year by introducing SLOs, synthetic checks, and runbook automation."
       ]
     }
   ],
-
   "education": [
     {
       "degree": "Bachelor of Science, Computer Science",

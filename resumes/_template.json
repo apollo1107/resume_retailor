@@ -8,11 +8,10 @@
   "linkedin": "https://www.linkedin.com/in/yourprofile",
   "website": "https://yourwebsite.com",
   "github": "https://github.com/yourusername",
-
-  "base_skills": {
-    "Example category": ["Skill always kept on resume", "Another core skill"]
-  },
-
+  "base_skills": [
+    "Languages and frameworks: Python, JavaScript, React",
+    "Version control: Git, GitHub"
+  ],
   "experience": [
     {
       "company": "Company Name 1",
@@ -30,10 +29,11 @@
       "location": "City, State",
       "start_date": "Jan 2018",
       "end_date": "Dec 2019",
-      "base_bullets": [""]
+      "base_bullets": [
+        ""
+      ]
     }
   ],
-
   "education": [
     {
       "degree": "Bachelor of Science in Computer Science",
