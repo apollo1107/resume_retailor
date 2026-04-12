@@ -5,6 +5,7 @@ import { slugToProfileName } from "../lib/profile-template-mapping";
 import { QuickCopyIcon, DockPinIcon } from "../lib/quick-copy-icons";
 import { QUICK_COPY_ANIMATIONS_CSS, quickCopyAnimSlot } from "../lib/quick-copy-animations-css";
 import { SPARKLE_PROFILE_CSS } from "../lib/sparkle-ui-css";
+import { EmailSnippetsSidebar } from "../components/EmailSnippetsSidebar";
 
 function ProfileLoadingSpinner() {
   return (
@@ -310,6 +311,8 @@ export default function ProfilePage() {
             ))}
           </div>
         </div>
+
+        <EmailSnippetsSidebar />
 
         {quickCopyFields.length > 0 && (
           <div className={`rt-top-copy-dock${quickCopyDockPinned ? " rt-top-copy-dock--pinned" : ""}`}>
