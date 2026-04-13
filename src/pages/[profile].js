@@ -927,7 +927,7 @@ export default function ProfilePage() {
               >
                 {generating === "cover-pdf"
                   ? `Generating… (${elapsedTime}s)`
-                  : "eDownload as PDF file"}
+                  : "Download as PDF file"}
               </button>
               <button
                 type="button"
