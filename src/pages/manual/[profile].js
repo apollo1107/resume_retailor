@@ -963,7 +963,7 @@ export default function ManualProfilePage() {
               >
                 {generating === "cover-pdf"
                   ? `Generating… (${elapsedTime}s)`
-                  : "Download Cover Letter as PDF file"}
+                  : "Download as PDF file"}
               </button>
               <button
                 type="button"
@@ -993,7 +993,7 @@ export default function ManualProfilePage() {
               >
                 {generating === "cover-docx"
                   ? `Generating… (${elapsedTime}s)`
-                  : "Download Cover Letter as Word file"}
+                  : "Download as Word file"}
               </button>
             </div>
 
