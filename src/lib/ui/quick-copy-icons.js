@@ -84,6 +84,15 @@ export function QuickCopyIcon({ fieldKey, size = 20, color = "currentColor", cla
           <path d="M9 18c-4.51 2-4.51-2-6-2" />
         </svg>
       );
+    case "cvLink":
+      return (
+        <svg {...p}>
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
+          <path d="M14 2v6h6" />
+          <path d="M10 12h4" />
+          <path d="M10 16h8" />
+        </svg>
+      );
     default:
       return null;
   }

@@ -383,6 +383,11 @@ export default function ManualProfilePage() {
     );
   }
 
+  const cvLinkRaw =
+    selectedProfileData?.cvLink ?? selectedProfileData?.cv_link;
+  const cvLinkValue =
+    typeof cvLinkRaw === "string" ? cvLinkRaw.trim() : cvLinkRaw;
+
   const quickCopyFields = [
     { key: "email", label: "Email", value: selectedProfileData?.email },
     { key: "phone", label: "Phone", value: selectedProfileData?.phone },
@@ -392,6 +397,7 @@ export default function ManualProfilePage() {
     { key: "lastRole", label: "Last Role", value: getLastRole() },
     { key: "linkedin", label: "LinkedIn", value: selectedProfileData?.linkedin },
     { key: "github", label: "GitHub", value: selectedProfileData?.github },
+    { key: "cvLink", label: "CV Link", value: cvLinkValue },
   ].filter((f) => f.value);
 
   const replyFirstName = firstNameFromFullName(selectedProfileData?.name);

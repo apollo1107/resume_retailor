@@ -8,6 +8,7 @@
   "linkedin": "https://www.linkedin.com/in/yourprofile",
   "website": "https://yourwebsite.com",
   "github": "https://github.com/yourusername",
+  "cvLink": "",
   "base_skills": [
     "Languages and frameworks: Python, JavaScript, React",
     "Version control: Git, GitHub"
