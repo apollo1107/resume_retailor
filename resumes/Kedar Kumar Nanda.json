@@ -8,7 +8,7 @@
   "linkedin": "https://www.linkedin.com/in/kedarnanda",
   "website": "",
   "github": "",
-  "cvLink": "",
+  "cvLink": "https://flowcv.com/resume/nmoq54g76eco",
   "base_skills": [
     "Data Engineering & Platforms: ETL/ELT pipelines, data modeling, dimensional design (star/snowflake), data warehousing, data lakes, data marts, batch and real-time processing, distributed systems, pipeline optimization, fault tolerance, partitioning, performance tuning.",
     "Cloud & Big Data: AWS (S3, Redshift, Lambda, Glue, EMR, Kinesis, SQS, SNS, CloudWatch), Snowflake, Azure (ADF, Databricks, Synapse), GCP (BigQuery, Cloud Storage), Apache Spark (Core, SQL, Streaming), PySpark, Hadoop (HDFS), Hive, Kafka, Sqoop, Cloudera CDP, Athena.",

@@ -8,7 +8,7 @@
   "linkedin": "https://www.linkedin.com/in/hk4cd/",
   "website": "",
   "github": "",
-  "cvLink": "",
+  "cvLink": "https://flowcv.com/resume/cu46slt4kmhw",
   "base_skills": [
     "Machine Learning & AI Technologies: Keras, TensorFlow, PyTorch, Theano, Caffe, MXNet, Fast.ai, Hugging Face Transformers, Scikit-learn, XGBoost, LightGBM, CatBoost, H2O.ai, Statsmodels, TPOT, Auto-sklearn, PyCaret, Scikit-Image, Feature-engine",
     "Natural Language Processing (NLP): NLTK, SpaCy, Gensim, TextBlob, AllenNLP, OpenNLP, Tesseract, Hugging Face Transformers, BERT, GPT, T5, DistilBERT, LIME, SHAP, ELI5, Captum",
