@@ -1,5 +1,6 @@
 import { incrementUserDownload } from "@/server/persistence/downloads-store";
 import { getSessionFromApiRequest } from "@/lib/auth/session-from-request";
+import { respondIfStorageUnavailable } from "@/server/persistence/respond-storage-unavailable";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -18,6 +19,12 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Invalid kind" });
   }
 
-  await incrementUserDownload(session.sub, kind);
-  return res.status(200).json({ ok: true });
+  try {
+    await incrementUserDownload(session.sub, kind);
+    return res.status(200).json({ ok: true });
+  } catch (e) {
+    if (respondIfStorageUnavailable(res, e)) return;
+    console.error(e);
+    return res.status(500).json({ error: "Failed to record download" });
+  }
 }
