@@ -867,7 +867,7 @@ export default function ProfilePage() {
               >
                 {generating === "cover-pdf"
                   ? `Generating… (${elapsedTime}s)`
-                  : "eDownload as PDF file"}
+                  : "Download Cover Letter as PDF file"}
               </button>
               <button
                 type="button"
@@ -913,7 +913,7 @@ export default function ProfilePage() {
               >
                 {generating === "cover-docx"
                   ? `Generating… (${elapsedTime}s)`
-                  : "Download as Word file"}
+                  : "Download Cover Letter as Word file"}
               </button>
             </div>
 
