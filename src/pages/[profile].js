@@ -10,6 +10,7 @@ import {
 } from "@/lib/ui/quick-copy-animations-css";
 import { SPARKLE_PROFILE_CSS } from "@/lib/ui/sparkle-ui-css";
 import { EmailSnippetsSidebar } from "@/components/EmailSnippetsSidebar";
+import { trackDownload } from "@/client/track-download";
 
 function ProfileLoadingSpinner() {
   return (
@@ -79,11 +80,13 @@ export default function ProfilePage() {
     // Lazy load profile data with delay to show loading state
     const loadData = async () => {
       try {
-        const response = await fetch(`/api/profiles/${encodeURIComponent(profileNameFromSlug)}`);
+        const response = await fetch(`/api/profiles/${encodeURIComponent(profileNameFromSlug)}`, {
+          credentials: "include",
+        });
         if (!response.ok) {
-          if (response.status === 404) {
-            console.error(`Profile file not found: ${profileNameFromSlug}`);
-            router.push('/');
+          if (response.status === 403 || response.status === 404) {
+            console.error(`Profile not available: ${profileNameFromSlug}`);
+            router.push("/");
             return;
           }
           throw new Error(`Failed to fetch profile: ${response.statusText}`);
@@ -161,6 +164,7 @@ export default function ProfilePage() {
     try {
       const response = await fetch("/api/generate", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           profile: profileSlug,
@@ -195,6 +199,7 @@ export default function ProfilePage() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
+      trackDownload("cv");
 
       setLastGenerationWasCover(false);
       setLastGenerationTime(Math.floor((Date.now() - startTimeRef.current) / 1000));
@@ -239,6 +244,7 @@ export default function ProfilePage() {
     try {
       const response = await fetch("/api/generate-cover-letter", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           profile: profileSlug,
@@ -274,6 +280,7 @@ export default function ProfilePage() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
+      trackDownload("cover");
 
       setLastGenerationWasCover(true);
       setLastGenerationTime(Math.floor((Date.now() - startTimeRef.current) / 1000));
@@ -409,6 +416,12 @@ export default function ProfilePage() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <style>{QUICK_COPY_ANIMATIONS_CSS}</style>
         <style>{SPARKLE_PROFILE_CSS}</style>
+        <style>{`
+          @keyframes rtBackHomePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.25); }
+            50% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
+          }
+        `}</style>
       </Head>
 
       <div
@@ -585,17 +598,45 @@ export default function ProfilePage() {
               }}
             >
               <div style={{ marginBottom: "10px" }}>
-                <h1
-                  style={{
-                    fontSize: "20px",
-                    fontWeight: "600",
-                    color: colors.text,
-                    margin: "0 0 4px 0",
-                    lineHeight: 1.25,
-                  }}
-                >
-                  {profileName}
-                </h1>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px" }}>
+                  <h1
+                    style={{
+                      fontSize: "20px",
+                      fontWeight: "600",
+                      color: colors.text,
+                      margin: "0 0 4px 0",
+                      lineHeight: 1.25,
+                    }}
+                  >
+                    {profileName}
+                  </h1>
+                  <button
+                    type="button"
+                    onClick={() => router.push("/")}
+                    style={{
+                      padding: "8px 12px",
+                      fontSize: "12px",
+                      fontWeight: "600",
+                      color: colors.buttonText,
+                      background: colors.buttonBg,
+                      border: "none",
+                      borderRadius: "999px",
+                      cursor: "pointer",
+                      animation: "rtBackHomePulse 1.8s ease-in-out infinite",
+                      whiteSpace: "nowrap",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "translateY(-1px)";
+                      e.currentTarget.style.background = colors.buttonHover;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "translateY(0)";
+                      e.currentTarget.style.background = colors.buttonBg;
+                    }}
+                  >
+                    Back to Home
+                  </button>
+                </div>
                 {selectedProfileData.title ? (
                   <p
                     style={{

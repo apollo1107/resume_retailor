@@ -58,6 +58,20 @@ export const profileTemplateMapping = {
 };
 
 /**
+ * URL slug for a resume JSON filename stem (e.g. "Hardika Narula" → "hardika").
+ * @param {string} resumeFileId - Value from resumes/*.json without extension
+ * @returns {string|null}
+ */
+export function slugForResumeId(resumeFileId) {
+  if (!resumeFileId || typeof resumeFileId !== "string") return null;
+  const needle = resumeFileId.trim();
+  for (const [slug, cfg] of Object.entries(profileTemplateMapping)) {
+    if (cfg?.resume === needle) return slug;
+  }
+  return null;
+}
+
+/**
  * Get profile configuration by slug (numeric ID)
  * @param {string} slug - The numeric ID slug (e.g., "1", "2", "3")
  * @returns {object|null} - Profile configuration or null if not found

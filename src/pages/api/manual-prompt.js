@@ -6,7 +6,9 @@ import {
   formatPermanentContextForPrompt,
   profileHasPermanentContent,
 } from "@/lib/resume/merge-resume-base";
-import { RESUMES_DIR } from "@/lib/server-paths";
+import { RESUMES_DIR } from "@/config/server-paths";
+import { getSessionFromApiRequest } from "@/lib/auth/session-from-request";
+import { findUserById, userCanAccessProfile } from "@/server/persistence/users-store";
 
 /**
  * Build the full prompt for manual ChatGPT use (no API key)
@@ -16,6 +18,11 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).send("Method not allowed");
 
   try {
+    const session = await getSessionFromApiRequest(req);
+    if (!session) return res.status(401).json({ error: "Unauthorized" });
+    const user = await findUserById(session.sub);
+    if (!user) return res.status(401).json({ error: "Unauthorized" });
+
     const { profile: profileSlug, jd } = req.body;
 
     if (!profileSlug) return res.status(400).json({ error: "Profile slug required" });
@@ -27,6 +34,9 @@ export default async function handler(req, res) {
     }
 
     const resumeName = profileConfig.resume;
+    if (!userCanAccessProfile(user, resumeName)) {
+      return res.status(403).json({ error: "This resume is not assigned to your account." });
+    }
     const profilePath = path.join(RESUMES_DIR, `${resumeName}.json`);
 
     if (!fs.existsSync(profilePath)) {
