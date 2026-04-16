@@ -9,7 +9,12 @@ const DATA_DIR = path.join(process.cwd(), "data");
 const DL_PATH = path.join(DATA_DIR, "download-stats.json");
 
 function ensureDataDir() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+  if (fs.existsSync(DATA_DIR)) return;
+  try {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+  } catch (e) {
+    console.warn("[downloads-store-fs] Cannot create data directory:", e?.message || e);
+  }
 }
 
 function readRaw() {
@@ -25,7 +30,18 @@ function readRaw() {
 
 function writeRaw(data) {
   ensureDataDir();
-  fs.writeFileSync(DL_PATH, JSON.stringify(data, null, 2), "utf8");
+  try {
+    fs.writeFileSync(DL_PATH, JSON.stringify(data, null, 2), "utf8");
+  } catch (e) {
+    const code = e?.code;
+    const ro = code === "EROFS" || code === "EACCES" || code === "EPERM" || /read-only/i.test(String(e?.message));
+    if (ro) {
+      throw new Error(
+        "Cannot write download stats: filesystem is read-only. Set MONGODB_URI to use MongoDB for analytics storage."
+      );
+    }
+    throw e;
+  }
 }
 
 function todayUtcDate() {

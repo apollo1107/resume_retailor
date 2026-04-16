@@ -1,43 +1,30 @@
 import { randomUUID } from "crypto";
+import { getMongoDb } from "@/lib/db/mongo";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { normalizeEmail, isValidEmail, isValidPassword } from "@/lib/auth/validation";
 import { ADMIN_SEED_EMAIL, ADMIN_SEED_PASSWORD } from "@/lib/auth/admin-seed";
 import { MAX_ADMINS } from "@/config/auth-limits";
-import { getRedis } from "@/server/persistence/redis-client";
 
-const USERS_KEY = "resume_retailor:users:v1";
+let indexesReady = false;
 
-function parseDoc(raw) {
-  if (raw == null) return { users: [] };
-  if (typeof raw === "string") {
-    try {
-      const data = JSON.parse(raw);
-      return Array.isArray(data.users) ? data : { users: [] };
-    } catch {
-      return { users: [] };
-    }
+async function usersColl() {
+  const db = await getMongoDb();
+  const c = db.collection("users");
+  if (!indexesReady) {
+    await c.createIndex({ id: 1 }, { unique: true });
+    await c.createIndex({ email: 1 }, { unique: true });
+    indexesReady = true;
+    await ensureAdminSeededOnce(c);
   }
-  if (typeof raw === "object" && Array.isArray(raw.users)) return raw;
-  return { users: [] };
+  return c;
 }
 
-async function readRaw() {
-  const r = getRedis();
-  const raw = await r.get(USERS_KEY);
-  return parseDoc(raw);
-}
-
-async function writeRaw(data) {
-  const r = getRedis();
-  await r.set(USERS_KEY, JSON.stringify(data));
-}
-
-function ensureAdminSeeded(data) {
+async function ensureAdminSeededOnce(c) {
   const email = normalizeEmail(ADMIN_SEED_EMAIL);
-  const idx = data.users.findIndex((u) => normalizeEmail(u.email) === email);
-  if (idx !== -1) return false;
+  const exists = await c.findOne({ email });
+  if (exists) return;
   const { salt, hash } = hashPassword(ADMIN_SEED_PASSWORD);
-  data.users.push({
+  await c.insertOne({
     id: randomUUID(),
     email,
     passwordSalt: salt,
@@ -46,34 +33,26 @@ function ensureAdminSeeded(data) {
     assignedProfiles: [],
     createdAt: new Date().toISOString(),
   });
-  return true;
-}
-
-async function loadUsers() {
-  const data = await readRaw();
-  if (ensureAdminSeeded(data)) await writeRaw(data);
-  return data;
 }
 
 export async function findUserByEmail(email) {
   const n = normalizeEmail(email);
-  const { users } = await loadUsers();
-  return users.find((u) => normalizeEmail(u.email) === n) || null;
+  const c = await usersColl();
+  return (await c.findOne({ email: n })) || null;
 }
 
 export async function findUserById(id) {
-  const { users } = await loadUsers();
-  return users.find((u) => u.id === id) || null;
+  const c = await usersColl();
+  return (await c.findOne({ id })) || null;
 }
 
 export async function createUser(email, password) {
   if (!isValidEmail(email)) throw new Error("Invalid email");
   if (!isValidPassword(password)) throw new Error("Invalid password");
   const n = normalizeEmail(email);
-  const data = await loadUsers();
-  if (data.users.some((u) => normalizeEmail(u.email) === n)) {
-    throw new Error("Email already registered");
-  }
+  const c = await usersColl();
+  const dup = await c.findOne({ email: n });
+  if (dup) throw new Error("Email already registered");
   const { salt, hash } = hashPassword(password);
   const user = {
     id: randomUUID(),
@@ -84,8 +63,7 @@ export async function createUser(email, password) {
     assignedProfiles: [],
     createdAt: new Date().toISOString(),
   };
-  data.users.push(user);
-  await writeRaw(data);
+  await c.insertOne(user);
   return user;
 }
 
@@ -97,8 +75,9 @@ export async function verifyUserLogin(email, password) {
 }
 
 export async function listUsersPublic() {
-  const { users } = await loadUsers();
-  return users.map((u) => ({
+  const c = await usersColl();
+  const rows = await c.find({}).sort({ email: 1 }).toArray();
+  return rows.map((u) => ({
     id: u.id,
     email: u.email,
     role: u.role,
@@ -109,58 +88,51 @@ export async function listUsersPublic() {
 
 export async function setUserPasswordById(userId, newPassword) {
   if (!isValidPassword(newPassword)) throw new Error("Invalid password");
-  const data = await loadUsers();
-  const u = data.users.find((x) => x.id === userId);
-  if (!u) throw new Error("User not found");
   const { salt, hash } = hashPassword(newPassword);
-  u.passwordSalt = salt;
-  u.passwordHash = hash;
-  await writeRaw(data);
+  const c = await usersColl();
+  const r = await c.updateOne({ id: userId }, { $set: { passwordSalt: salt, passwordHash: hash } });
+  if (r.matchedCount === 0) throw new Error("User not found");
 }
 
 export async function deleteUserById(userId) {
-  const data = await loadUsers();
-  const u = data.users.find((x) => x.id === userId);
+  const c = await usersColl();
+  const u = await c.findOne({ id: userId });
   if (!u) throw new Error("User not found");
-  const admins = data.users.filter((x) => x.role === "admin");
-  if (u.role === "admin" && admins.length <= 1) {
+  const adminCount = await c.countDocuments({ role: "admin" });
+  if (u.role === "admin" && adminCount <= 1) {
     throw new Error("Cannot delete the only administrator");
   }
-  data.users = data.users.filter((x) => x.id !== userId);
-  await writeRaw(data);
+  await c.deleteOne({ id: userId });
 }
 
 export async function setUserRoleById(userId, nextRole) {
   if (nextRole !== "user" && nextRole !== "admin") throw new Error("Invalid role");
-  const data = await loadUsers();
-  const user = data.users.find((x) => x.id === userId);
+  const c = await usersColl();
+  const user = await c.findOne({ id: userId });
   if (!user) throw new Error("User not found");
   if (user.role === nextRole) return user;
 
   if (nextRole === "admin") {
-    const adminCount = data.users.filter((x) => x.role === "admin").length;
+    const adminCount = await c.countDocuments({ role: "admin" });
     if (adminCount >= MAX_ADMINS) {
       throw new Error(`Maximum ${MAX_ADMINS} administrators allowed`);
     }
   } else {
-    const adminCount = data.users.filter((x) => x.role === "admin").length;
+    const adminCount = await c.countDocuments({ role: "admin" });
     if (user.role === "admin" && adminCount <= 1) {
       throw new Error("Cannot remove the only administrator");
     }
   }
 
-  user.role = nextRole;
-  await writeRaw(data);
-  return user;
+  await c.updateOne({ id: userId }, { $set: { role: nextRole } });
+  return { ...user, role: nextRole };
 }
 
 export async function setUserAssignedProfilesById(userId, profiles) {
   if (!Array.isArray(profiles)) throw new Error("Invalid assigned profiles");
   const clean = [...new Set(profiles.map((p) => String(p).trim()).filter(Boolean))];
-  const data = await loadUsers();
-  const user = data.users.find((x) => x.id === userId);
-  if (!user) throw new Error("User not found");
-  user.assignedProfiles = clean;
-  await writeRaw(data);
-  return user;
+  const c = await usersColl();
+  const r = await c.updateOne({ id: userId }, { $set: { assignedProfiles: clean } });
+  if (r.matchedCount === 0) throw new Error("User not found");
+  return await findUserById(userId);
 }

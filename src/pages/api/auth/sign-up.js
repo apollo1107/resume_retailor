@@ -1,5 +1,4 @@
 import { createUser } from "@/server/persistence/users-store";
-import { respondIfStorageUnavailable } from "@/server/persistence/respond-storage-unavailable";
 import { randomUUID } from "crypto";
 import { isValidEmail, isValidPassword, normalizeEmail } from "@/lib/auth/validation";
 import { signSessionToken, SESSION_MAX_AGE_SEC } from "@/lib/auth/session-token";
@@ -42,7 +41,6 @@ export default async function handler(req, res) {
       user: { id: user.id, email: user.email, role: user.role },
     });
   } catch (e) {
-    if (respondIfStorageUnavailable(res, e)) return;
     const msg = e?.message || "Sign up failed";
     if (msg.includes("already registered")) {
       return res.status(409).json({ error: msg });
@@ -51,6 +49,9 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: msg });
     }
     console.error(e);
+    if (msg.includes("read-only") || msg.includes("MONGODB_URI")) {
+      return res.status(503).json({ error: msg });
+    }
     return res.status(500).json({ error: "Sign up failed" });
   }
 }

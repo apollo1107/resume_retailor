@@ -11,7 +11,12 @@ const USERS_PATH = path.join(DATA_DIR, "users.json");
 export { MAX_ADMINS };
 
 function ensureDataDir() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+  if (fs.existsSync(DATA_DIR)) return;
+  try {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+  } catch (e) {
+    console.warn("[users-store-fs] Cannot create data directory (read-only host?):", e?.message || e);
+  }
 }
 
 function readUsersRaw() {
@@ -28,7 +33,18 @@ function readUsersRaw() {
 
 function writeUsersRaw(data) {
   ensureDataDir();
-  fs.writeFileSync(USERS_PATH, JSON.stringify(data, null, 2), "utf8");
+  try {
+    fs.writeFileSync(USERS_PATH, JSON.stringify(data, null, 2), "utf8");
+  } catch (e) {
+    const code = e?.code;
+    const ro = code === "EROFS" || code === "EACCES" || code === "EPERM" || /read-only/i.test(String(e?.message));
+    if (ro) {
+      throw new Error(
+        "Cannot write user data: filesystem is read-only (typical on Vercel). Set MONGODB_URI to use MongoDB for auth storage."
+      );
+    }
+    throw e;
+  }
 }
 
 function ensureAdminSeeded(data) {
@@ -50,7 +66,13 @@ function ensureAdminSeeded(data) {
 
 export function loadUsers() {
   const data = readUsersRaw();
-  if (ensureAdminSeeded(data)) writeUsersRaw(data);
+  if (ensureAdminSeeded(data)) {
+    try {
+      writeUsersRaw(data);
+    } catch (e) {
+      console.warn("[users-store-fs] Admin seed not persisted:", e?.message || e);
+    }
+  }
   return data;
 }
 
