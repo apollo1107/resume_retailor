@@ -51,14 +51,8 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [copiedField, setCopiedField] = useState(null);
   const [quickCopyDockPinned, setQuickCopyDockPinned] = useState(false);
-  /** Briefly show the CV URL text on the chip after a successful copy. */
-  const [cvUrlPeek, setCvUrlPeek] = useState(null);
   const timerIntervalRef = useRef(null);
   const startTimeRef = useRef(null);
-
-  useEffect(() => {
-    setCvUrlPeek(null);
-  }, [profileSlug]);
 
   // Lazy load profile data when profile slug changes
   useEffect(() => {
@@ -372,9 +366,9 @@ export default function ProfilePage() {
     selectedProfileData.cvLink ?? selectedProfileData.cv_link;
   const cvLinkValue =
     typeof cvLinkRaw === "string" ? cvLinkRaw.trim() : cvLinkRaw;
-  const hasCvLink = Boolean(cvLinkValue);
 
-  const quickCopyFieldsCore = [
+  // Quick copy fields
+  const quickCopyFields = [
     { key: "email", label: "Email", value: selectedProfileData.email },
     { key: "phone", label: "Phone", value: selectedProfileData.phone },
     { key: "location", label: "Address", value: selectedProfileData.location },
@@ -383,22 +377,8 @@ export default function ProfilePage() {
     { key: "lastRole", label: "Last Role", value: getLastRole() },
     { key: "linkedin", label: "LinkedIn", value: selectedProfileData.linkedin },
     { key: "github", label: "GitHub", value: selectedProfileData.github },
-  ].filter((field) => field.value);
-
-  const showQuickCopyDock =
-    quickCopyFieldsCore.length > 0 || hasCvLink;
-
-  const handleCvUrlDockClick = async () => {
-    if (!hasCvLink) {
-      alert(
-        'No CV URL yet. Add a "cvLink" string to this profile JSON in the resumes/ folder (same level as email), e.g. "cvLink": "https://flowcv.com/..."'
-      );
-      return;
-    }
-    setCvUrlPeek(cvLinkValue);
-    setTimeout(() => setCvUrlPeek(null), 4500);
-    await copyToClipboard(cvLinkValue, "cvLink");
-  };
+    { key: "cvLink", label: "CV Link", value: cvLinkValue },
+  ].filter((field) => field.value); // Only show fields with values
 
   const replyFirstName = firstNameFromFullName(selectedProfileData?.name);
 
@@ -434,11 +414,11 @@ export default function ProfilePage() {
 
         <EmailSnippetsSidebar replyFirstName={replyFirstName} />
 
-        {showQuickCopyDock && (
+        {quickCopyFields.length > 0 && (
           <div className={`rt-top-copy-dock${quickCopyDockPinned ? " rt-top-copy-dock--pinned" : ""}`}>
             <div className="rt-top-copy-dock__hit" aria-hidden />
             <div className="rt-top-copy-dock__panel">
-              {quickCopyFieldsCore.map(({ key, label, value }, index) => (
+              {quickCopyFields.map(({ key, label, value }, index) => (
                 <button
                   key={key}
                   type="button"
@@ -457,46 +437,6 @@ export default function ProfilePage() {
                   <div className="rt-quick-copy-label">{copiedField === key ? "Copied!" : label}</div>
                 </button>
               ))}
-              <button
-                type="button"
-                aria-label={
-                  copiedField === "cvLink"
-                    ? "CV URL copied"
-                    : hasCvLink
-                      ? `Copy CV URL: ${cvLinkValue}`
-                      : "CV URL — not set in profile JSON"
-                }
-                title={hasCvLink ? cvLinkValue : undefined}
-                className={`rt-quick-copy-btn rt-dock-copy-btn rt-qca-${quickCopyAnimSlot("cvLink")}${copiedField === "cvLink" ? " rt-quick-copy-btn--copied" : ""}`}
-                onClick={handleCvUrlDockClick}
-                style={{
-                  animationDelay: `${quickCopyFieldsCore.length * 45}ms`,
-                  opacity: hasCvLink ? 1 : 0.72,
-                }}
-              >
-                <span className="rt-quick-copy-icon-wrap">
-                  <QuickCopyIcon
-                    fieldKey="cvLink"
-                    size={48}
-                    color={
-                      copiedField === "cvLink"
-                        ? colors.successText
-                        : hasCvLink
-                          ? "#1e293b"
-                          : "#64748b"
-                    }
-                  />
-                </span>
-                <div className="rt-quick-copy-label">
-                  {cvUrlPeek
-                    ? cvUrlPeek.length > 30
-                      ? `${cvUrlPeek.slice(0, 28)}…`
-                      : cvUrlPeek
-                    : copiedField === "cvLink"
-                      ? "Copied!"
-                      : "CV URL"}
-                </div>
-              </button>
               <button
                 type="button"
                 className={`rt-top-copy-dock__pin${quickCopyDockPinned ? " rt-top-copy-dock__pin--active" : ""}`}
