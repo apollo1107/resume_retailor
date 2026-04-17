@@ -10,7 +10,6 @@ import {
 } from "@/lib/ui/quick-copy-animations-css";
 import { SPARKLE_PROFILE_CSS } from "@/lib/ui/sparkle-ui-css";
 import { EmailSnippetsSidebar } from "@/components/EmailSnippetsSidebar";
-import { trackDownload } from "@/client/track-download";
 
 function ProfileLoadingSpinner() {
   return (
@@ -193,7 +192,6 @@ export default function ProfilePage() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      trackDownload("cv");
 
       setLastGenerationWasCover(false);
       setLastGenerationTime(Math.floor((Date.now() - startTimeRef.current) / 1000));
@@ -274,7 +272,6 @@ export default function ProfilePage() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      trackDownload("cover");
 
       setLastGenerationWasCover(true);
       setLastGenerationTime(Math.floor((Date.now() - startTimeRef.current) / 1000));

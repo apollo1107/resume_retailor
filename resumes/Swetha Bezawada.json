@@ -2,20 +2,12 @@
   "name": "Swetha Bezawada",
   "title": "Senior AI Product Manager | Data Scientist",
   "email": "swethabezawada@proton.me",
-<<<<<<< HEAD
   "phone": "(341) 219-9963",
-=======
-  "phone": "'+1 (341) 219-9963 ",
->>>>>>> 2191400de9d83c0acdbbd1381067c806fcbdc741
   "location": "Fishers, IN ",
   "zip": "46037",
   "linkedin": "https://www.linkedin.com/in/swethabez/",
   "website": "",
   "github": "",
-<<<<<<< HEAD
-  "cvLink": "",
-  "base_skills": [],
-=======
   "cvLink": "https://flowcv.com/resume/wdkj8kj32d80",
   "base_skills": [
     "Product Management & Strategy: Product Roadmapping, Product Lifecycle Management, Agile/Scrum, Stakeholder Management, Market Research, Competitive Analysis, Product Vision, Prioritization, Executive Communication",
@@ -26,7 +18,6 @@
     "Tools & Collaboration: Jira, Confluence, Slack, Microsoft Teams, Figma, Miro, Lucidchart, Sketch, Zapier, Make, n8n",
     "Core Competencies: Leadership, Strategic Thinking, Problem Solving, Cross-functional Collaboration, Data Storytelling"
   ],
->>>>>>> 2191400de9d83c0acdbbd1381067c806fcbdc741
   "experience": [
     {
       "company": "Salesforce",

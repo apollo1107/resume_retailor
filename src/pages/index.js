@@ -3,10 +3,8 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import { SPARKLE_LANDING_CSS } from "@/lib/ui/sparkle-ui-css";
-import { useAuth } from "@/components/AuthProvider";
 
 export default function Home() {
-  const { user, signOut } = useAuth();
   const router = useRouter();
   const [profiles, setProfiles] = useState([]);
   const [profilesLoading, setProfilesLoading] = useState(true);
@@ -19,7 +17,7 @@ export default function Home() {
       setProfilesLoading(true);
       setProfilesError("");
       try {
-        const r = await fetch("/api/profiles", { credentials: "include" });
+        const r = await fetch("/api/profiles");
         const data = await r.json().catch(() => ({}));
         if (cancelled) return;
         if (!r.ok) {
@@ -107,55 +105,35 @@ export default function Home() {
             minWidth: 0,
           }}
         >
-          {user ? (
-            <div
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              gap: "12px",
+              marginBottom: "12px",
+              fontSize: "14px",
+              color: colors.textSecondary,
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => router.push("/admin")}
               style={{
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
-                justifyContent: "flex-end",
-                gap: "12px",
-                marginBottom: "12px",
+                padding: "8px 14px",
                 fontSize: "14px",
-                color: colors.textSecondary,
+                fontWeight: "600",
+                color: colors.buttonText,
+                background: colors.buttonBg,
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer",
               }}
             >
-              <span style={{ marginRight: "auto" }}>{user.email}</span>
-              {user.role === "admin" ? (
-                <button
-                  type="button"
-                  onClick={() => router.push("/admin")}
-                  style={{
-                    padding: "8px 14px",
-                    fontSize: "14px",
-                    fontWeight: "600",
-                    color: colors.buttonText,
-                    background: colors.buttonBg,
-                    border: "none",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                  }}
-                >
-                  Go to Admin
-                </button>
-              ) : null}
-              <button
-                type="button"
-                onClick={() => signOut()}
-                style={{
-                  padding: "8px 14px",
-                  fontSize: "14px",
-                  color: colors.text,
-                  background: "rgba(30, 41, 59, 0.75)",
-                  border: `1px solid ${colors.inputBorder}`,
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                }}
-              >
-                Sign out
-              </button>
-            </div>
-          ) : null}
+              Admin
+            </button>
+          </div>
           <div
             className="rt-landing-card"
             style={{
@@ -251,7 +229,7 @@ export default function Home() {
                   ) : null}
                   {!profilesLoading && profiles.length === 0 && !profilesError ? (
                     <p style={{ margin: "10px 0 0 0", fontSize: "14px", color: colors.textSecondary }}>
-                      No resumes are assigned to your account. Ask an administrator to assign profiles.
+                      No resumes found in the resumes folder.
                     </p>
                   ) : null}
                 </div>

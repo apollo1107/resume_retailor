@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
-import { hashPassword, verifyPassword } from "@/lib/auth/password";
-import { normalizeEmail, isValidEmail, isValidPassword } from "@/lib/auth/validation";
+import { hashPassword } from "@/lib/auth/password";
+import { normalizeEmail, isValidPassword } from "@/lib/auth/validation";
 import { ADMIN_SEED_EMAIL, ADMIN_SEED_PASSWORD } from "@/lib/auth/admin-seed";
 import { MAX_ADMINS } from "@/config/auth-limits";
 
@@ -58,7 +58,6 @@ function ensureAdminSeeded(data) {
     passwordSalt: salt,
     passwordHash: hash,
     role: "admin",
-    assignedProfiles: [],
     createdAt: new Date().toISOString(),
   });
   return true;
@@ -76,43 +75,8 @@ export function loadUsers() {
   return data;
 }
 
-export function findUserByEmail(email) {
-  const n = normalizeEmail(email);
-  return loadUsers().users.find((u) => normalizeEmail(u.email) === n) || null;
-}
-
 export function findUserById(id) {
   return loadUsers().users.find((u) => u.id === id) || null;
-}
-
-export function createUser(email, password) {
-  if (!isValidEmail(email)) throw new Error("Invalid email");
-  if (!isValidPassword(password)) throw new Error("Invalid password");
-  const n = normalizeEmail(email);
-  const data = loadUsers();
-  if (data.users.some((u) => normalizeEmail(u.email) === n)) {
-    throw new Error("Email already registered");
-  }
-  const { salt, hash } = hashPassword(password);
-  const user = {
-    id: randomUUID(),
-    email: n,
-    passwordSalt: salt,
-    passwordHash: hash,
-    role: "user",
-    assignedProfiles: [],
-    createdAt: new Date().toISOString(),
-  };
-  data.users.push(user);
-  writeUsersRaw(data);
-  return user;
-}
-
-export function verifyUserLogin(email, password) {
-  const user = findUserByEmail(email);
-  if (!user) return null;
-  if (!verifyPassword(password, user.passwordSalt, user.passwordHash)) return null;
-  return user;
 }
 
 export function listUsersPublic() {
@@ -120,7 +84,6 @@ export function listUsersPublic() {
     id: u.id,
     email: u.email,
     role: u.role,
-    assignedProfiles: Array.isArray(u.assignedProfiles) ? u.assignedProfiles : [],
     createdAt: u.createdAt,
   }));
 }
@@ -168,17 +131,6 @@ export function setUserRoleById(userId, nextRole) {
   }
 
   user.role = nextRole;
-  writeUsersRaw(data);
-  return user;
-}
-
-export function setUserAssignedProfilesById(userId, profiles) {
-  if (!Array.isArray(profiles)) throw new Error("Invalid assigned profiles");
-  const clean = [...new Set(profiles.map((p) => String(p).trim()).filter(Boolean))];
-  const data = loadUsers();
-  const user = data.users.find((x) => x.id === userId);
-  if (!user) throw new Error("User not found");
-  user.assignedProfiles = clean;
   writeUsersRaw(data);
   return user;
 }

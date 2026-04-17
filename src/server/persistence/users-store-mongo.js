@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { getMongoDb } from "@/lib/db/mongo";
-import { hashPassword, verifyPassword } from "@/lib/auth/password";
-import { normalizeEmail, isValidEmail, isValidPassword } from "@/lib/auth/validation";
+import { hashPassword } from "@/lib/auth/password";
+import { normalizeEmail, isValidPassword } from "@/lib/auth/validation";
 import { ADMIN_SEED_EMAIL, ADMIN_SEED_PASSWORD } from "@/lib/auth/admin-seed";
 import { MAX_ADMINS } from "@/config/auth-limits";
 
@@ -30,48 +30,13 @@ async function ensureAdminSeededOnce(c) {
     passwordSalt: salt,
     passwordHash: hash,
     role: "admin",
-    assignedProfiles: [],
     createdAt: new Date().toISOString(),
   });
-}
-
-export async function findUserByEmail(email) {
-  const n = normalizeEmail(email);
-  const c = await usersColl();
-  return (await c.findOne({ email: n })) || null;
 }
 
 export async function findUserById(id) {
   const c = await usersColl();
   return (await c.findOne({ id })) || null;
-}
-
-export async function createUser(email, password) {
-  if (!isValidEmail(email)) throw new Error("Invalid email");
-  if (!isValidPassword(password)) throw new Error("Invalid password");
-  const n = normalizeEmail(email);
-  const c = await usersColl();
-  const dup = await c.findOne({ email: n });
-  if (dup) throw new Error("Email already registered");
-  const { salt, hash } = hashPassword(password);
-  const user = {
-    id: randomUUID(),
-    email: n,
-    passwordSalt: salt,
-    passwordHash: hash,
-    role: "user",
-    assignedProfiles: [],
-    createdAt: new Date().toISOString(),
-  };
-  await c.insertOne(user);
-  return user;
-}
-
-export async function verifyUserLogin(email, password) {
-  const user = await findUserByEmail(email);
-  if (!user) return null;
-  if (!verifyPassword(password, user.passwordSalt, user.passwordHash)) return null;
-  return user;
 }
 
 export async function listUsersPublic() {
@@ -81,7 +46,6 @@ export async function listUsersPublic() {
     id: u.id,
     email: u.email,
     role: u.role,
-    assignedProfiles: Array.isArray(u.assignedProfiles) ? u.assignedProfiles : [],
     createdAt: u.createdAt,
   }));
 }
@@ -126,13 +90,4 @@ export async function setUserRoleById(userId, nextRole) {
 
   await c.updateOne({ id: userId }, { $set: { role: nextRole } });
   return { ...user, role: nextRole };
-}
-
-export async function setUserAssignedProfilesById(userId, profiles) {
-  if (!Array.isArray(profiles)) throw new Error("Invalid assigned profiles");
-  const clean = [...new Set(profiles.map((p) => String(p).trim()).filter(Boolean))];
-  const c = await usersColl();
-  const r = await c.updateOne({ id: userId }, { $set: { assignedProfiles: clean } });
-  if (r.matchedCount === 0) throw new Error("User not found");
-  return await findUserById(userId);
 }

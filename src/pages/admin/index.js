@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useAuth } from "@/components/AuthProvider";
 import { adminPalette } from "@/components/admin/admin-palette";
 import { MAX_ADMINS } from "@/config/auth-limits";
 
@@ -10,7 +9,6 @@ const colors = adminPalette;
 
 export default function AdminUsersPage() {
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
   const [users, setUsers] = useState([]);
   const [loadError, setLoadError] = useState("");
   const [busyId, setBusyId] = useState(null);
@@ -29,21 +27,11 @@ export default function AdminUsersPage() {
     error: "",
     submitting: false,
   });
-  const [allProfiles, setAllProfiles] = useState([]);
-  const [assignModal, setAssignModal] = useState({
-    open: false,
-    userId: "",
-    email: "",
-    selected: [],
-    error: "",
-    submitting: false,
-  });
 
   useEffect(() => {
-    if (authLoading || !user || user.role !== "admin") return;
     (async () => {
       try {
-        const r = await fetch("/api/admin/users", { credentials: "include" });
+        const r = await fetch("/api/admin/users");
         const data = await r.json();
         if (!r.ok) throw new Error(data.error || "Failed to load");
         setUsers(data.users || []);
@@ -51,21 +39,7 @@ export default function AdminUsersPage() {
         setLoadError(e.message || "Failed to load users");
       }
     })();
-  }, [authLoading, user]);
-
-  useEffect(() => {
-    if (authLoading || !user || user.role !== "admin") return;
-    (async () => {
-      try {
-        const r = await fetch("/api/profiles", { credentials: "include" });
-        const data = await r.json();
-        if (!r.ok) throw new Error(data.error || "Failed to load resumes");
-        setAllProfiles(data || []);
-      } catch (e) {
-        setLoadError(e.message || "Failed to load resumes");
-      }
-    })();
-  }, [authLoading, user]);
+  }, []);
 
   const openPasswordModal = (targetId, email) => {
     setPasswordModal({
@@ -84,7 +58,6 @@ export default function AdminUsersPage() {
     try {
       const r = await fetch(`/api/admin/users/${encodeURIComponent(passwordModal.userId)}`, {
         method: "PATCH",
-        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password: passwordModal.password }),
       });
@@ -127,7 +100,6 @@ export default function AdminUsersPage() {
     try {
       const r = await fetch(`/api/admin/users/${encodeURIComponent(deleteModal.userId)}`, {
         method: "DELETE",
-        credentials: "include",
       });
       const data = await r.json().catch(() => ({}));
       if (!r.ok) {
@@ -157,7 +129,6 @@ export default function AdminUsersPage() {
     try {
       const r = await fetch(`/api/admin/users/${encodeURIComponent(targetId)}`, {
         method: "PATCH",
-        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role }),
       });
@@ -171,59 +142,6 @@ export default function AdminUsersPage() {
       setBusyId(null);
     }
   };
-
-  const openAssignModal = (targetUser) => {
-    setAssignModal({
-      open: true,
-      userId: targetUser.id,
-      email: targetUser.email,
-      selected: Array.isArray(targetUser.assignedProfiles) ? targetUser.assignedProfiles : [],
-      error: "",
-      submitting: false,
-    });
-  };
-
-  const submitAssignProfiles = async () => {
-    setBusyId(assignModal.userId);
-    setAssignModal((prev) => ({ ...prev, submitting: true, error: "" }));
-    try {
-      const r = await fetch(`/api/admin/users/${encodeURIComponent(assignModal.userId)}`, {
-        method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ assignedProfiles: assignModal.selected }),
-      });
-      const data = await r.json().catch(() => ({}));
-      if (!r.ok) {
-        setAssignModal((prev) => ({
-          ...prev,
-          submitting: false,
-          error: data.error || "Could not update assigned resumes",
-        }));
-        return;
-      }
-      setUsers((prev) =>
-        prev.map((u) =>
-          u.id === assignModal.userId ? { ...u, assignedProfiles: assignModal.selected } : u
-        )
-      );
-      setAssignModal({
-        open: false,
-        userId: "",
-        email: "",
-        selected: [],
-        error: "",
-        submitting: false,
-      });
-    } finally {
-      setBusyId(null);
-      setAssignModal((prev) => ({ ...prev, submitting: false }));
-    }
-  };
-
-  if (!authLoading && user && user.role !== "admin") {
-    return null;
-  }
 
   return (
     <>
@@ -263,7 +181,6 @@ export default function AdminUsersPage() {
                   <tr style={{ background: "rgba(30, 41, 59, 0.9)", textAlign: "left" }}>
                     <th style={{ padding: "12px 16px", fontWeight: 600 }}>Email</th>
                     <th style={{ padding: "12px 16px", fontWeight: 600 }}>Role</th>
-                    <th style={{ padding: "12px 16px", fontWeight: 600 }}>Assigned resumes</th>
                     <th style={{ padding: "12px 16px", fontWeight: 600 }}>Actions</th>
                   </tr>
                 </thead>
@@ -276,11 +193,6 @@ export default function AdminUsersPage() {
                     >
                       <td style={{ padding: "12px 16px", color: colors.text }}>{u.email}</td>
                       <td style={{ padding: "12px 16px", color: colors.muted }}>{u.role}</td>
-                      <td style={{ padding: "12px 16px", color: colors.muted }}>
-                        {u.role === "admin"
-                          ? "All resumes"
-                          : `${Array.isArray(u.assignedProfiles) ? u.assignedProfiles.length : 0} selected`}
-                      </td>
                       <td style={{ padding: "8px 16px" }} onClick={(e) => e.stopPropagation()}>
                         <button
                           type="button"
@@ -298,23 +210,6 @@ export default function AdminUsersPage() {
                           }}
                         >
                           Set password
-                        </button>
-                        <button
-                          type="button"
-                          disabled={busyId === u.id}
-                          onClick={() => openAssignModal(u)}
-                          style={{
-                            marginRight: "8px",
-                            padding: "6px 10px",
-                            fontSize: "13px",
-                            borderRadius: "6px",
-                            border: `1px solid ${colors.border}`,
-                            background: "rgba(30, 41, 59, 0.6)",
-                            color: colors.text,
-                            cursor: busyId === u.id ? "wait" : "pointer",
-                          }}
-                        >
-                          Assign resumes
                         </button>
                         <button
                           type="button"
@@ -339,7 +234,7 @@ export default function AdminUsersPage() {
                         </button>
                         <button
                           type="button"
-                          disabled={busyId === u.id || u.id === user?.id}
+                          disabled={busyId === u.id}
                           onClick={() => openDeleteModal(u.id, u.email)}
                           style={{
                             padding: "6px 10px",
@@ -348,7 +243,7 @@ export default function AdminUsersPage() {
                             border: "none",
                             background: "rgba(127, 29, 29, 0.45)",
                             color: "#fecaca",
-                            cursor: busyId === u.id || u.id === user?.id ? "not-allowed" : "pointer",
+                            cursor: busyId === u.id ? "not-allowed" : "pointer",
                           }}
                         >
                           Delete
@@ -361,7 +256,7 @@ export default function AdminUsersPage() {
             </div>
           )}
           <p style={{ marginTop: "16px", fontSize: "13px", color: colors.muted }}>
-            Click a row to open usage details and download charts.
+            Click a row for user details.
           </p>
           <p style={{ marginTop: "6px", fontSize: "12px", color: colors.muted }}>
             Maximum administrators allowed: {MAX_ADMINS}
@@ -463,125 +358,6 @@ export default function AdminUsersPage() {
             </div>
           </div>
         ) : null}
-        {assignModal.open ? (
-          <div
-            style={{
-              position: "fixed",
-              inset: 0,
-              background: "rgba(2, 6, 23, 0.7)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "16px",
-              zIndex: 50,
-            }}
-          >
-            <div
-              style={{
-                width: "100%",
-                maxWidth: "540px",
-                borderRadius: "12px",
-                border: `1px solid ${colors.border}`,
-                background: "#0b1222",
-                boxShadow: "0 20px 60px rgba(0, 0, 0, 0.4)",
-                padding: "20px",
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <h2 style={{ margin: 0, fontSize: "18px" }}>Assign Resumes</h2>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setAssignModal({
-                      open: false,
-                      userId: "",
-                      email: "",
-                      selected: [],
-                      error: "",
-                      submitting: false,
-                    })
-                  }
-                  style={{
-                    border: "none",
-                    background: "transparent",
-                    color: colors.muted,
-                    fontSize: "18px",
-                    cursor: "pointer",
-                  }}
-                >
-                  ×
-                </button>
-              </div>
-              <p style={{ marginTop: "10px", marginBottom: "14px", fontSize: "13px", color: colors.muted }}>
-                User: {assignModal.email}
-              </p>
-              <div
-                style={{
-                  border: `1px solid ${colors.border}`,
-                  borderRadius: "8px",
-                  maxHeight: "280px",
-                  overflow: "auto",
-                  padding: "10px",
-                }}
-              >
-                {allProfiles.map((p) => {
-                  const checked = assignModal.selected.includes(p.id);
-                  return (
-                    <label
-                      key={p.id}
-                      style={{
-                        display: "flex",
-                        gap: "8px",
-                        alignItems: "center",
-                        marginBottom: "8px",
-                        color: colors.text,
-                        fontSize: "13px",
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={checked}
-                        onChange={(e) => {
-                          const isChecked = e.target.checked;
-                          setAssignModal((prev) => ({
-                            ...prev,
-                            selected: isChecked
-                              ? [...prev.selected, p.id]
-                              : prev.selected.filter((id) => id !== p.id),
-                          }));
-                        }}
-                      />
-                      {p.name}
-                    </label>
-                  );
-                })}
-              </div>
-              {assignModal.error ? (
-                <p style={{ marginTop: "10px", marginBottom: 0, color: colors.danger, fontSize: "13px" }}>
-                  {assignModal.error}
-                </p>
-              ) : null}
-              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "16px" }}>
-                <button
-                  type="button"
-                  onClick={submitAssignProfiles}
-                  disabled={assignModal.submitting}
-                  style={{
-                    padding: "9px 14px",
-                    borderRadius: "8px",
-                    border: "none",
-                    background: "#3b82f6",
-                    color: "#fff",
-                    fontWeight: 600,
-                    cursor: assignModal.submitting ? "not-allowed" : "pointer",
-                  }}
-                >
-                  {assignModal.submitting ? "Saving..." : "Save assignments"}
-                </button>
-              </div>
-            </div>
-          </div>
-        ) : null}
         {deleteModal.open ? (
           <div
             style={{
@@ -631,8 +407,7 @@ export default function AdminUsersPage() {
                 </button>
               </div>
               <p style={{ marginTop: "10px", marginBottom: "14px", fontSize: "13px", color: colors.muted }}>
-                This will permanently delete <strong style={{ color: colors.text }}>{deleteModal.email}</strong> and
-                all download stats.
+                This will permanently delete <strong style={{ color: colors.text }}>{deleteModal.email}</strong>.
               </p>
               {deleteModal.error ? (
                 <p style={{ marginTop: "10px", marginBottom: 0, color: colors.danger, fontSize: "13px" }}>

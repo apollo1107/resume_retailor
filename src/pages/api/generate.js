@@ -21,18 +21,11 @@ import {
   profileHasPermanentContent,
 } from "@/lib/resume/merge-resume-base";
 import { RESUMES_DIR } from "@/config/server-paths";
-import { getSessionFromApiRequest } from "@/lib/auth/session-from-request";
-import { findUserById, userCanAccessProfile } from "@/server/persistence/users-store";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).send("Method not allowed");
 
   try {
-    const session = await getSessionFromApiRequest(req);
-    if (!session) return res.status(401).send("Unauthorized");
-    const user = await findUserById(session.sub);
-    if (!user) return res.status(401).send("Unauthorized");
-
     const {
       profile: profileSlug,
       jd,
@@ -55,9 +48,6 @@ export default async function handler(req, res) {
     }
 
     const resumeName = profileConfig.resume;
-    if (!userCanAccessProfile(user, resumeName)) {
-      return res.status(403).send("This resume is not assigned to your account.");
-    }
 
     // Get template from profile mapping or use provided/default
     const templateName =
