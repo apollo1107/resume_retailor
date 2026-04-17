@@ -8,10 +8,6 @@
   "linkedin": "https://www.linkedin.com/in/praveen-chaulagain-850266273/",
   "website": "",
   "github": "",
-<<<<<<< HEAD
-  "cvLink": "",
-  "base_skills": [],
-=======
   "cvLink": "https://flowcv.com/resume/3oebm4rq2hgt",
   "base_skills": [
     "Languages and Frameworks: Python, Java, Go, Scala, SQL, R, Shell scripting (Bash), Perl, Next.js, React, PySpark, Apache Spark, Apache Flume, Apache NiFi, Scikit-learn, TensorFlow, Keras, XGBoost, LightGBM, Random Forest, Neural Networks",
@@ -25,7 +21,6 @@
     "Testing and Quality Assurance: Unit Testing, PyTest, JUnit, Test Automation (PyTest, JUnit), Data Validation Tools (Great Expectations)",
     "Specialized Expertise: Salesforce (APIs, batch ingestion pipelines for Salesforce data), Healthcare Data (FHIR APIs, HL7v2, ICD-10, SNOMED CT, LOINC, RxNorm), RAG Infrastructure (Building and scaling RAG infrastructure for AI-powered applications), Gremlin (Proficiency in Gremlin for querying graph databases), Web Scraping (Social media web scraping in production environments), dbt (dbt Labs: Production experience with dbt Labs, building models and documenting Snowflake data models)"
   ],
->>>>>>> 2191400de9d83c0acdbbd1381067c806fcbdc741
   "experience": [
     {
       "company": "NaviHealth",

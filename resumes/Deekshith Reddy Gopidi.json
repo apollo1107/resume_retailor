@@ -8,10 +8,6 @@
   "linkedin": "https://www.linkedin.com/in/deekshith-reddy-gopidi-21b9a22a9/",
   "website": "",
   "github": "",
-<<<<<<< HEAD
-  "cvLink": "",
-  "base_skills": [],
-=======
   "cvLink": "https://flowcv.com/resume/g0crasdmhg6a",
   "base_skills": [
     "Programming Languages: Python, Scala, SQL, Shell Scripting, Java",
@@ -30,7 +26,6 @@
     "Governance & Compliance: HIPAA, SOX, Data Governance, Audit Trails, Secure Data Handling",
     "Methodologies: Agile, Scrum, JIRA"
   ],
->>>>>>> 2191400de9d83c0acdbbd1381067c806fcbdc741
   "experience": [
     {
       "company": "Deutsche Bank",

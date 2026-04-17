@@ -8,10 +8,6 @@
   "linkedin": "https://www.linkedin.com/in/hk4cd/",
   "website": "",
   "github": "",
-<<<<<<< HEAD
-  "cvLink": "",
-  "base_skills": [],
-=======
   "cvLink": "https://flowcv.com/resume/cu46slt4kmhw",
   "base_skills": [
     "Machine Learning & AI Technologies: Keras, TensorFlow, PyTorch, Theano, Caffe, MXNet, Fast.ai, Hugging Face Transformers, Scikit-learn, XGBoost, LightGBM, CatBoost, H2O.ai, Statsmodels, TPOT, Auto-sklearn, PyCaret, Scikit-Image, Feature-engine",
@@ -26,7 +22,6 @@
     "Version Control & Development Tools: Git, GitHub, Bitbucket, Jupyter, PyCharm, Visual Studio Code",
     "Data Visualization: Plotly, Bokeh, Dash, Matplotlib, Seaborn, Altair, ggplot2"
   ],
->>>>>>> 2191400de9d83c0acdbbd1381067c806fcbdc741
   "experience": [
     {
       "company": "Healthcare Risk Advisors",

@@ -8,10 +8,6 @@
   "linkedin": "https://www.linkedin.com/in/kedarnanda",
   "website": "",
   "github": "",
-<<<<<<< HEAD
-  "cvLink": "",
-  "base_skills": [],
-=======
   "cvLink": "https://flowcv.com/resume/nmoq54g76eco",
   "base_skills": [
     "Data Engineering & Platforms: ETL/ELT pipelines, data modeling, dimensional design (star/snowflake), data warehousing, data lakes, data marts, batch and real-time processing, distributed systems, pipeline optimization, fault tolerance, partitioning, performance tuning.",
@@ -21,7 +17,6 @@
     "Analytics, AI & Applications: Tableau, QuickSight, Pandas, NumPy, Matplotlib, Seaborn, Plotly; Scikit-learn, TensorFlow, PyTorch, Random Forest, XGBoost, KNN, PCA, K-Means, Neural Networks; GPT-4/3.5, Claude, Gemini, Hugging Face, LangChain, RAG, Pinecone, Weaviate, ChromaDB, PromptLayer; FastAPI, Flask, Streamlit, React.",
     "DevOps, Governance & Leadership: Jenkins, GitLab CI, CircleCI, Azure DevOps, AWS CodePipeline, Docker, Kubernetes, Helm, Terraform; data quality, lineage, monitoring, governance, IAM, encryption, HIPAA compliance; Agile, team leadership, mentoring, stakeholder management."
   ],
->>>>>>> 2191400de9d83c0acdbbd1381067c806fcbdc741
   "experience": [
     {
       "company": "PRA Health Sciences",
