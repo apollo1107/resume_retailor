@@ -1,12 +1,46 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import { SPARKLE_LANDING_CSS } from "@/lib/ui/sparkle-ui-css";
+import { useAuth } from "@/components/AuthProvider";
 
 export default function Home() {
+  const { user, signOut } = useAuth();
   const router = useRouter();
-  const [profileSlug, setProfileSlug] = useState("");
+  const [profiles, setProfiles] = useState([]);
+  const [profilesLoading, setProfilesLoading] = useState(true);
+  const [profilesError, setProfilesError] = useState("");
+  const [selectedSlug, setSelectedSlug] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setProfilesLoading(true);
+      setProfilesError("");
+      try {
+        const r = await fetch("/api/profiles", { credentials: "include" });
+        const data = await r.json().catch(() => ({}));
+        if (cancelled) return;
+        if (!r.ok) {
+          setProfilesError(data.error || "Could not load resumes.");
+          setProfiles([]);
+          return;
+        }
+        setProfiles(Array.isArray(data) ? data : []);
+      } catch {
+        if (!cancelled) {
+          setProfilesError("Could not load resumes.");
+          setProfiles([]);
+        }
+      } finally {
+        if (!cancelled) setProfilesLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const colors = {
     bg: "#0f172a",
@@ -23,8 +57,8 @@ export default function Home() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (profileSlug.trim()) {
-      router.push(`/${profileSlug.trim()}`);
+    if (selectedSlug) {
+      router.push(`/${selectedSlug}`);
     }
   };
 
@@ -73,6 +107,55 @@ export default function Home() {
             minWidth: 0,
           }}
         >
+          {user ? (
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                gap: "12px",
+                marginBottom: "12px",
+                fontSize: "14px",
+                color: colors.textSecondary,
+              }}
+            >
+              <span style={{ marginRight: "auto" }}>{user.email}</span>
+              {user.role === "admin" ? (
+                <button
+                  type="button"
+                  onClick={() => router.push("/admin")}
+                  style={{
+                    padding: "8px 14px",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    color: colors.buttonText,
+                    background: colors.buttonBg,
+                    border: "none",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Go to Admin
+                </button>
+              ) : null}
+              <button
+                type="button"
+                onClick={() => signOut()}
+                style={{
+                  padding: "8px 14px",
+                  fontSize: "14px",
+                  color: colors.text,
+                  background: "rgba(30, 41, 59, 0.75)",
+                  border: `1px solid ${colors.inputBorder}`,
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                }}
+              >
+                Sign out
+              </button>
+            </div>
+          ) : null}
           <div
             className="rt-landing-card"
             style={{
@@ -119,6 +202,7 @@ export default function Home() {
               >
                 <div style={{ minWidth: 0, maxWidth: "100%" }}>
                   <label
+                    htmlFor="rt-home-profile-select"
                     style={{
                       display: "block",
                       fontSize: "15px",
@@ -127,12 +211,13 @@ export default function Home() {
                       marginBottom: "8px",
                     }}
                   >
-                    Enter Profile ID
+                    Choose a resume
                   </label>
-                  <input
-                    type="text"
-                    value={profileSlug}
-                    onChange={(e) => setProfileSlug(e.target.value)}
+                  <select
+                    id="rt-home-profile-select"
+                    value={selectedSlug}
+                    onChange={(e) => setSelectedSlug(e.target.value)}
+                    disabled={profilesLoading || profiles.length === 0}
                     style={{
                       width: "100%",
                       maxWidth: "100%",
@@ -145,20 +230,35 @@ export default function Home() {
                       borderRadius: "8px",
                       outline: "none",
                       boxSizing: "border-box",
-                      transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+                      cursor: profilesLoading || profiles.length === 0 ? "not-allowed" : "pointer",
                     }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = colors.buttonBg;
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = colors.inputBorder;
-                    }}
-                  />
+                  >
+                    <option value="">
+                      {profilesLoading
+                        ? "Loading resumes…"
+                        : profiles.length === 0
+                          ? "No resumes available"
+                          : "Select a resume…"}
+                    </option>
+                    {profiles.map((p) => (
+                      <option key={p.slug} value={p.slug}>
+                        {p.name}
+                      </option>
+                    ))}
+                  </select>
+                  {profilesError ? (
+                    <p style={{ margin: "10px 0 0 0", fontSize: "14px", color: "#f87171" }}>{profilesError}</p>
+                  ) : null}
+                  {!profilesLoading && profiles.length === 0 && !profilesError ? (
+                    <p style={{ margin: "10px 0 0 0", fontSize: "14px", color: colors.textSecondary }}>
+                      No resumes are assigned to your account. Ask an administrator to assign profiles.
+                    </p>
+                  ) : null}
                 </div>
 
                 <button
                   type="submit"
-                  disabled={!profileSlug.trim()}
+                  disabled={!selectedSlug}
                   style={{
                     width: "100%",
                     maxWidth: "100%",
@@ -166,12 +266,10 @@ export default function Home() {
                     fontSize: "16px",
                     fontWeight: "500",
                     color: colors.buttonText,
-                    background: profileSlug.trim()
-                      ? colors.buttonBg
-                      : colors.buttonDisabled,
+                    background: selectedSlug ? colors.buttonBg : colors.buttonDisabled,
                     border: "none",
                     borderRadius: "8px",
-                    cursor: profileSlug.trim() ? "pointer" : "not-allowed",
+                    cursor: selectedSlug ? "pointer" : "not-allowed",
                     boxSizing: "border-box",
                     transition: "background 0.2s ease, opacity 0.2s ease",
                   }}

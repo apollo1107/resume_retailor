@@ -9,7 +9,9 @@ import { computeCoverLetterBaseFileName } from "@/lib/cover-letter/cover-letter-
 import { buildCoverLetterPrompt } from "@/lib/cover-letter/cover-letter-prompt";
 import { parseCoverLetterParagraphs } from "@/lib/cover-letter/cover-letter-parse";
 import CoverLetterPdf from "@/lib/pdf-templates/CoverLetterPdf";
-import { RESUMES_DIR } from "@/lib/server-paths";
+import { RESUMES_DIR } from "@/config/server-paths";
+import { getSessionFromApiRequest } from "@/lib/auth/session-from-request";
+import { findUserById, userCanAccessProfile } from "@/server/persistence/users-store";
 
 function formatWorkHistoryForPrompt(experience) {
   if (!Array.isArray(experience) || experience.length === 0) {
@@ -39,6 +41,11 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).send("Method not allowed");
 
   try {
+    const session = await getSessionFromApiRequest(req);
+    if (!session) return res.status(401).send("Unauthorized");
+    const user = await findUserById(session.sub);
+    if (!user) return res.status(401).send("Unauthorized");
+
     const {
       profile: profileSlug,
       jd,
@@ -60,6 +67,9 @@ export default async function handler(req, res) {
     }
 
     const resumeName = profileConfig.resume;
+    if (!userCanAccessProfile(user, resumeName)) {
+      return res.status(403).send("This resume is not assigned to your account.");
+    }
     const profilePath = path.join(RESUMES_DIR, `${resumeName}.json`);
     if (!fs.existsSync(profilePath)) {
       return res.status(404).send(`Profile file "${resumeName}.json" not found`);

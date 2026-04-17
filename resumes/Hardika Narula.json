@@ -2,14 +2,34 @@
   "name": "Hardika Narula",
   "title": "Senior Technical Product Manager, Gen AI",
   "email": "hardikanarula_po@proton.me",
+<<<<<<< HEAD
   "phone": "(341) 219-9963",
+=======
+  "phone": "'+1 (341) 219-9963",
+>>>>>>> 2191400de9d83c0acdbbd1381067c806fcbdc741
   "location": "Sunnyvale, CA",
   "zip": "94089",
   "linkedin": "https://www.linkedin.com/in/hardikanarula/",
   "website": "",
   "github": "",
+<<<<<<< HEAD
   "cvLink": "",
   "base_skills": [],
+=======
+  "cvLink": "https://flowcv.com/resume/m1h76edcjvsu",
+  "base_skills": [
+    "Product roadmap development, product lifecycle management, product vision & strategy, stakeholder management, prioritization, product-led growth (PLG), GTM strategy, conversion optimization, A/B testing",
+    "Supervised learning, unsupervised learning, deep learning, NLP, human-in-the-loop (HITL) ML, AI sentiment analysis, churn prediction modeling, AI ethics, bias mitigation, model tuning",
+    "Python, R, SQL, Apache Spark, Hadoop, NoSQL, BigQuery, Redshift, distributed systems, low-latency systems",
+    "Zapier, Make.com, n8n",
+    "Figma, Sketch, Lucidchart, Miro",
+    "Enterprise SaaS, Fintech (Payments, Billing, Lending, Risk), Healthcare (FHIR R4/R4B, HL7, CDS Hooks, EHR), Telecom (eSIM/eUICC, HLR/HSS), GEOINT, Retail & Marketplace",
+    "AWS, Microsoft Azure, Google Cloud Platform, Docker, Kubernetes, CI/CD pipelines, model deployment, model monitoring",
+    "Docker, Kubernetes, CI/CD Pipelines, Model Monitoring",
+    "Jira, Confluence, Slack, Microsoft Teams, Zoom, Google Meet, Figma, Miro",
+    "Leadership, Problem-Solving, Strategic Thinking, Time Management, Cross-functional Communication, Stakeholder Engagement"
+  ],
+>>>>>>> 2191400de9d83c0acdbbd1381067c806fcbdc741
   "experience": [
     {
       "company": "Amazon",

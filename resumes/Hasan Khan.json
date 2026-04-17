@@ -8,8 +8,25 @@
   "linkedin": "https://www.linkedin.com/in/hk4cd/",
   "website": "",
   "github": "",
+<<<<<<< HEAD
   "cvLink": "",
   "base_skills": [],
+=======
+  "cvLink": "https://flowcv.com/resume/cu46slt4kmhw",
+  "base_skills": [
+    "Machine Learning & AI Technologies: Keras, TensorFlow, PyTorch, Theano, Caffe, MXNet, Fast.ai, Hugging Face Transformers, Scikit-learn, XGBoost, LightGBM, CatBoost, H2O.ai, Statsmodels, TPOT, Auto-sklearn, PyCaret, Scikit-Image, Feature-engine",
+    "Natural Language Processing (NLP): NLTK, SpaCy, Gensim, TextBlob, AllenNLP, OpenNLP, Tesseract, Hugging Face Transformers, BERT, GPT, T5, DistilBERT, LIME, SHAP, ELI5, Captum",
+    "Deep Learning & Neural Networks: CNN, RNN, LSTM, GANs, VAEs, CycleGAN, Pix2Pix, YOLO, Detectron2, TensorFlow Object Detection API",
+    "Reinforcement Learning: Stable-Baselines3, Ray RLLib, OpenAI Gym, TensorFlow Agents",
+    "Big Data & Distributed Computing: Apache Spark, Dask, Hadoop, Apache Kafka, Ray, PySpark, BigQuery",
+    "Data Science & Analytics: Pandas, NumPy, Vaex, Prophet, ARIMA, fbprophet, t-SNE, UMAP, PCA, LDA, K-means, DBSCAN, Agglomerative Clustering",
+    "Model Deployment & MLOps: MLflow, TensorFlow Serving, ONNX, Flask, FastAPI, Docker, Kubernetes, Apache Airflow, Luigi, Dagster, Talend, Apache NiFi, Jenkins, GitLab CI/CD, Kubeflow, Pachyderm, DVC (Data Version Control), Terraform",
+    "Cloud Platforms & Services: AWS (S3, EC2, SageMaker, Lambda), Microsoft Azure, Google Cloud Platform, IBM Watson",
+    "Programming Languages: Python, Java, C++, Ada, HTML, JavaScript, SQL",
+    "Version Control & Development Tools: Git, GitHub, Bitbucket, Jupyter, PyCharm, Visual Studio Code",
+    "Data Visualization: Plotly, Bokeh, Dash, Matplotlib, Seaborn, Altair, ggplot2"
+  ],
+>>>>>>> 2191400de9d83c0acdbbd1381067c806fcbdc741
   "experience": [
     {
       "company": "Healthcare Risk Advisors",

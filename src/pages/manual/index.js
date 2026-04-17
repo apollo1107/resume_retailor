@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
@@ -6,7 +6,39 @@ import { SPARKLE_LANDING_CSS } from "@/lib/ui/sparkle-ui-css";
 
 export default function ManualIndex() {
   const router = useRouter();
-  const [profileSlug, setProfileSlug] = useState("");
+  const [profiles, setProfiles] = useState([]);
+  const [profilesLoading, setProfilesLoading] = useState(true);
+  const [profilesError, setProfilesError] = useState("");
+  const [selectedSlug, setSelectedSlug] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setProfilesLoading(true);
+      setProfilesError("");
+      try {
+        const r = await fetch("/api/profiles", { credentials: "include" });
+        const data = await r.json().catch(() => ({}));
+        if (cancelled) return;
+        if (!r.ok) {
+          setProfilesError(data.error || "Could not load resumes.");
+          setProfiles([]);
+          return;
+        }
+        setProfiles(Array.isArray(data) ? data : []);
+      } catch {
+        if (!cancelled) {
+          setProfilesError("Could not load resumes.");
+          setProfiles([]);
+        }
+      } finally {
+        if (!cancelled) setProfilesLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const colors = {
     bg: "#0f172a",
@@ -26,8 +58,8 @@ export default function ManualIndex() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (profileSlug.trim()) {
-      router.push(`/manual/${profileSlug.trim()}`);
+    if (selectedSlug) {
+      router.push(`/manual/${selectedSlug}`);
     }
   };
 
@@ -146,7 +178,7 @@ export default function ManualIndex() {
                   lineHeight: 1.65,
                 }}
               >
-                Enter your profile ID, open the manual workflow, copy the prompt
+                Choose a resume you are allowed to use, open the manual workflow, copy the prompt
                 into ChatGPT, paste the JSON response back, then download your
                 resume as PDF or Word — same layout as API mode, without server-side
                 AI.
@@ -164,6 +196,7 @@ export default function ManualIndex() {
               >
                 <div style={{ minWidth: 0, maxWidth: "100%" }}>
                   <label
+                    htmlFor="rt-manual-profile-select"
                     style={{
                       display: "block",
                       fontSize: "15px",
@@ -172,13 +205,13 @@ export default function ManualIndex() {
                       marginBottom: "8px",
                     }}
                   >
-                    Enter Profile ID
+                    Choose a resume
                   </label>
-                  <input
-                    type="text"
-                    value={profileSlug}
-                    onChange={(e) => setProfileSlug(e.target.value)}
-                    placeholder="e.g. as1, js1, lm1"
+                  <select
+                    id="rt-manual-profile-select"
+                    value={selectedSlug}
+                    onChange={(e) => setSelectedSlug(e.target.value)}
+                    disabled={profilesLoading || profiles.length === 0}
                     style={{
                       width: "100%",
                       maxWidth: "100%",
@@ -192,19 +225,35 @@ export default function ManualIndex() {
                       outline: "none",
                       transition: "border-color 0.2s ease, box-shadow 0.2s ease",
                       boxSizing: "border-box",
+                      cursor: profilesLoading || profiles.length === 0 ? "not-allowed" : "pointer",
                     }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = colors.buttonBg;
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = colors.inputBorder;
-                    }}
-                  />
+                  >
+                    <option value="">
+                      {profilesLoading
+                        ? "Loading resumes…"
+                        : profiles.length === 0
+                          ? "No resumes available"
+                          : "Select a resume…"}
+                    </option>
+                    {profiles.map((p) => (
+                      <option key={p.slug} value={p.slug}>
+                        {p.name}
+                      </option>
+                    ))}
+                  </select>
+                  {profilesError ? (
+                    <p style={{ margin: "10px 0 0 0", fontSize: "14px", color: "#f87171" }}>{profilesError}</p>
+                  ) : null}
+                  {!profilesLoading && profiles.length === 0 && !profilesError ? (
+                    <p style={{ margin: "10px 0 0 0", fontSize: "14px", color: colors.textMuted }}>
+                      No resumes are assigned to your account. Ask an administrator to assign profiles.
+                    </p>
+                  ) : null}
                 </div>
 
                 <button
                   type="submit"
-                  disabled={!profileSlug.trim()}
+                  disabled={!selectedSlug}
                   style={{
                     width: "100%",
                     maxWidth: "100%",
@@ -212,12 +261,10 @@ export default function ManualIndex() {
                     fontSize: "16px",
                     fontWeight: "500",
                     color: colors.buttonText,
-                    background: profileSlug.trim()
-                      ? colors.buttonBg
-                      : colors.buttonDisabled,
+                    background: selectedSlug ? colors.buttonBg : colors.buttonDisabled,
                     border: "none",
                     borderRadius: "8px",
-                    cursor: profileSlug.trim() ? "pointer" : "not-allowed",
+                    cursor: selectedSlug ? "pointer" : "not-allowed",
                     boxSizing: "border-box",
                     transition: "background 0.2s ease, opacity 0.2s ease",
                   }}

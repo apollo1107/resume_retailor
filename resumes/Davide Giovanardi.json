@@ -8,8 +8,28 @@
   "linkedin": "https://www.linkedin.com/in/dgiova/",
   "website": "",
   "github": "",
+<<<<<<< HEAD
   "cvLink": "",
   "base_skills": [],
+=======
+  "cvLink": "https://flowcv.com/resume/0pbq0wutb89k",
+  "base_skills": [
+    "Languages & Frameworks: Python, C++, Java, JavaScript/TypeScript, Go, Scala, SQL, Bash, PyTorch, TensorFlow, Keras, JAX, Scikit-learn, XGBoost, LightGBM, spaCy, NLTK, OpenCV, FastAPI, Flask, Django, PySpark, Spark, Ray, Dask, ONNX, TensorRT",
+    "Machine Learning & AI: Machine Learning, Deep Learning, Predictive Modeling, Supervised/Unsupervised Learning, Feature Engineering, Model Optimization & Evaluation, Representation Learning",
+    "NLP & Speech: NLP, Text Classification, Sentiment Analysis, NER, Text Summarization, Information Extraction, Conversational AI, Semantic Search, Multilingual NLP, Speech-to-Text",
+    "LLMs & Generative AI: LLMs, Generative AI, Fine-tuning (SFT, DPO, RFT), Prompt Engineering, LLM Evaluation, Hallucination Mitigation, RAG, Agentic AI, Autonomous Agents, Reasoning Systems, Function Calling",
+    "Deep Learning: Transformers, Seq2Seq, Attention Mechanisms, CNNs, RNNs, LSTMs",
+    "MLOps & Systems: ML Pipelines, Deployment & Serving, Monitoring & Observability, Drift Detection, Continuous Training, A/B Testing, CI/CD, Scalable Low-latency Systems",
+    "Data Engineering: Data Pipelines, ETL, Preprocessing, Feature Selection, Large-scale Processing, Data Quality, Batch & Streaming (Kafka)",
+    "Cloud & Infra: AWS (SageMaker, EC2, S3, Lambda), GCP (Vertex AI, BigQuery), Azure ML, Docker, Kubernetes, Terraform, Serverless, Distributed Systems",
+    "LLM Tooling & Vector DBs: OpenAI API, Anthropic, vLLM, Hugging Face, LangChain, LlamaIndex, Haystack, FAISS, Pinecone, Weaviate, ChromaDB, Triton",
+    "Databases: PostgreSQL, MySQL, MongoDB, Redis, Elasticsearch, Snowflake, BigQuery",
+    "Evaluation & Research: LLM Evaluation Frameworks, Benchmarking, Experimentation, Bias & Fairness, NLP/GenAI Research, Patents",
+    "Applied AI: Customer Support AI, Meeting Summarization, Real-time AI (captions, insights), Decision Systems, Financial ML",
+    "Engineering & Leadership: System Design, Scalable Architecture, Cross-functional Collaboration, ML Leadership, Production AI at Scale",
+    "Version Control & Collaboration: Git, GitHub, GitLab, Bitbucket, Branching Strategies (Git Flow, Trunk-Based Development), Code Reviews, Pull Requests, Merge Conflict Resolution, CI/CD Integration"
+  ],
+>>>>>>> 2191400de9d83c0acdbbd1381067c806fcbdc741
   "experience": [
     {
       "company": "Robinhood",

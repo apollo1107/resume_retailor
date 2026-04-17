@@ -2,14 +2,31 @@
   "name": "Swetha Bezawada",
   "title": "Senior AI Product Manager | Data Scientist",
   "email": "swethabezawada@proton.me",
+<<<<<<< HEAD
   "phone": "(341) 219-9963",
+=======
+  "phone": "'+1 (341) 219-9963 ",
+>>>>>>> 2191400de9d83c0acdbbd1381067c806fcbdc741
   "location": "Fishers, IN ",
   "zip": "46037",
   "linkedin": "https://www.linkedin.com/in/swethabez/",
   "website": "",
   "github": "",
+<<<<<<< HEAD
   "cvLink": "",
   "base_skills": [],
+=======
+  "cvLink": "https://flowcv.com/resume/wdkj8kj32d80",
+  "base_skills": [
+    "Product Management & Strategy: Product Roadmapping, Product Lifecycle Management, Agile/Scrum, Stakeholder Management, Market Research, Competitive Analysis, Product Vision, Prioritization, Executive Communication",
+    "AI & Machine Learning: Supervised, Unsupervised, Semi-supervised, Self-supervised Learning, Deep Learning, Natural Language Processing (NLP), Generative AI (GAI), Bias Mitigation, AI Ethics",
+    "MLOps & Data Systems: Model Deployment, MLOps, Model Monitoring, CI/CD Pipelines, Docker, Kubernetes, Distributed Systems",
+    "Data Science & Analytics: Python, R, SQL, Apache Spark, Hadoop, NoSQL, BigQuery, AWS Redshift, Statistical Modeling, Experimentation, A/B Testing, Customer Lifecycle Analytics, Marketing Analytics, ROI Analysis",
+    "Cloud Platforms: AWS, Microsoft Azure, Google Cloud Platform",
+    "Tools & Collaboration: Jira, Confluence, Slack, Microsoft Teams, Figma, Miro, Lucidchart, Sketch, Zapier, Make, n8n",
+    "Core Competencies: Leadership, Strategic Thinking, Problem Solving, Cross-functional Collaboration, Data Storytelling"
+  ],
+>>>>>>> 2191400de9d83c0acdbbd1381067c806fcbdc741
   "experience": [
     {
       "company": "Salesforce",

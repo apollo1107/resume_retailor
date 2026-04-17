@@ -10,6 +10,7 @@ import {
   quickCopyAnimSlot,
 } from "@/lib/ui/quick-copy-animations-css";
 import { SPARKLE_PROFILE_CSS } from "@/lib/ui/sparkle-ui-css";
+import { trackDownload } from "@/client/track-download";
 import { EmailSnippetsSidebar } from "@/components/EmailSnippetsSidebar";
 
 function ManualProfileLoadingSpinner() {
@@ -72,11 +73,11 @@ export default function ManualProfilePage() {
 
     const loadData = async () => {
       try {
-        const response = await fetch(
-          `/api/profiles/${encodeURIComponent(profileNameFromSlug)}`
-        );
+        const response = await fetch(`/api/profiles/${encodeURIComponent(profileNameFromSlug)}`, {
+          credentials: "include",
+        });
         if (!response.ok) {
-          if (response.status === 404) {
+          if (response.status === 403 || response.status === 404) {
             router.push("/manual");
             return;
           }
@@ -131,6 +132,7 @@ export default function ManualProfilePage() {
     try {
       const response = await fetch("/api/manual-prompt", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ profile: profileSlug, jd }),
       });
@@ -177,6 +179,7 @@ export default function ManualProfilePage() {
     try {
       const response = await fetch("/api/generate-manual", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           profile: profileSlug,
@@ -209,6 +212,7 @@ export default function ManualProfilePage() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
+      trackDownload("cv");
 
       setLastGenerationWasCover(false);
       setLastGenerationTime(
@@ -255,6 +259,7 @@ export default function ManualProfilePage() {
     try {
       const response = await fetch("/api/generate-cover-letter", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           profile: profileSlug,
@@ -288,6 +293,7 @@ export default function ManualProfilePage() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
+      trackDownload("cover");
 
       setLastGenerationWasCover(true);
       setLastGenerationTime(
