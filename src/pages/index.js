@@ -7,7 +7,7 @@ import {
   clearStoredAccessUrl,
   getEffectiveAccessHref,
   rememberValidatedAccessHref,
-} from "@/lib/access/browser-url-session";
+} from "@/client/access/browser-session";
 
 export default function Home() {
   const router = useRouter();

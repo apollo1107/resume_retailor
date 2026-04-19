@@ -49,10 +49,6 @@ export function loadUrlAccessRules() {
 /**
  * Match the browser-reported full URL against `urlProfileRules`.
  * First matching rule wins. No rules, empty URL, or no substring match → not ok (404).
- *
- * @param {string} fullUrl
- * @param {{ urlProfileRules: Array<{ matchSubstring: string, allowedProfileSlugs: string[], showRightSidebar?: boolean }> }} config
- * @returns {{ ok: true, allowedSlugs: Set<string>, showRightSidebar: boolean } | { ok: false, code: string }}
  */
 export function resolveUrlAccess(fullUrl, config) {
   const rules = config?.urlProfileRules;

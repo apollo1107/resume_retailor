@@ -7,7 +7,7 @@ import {
   clearStoredAccessUrl,
   getEffectiveAccessHref,
   rememberValidatedAccessHref,
-} from "@/lib/access/browser-url-session";
+} from "@/client/access/browser-session";
 
 export default function ManualIndex() {
   const router = useRouter();
@@ -261,7 +261,7 @@ export default function ManualIndex() {
                   ) : null}
                   {!profilesLoading && profiles.length === 0 && !profilesError ? (
                     <p style={{ margin: "10px 0 0 0", fontSize: "14px", color: colors.textMuted }}>
-                      No resumes are assigned to your account. Ask an administrator to assign profiles.
+                      No resumes are available for this access link. Use a link that includes your access token, or ask for an updated link.
                     </p>
                   ) : null}
                 </div>

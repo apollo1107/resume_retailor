@@ -15,7 +15,7 @@ import {
   clearStoredAccessUrl,
   getEffectiveAccessHref,
   rememberValidatedAccessHref,
-} from "@/lib/access/browser-url-session";
+} from "@/client/access/browser-session";
 
 function ManualProfileLoadingSpinner() {
   return (

@@ -35,6 +35,10 @@ export const profileTemplateMapping = {
     resume: "Hardika Narula",
     template: "Resume-Executive-Navy",
   },
+  rao: {
+    resume: "Amruutha Chandrasekarrao",
+    template: "Resume-Executive-Navy",
+  },
   oscar: {
     resume: "Oscar Adeyemi Adimi",
     template: "Resume-Executive-Navy",

@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { RESUMES_DIR } from "@/config/project-paths";
 import { slugForResumeId } from "@/lib/profiles/registry";
-import { loadUrlAccessRules, resolveUrlAccess } from "@/lib/access/url-rules-config";
+import { loadUrlAccessRules, resolveUrlAccess } from "@/server/access/url-rules";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {

@@ -1,4 +1,4 @@
-import { loadUrlAccessRules, resolveUrlAccess } from "@/lib/access/url-rules-config";
+import { loadUrlAccessRules, resolveUrlAccess } from "@/server/access/url-rules";
 
 export default function handler(req, res) {
   if (req.method !== "GET") {
