@@ -1,14 +1,15 @@
 {
-  "_readme": "allowedProfileSlugs must match URL slug keys in src/lib/profile/profile-template-mapping.js (e.g. rahulmonga for Rahul, davide, swetha). First matching urlProfileRules entry wins. Match is substring on the full browser URL (path, query, hash).",
-  "showRightSidebar": true,
+  "_readme": "allowedProfileSlugs = keys in profile-template-mapping.js. First matching urlProfileRules wins. showRightSidebar is per rule. If the URL matches no matchSubstring (or accessUrl is missing), APIs return 404.",
   "urlProfileRules": [
     {
-      "matchSubstring": "cvasdf3#Dfa^",
-      "allowedProfileSlugs": ["davide", "rahulmonga"]
+      "matchSubstring": ".uNf^o:dnr9eJELN>0pm0V3FucDZMy2)1YCmv09Q_eUG,Jhvez43nr1*Ee*Ksf}@t*NwwKj)iQ4cr5,30v2#%u!])^?_ZU=#Ri6x",
+      "allowedProfileSlugs": ["ariel", "ricardo", "sugar", "maurice"],
+      "showRightSidebar": true
     },
     {
-      "matchSubstring": "asfsdf^",
-      "allowedProfileSlugs": ["swetha"]
+      "matchSubstring": "G]T3,9huUnAzZ>HWNJxiR*Y2uLMT9a@8+uEVPHcR]GKrnxPB0V3+-Wps3,EyT6LmNjNn9aR?i^LBiDJ]+)0Mh=%sqnL@)-]U5eyF",
+      "allowedProfileSlugs": ["rahulmonga"],
+      "showRightSidebar": false
     }
   ]
 }

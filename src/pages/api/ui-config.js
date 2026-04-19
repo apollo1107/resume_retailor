@@ -1,11 +1,19 @@
-import { loadUiAccessConfig } from "@/lib/ui-access-config";
+import {
+  loadUiAccessConfig,
+  resolveUiAccessFromUrl,
+} from "@/lib/ui-access-config";
 
 export default function handler(req, res) {
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
   }
-  const cfg = loadUiAccessConfig();
+  const accessUrl =
+    typeof req.query.accessUrl === "string" ? req.query.accessUrl : "";
+  const resolved = resolveUiAccessFromUrl(accessUrl, loadUiAccessConfig());
+  if (!resolved.ok) {
+    return res.status(404).json({ error: "Not found", code: resolved.code });
+  }
   res.status(200).json({
-    showRightSidebar: cfg.showRightSidebar !== false,
+    showRightSidebar: resolved.showRightSidebar,
   });
 }

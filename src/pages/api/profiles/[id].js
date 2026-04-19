@@ -2,10 +2,7 @@ import fs from "fs";
 import path from "path";
 import { RESUMES_DIR } from "@/config/server-paths";
 import { slugForResumeId } from "@/lib/profile/profile-template-mapping";
-import {
-  loadUiAccessConfig,
-  allowedSlugsForUrl,
-} from "@/lib/ui-access-config";
+import { loadUiAccessConfig, resolveUiAccessFromUrl } from "@/lib/ui-access-config";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
@@ -14,11 +11,12 @@ export default async function handler(req, res) {
 
   try {
     const { id } = req.query;
-    if (!id) {
+    const idStr = Array.isArray(id) ? id[0] : id;
+    if (!idStr) {
       return res.status(400).json({ error: "Profile ID required" });
     }
 
-    const profilePath = path.join(RESUMES_DIR, `${id}.json`);
+    const profilePath = path.join(RESUMES_DIR, `${idStr}.json`);
 
     if (!fs.existsSync(profilePath)) {
       return res.status(404).json({ error: "Profile not found" });
@@ -27,12 +25,14 @@ export default async function handler(req, res) {
     const accessUrl =
       typeof req.query.accessUrl === "string" ? req.query.accessUrl : "";
     const uiAccess = loadUiAccessConfig();
-    const allowed = allowedSlugsForUrl(accessUrl, uiAccess.urlProfileRules);
-    if (allowed) {
-      const slug = slugForResumeId(String(id));
-      if (!slug || !allowed.has(slug)) {
-        return res.status(403).json({ error: "Profile not available for this link." });
-      }
+    const resolved = resolveUiAccessFromUrl(accessUrl, uiAccess);
+    if (!resolved.ok) {
+      return res.status(404).json({ error: "Not found", code: resolved.code });
+    }
+
+    const slug = slugForResumeId(String(idStr));
+    if (!slug || !resolved.allowedSlugs.has(slug)) {
+      return res.status(404).json({ error: "Profile not found" });
     }
 
     const profileData = JSON.parse(fs.readFileSync(profilePath, "utf-8"));

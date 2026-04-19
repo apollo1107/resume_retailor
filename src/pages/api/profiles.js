@@ -1,10 +1,7 @@
 import fs from "fs";
 import { RESUMES_DIR } from "@/config/server-paths";
 import { slugForResumeId } from "@/lib/profile/profile-template-mapping";
-import {
-  loadUiAccessConfig,
-  allowedSlugsForUrl,
-} from "@/lib/ui-access-config";
+import { loadUiAccessConfig, resolveUiAccessFromUrl } from "@/lib/ui-access-config";
 
 export default async function handler(req, res) {
   try {
@@ -27,10 +24,12 @@ export default async function handler(req, res) {
     const accessUrl =
       typeof req.query.accessUrl === "string" ? req.query.accessUrl : "";
     const uiAccess = loadUiAccessConfig();
-    const allowed = allowedSlugsForUrl(accessUrl, uiAccess.urlProfileRules);
-    if (allowed) {
-      profiles = profiles.filter((p) => allowed.has(p.slug));
+    const resolved = resolveUiAccessFromUrl(accessUrl, uiAccess);
+    if (!resolved.ok) {
+      return res.status(404).json({ error: "Not found", code: resolved.code });
     }
+
+    profiles = profiles.filter((p) => resolved.allowedSlugs.has(p.slug));
 
     res.status(200).json(profiles);
   } catch (error) {
@@ -38,4 +37,3 @@ export default async function handler(req, res) {
     res.status(500).json({ error: "Failed to load profiles" });
   }
 }
-

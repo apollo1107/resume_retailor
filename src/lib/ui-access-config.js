@@ -4,15 +4,16 @@ import path from "path";
 const CONFIG_PATH = path.join(process.cwd(), "config", "ui-access.json");
 
 const DEFAULT_CONFIG = {
-  showRightSidebar: true,
   urlProfileRules: [],
 };
 
+export const ACCESS_RESOLVE_CODE = {
+  NO_RULES: "NO_RULES",
+  NO_URL: "NO_URL",
+  NO_MATCH: "NO_MATCH",
+};
+
 function normalizeConfig(raw) {
-  const showRightSidebar =
-    raw && typeof raw === "object" && "showRightSidebar" in raw
-      ? Boolean(raw.showRightSidebar)
-      : true;
   const rules = Array.isArray(raw?.urlProfileRules)
     ? raw.urlProfileRules
         .map((r) => ({
@@ -21,10 +22,14 @@ function normalizeConfig(raw) {
           allowedProfileSlugs: Array.isArray(r?.allowedProfileSlugs)
             ? r.allowedProfileSlugs.map((s) => String(s).trim()).filter(Boolean)
             : [],
+          showRightSidebar:
+            r && typeof r === "object" && "showRightSidebar" in r
+              ? Boolean(r.showRightSidebar)
+              : true,
         }))
         .filter((r) => r.matchSubstring.length > 0)
     : [];
-  return { showRightSidebar, urlProfileRules: rules };
+  return { urlProfileRules: rules };
 }
 
 /**
@@ -41,21 +46,31 @@ export function loadUiAccessConfig() {
 }
 
 /**
- * If the full URL matches a rule's `matchSubstring`, returns allowed profile slugs (Set).
- * First matching rule wins. If no rule matches, returns `null` (no restriction).
+ * Resolves access from the full browser URL against `urlProfileRules`.
+ * First matching rule wins. If there are no rules, empty URL, or no substring match → not ok (404).
+ *
  * @param {string} fullUrl
- * @param {Array<{ matchSubstring: string, allowedProfileSlugs: string[] }>} rules
- * @returns {Set<string> | null}
+ * @param {{ urlProfileRules: Array<{ matchSubstring: string, allowedProfileSlugs: string[], showRightSidebar?: boolean }> }} config
+ * @returns {{ ok: true, allowedSlugs: Set<string>, showRightSidebar: boolean } | { ok: false, code: string }}
  */
-export function allowedSlugsForUrl(fullUrl, rules) {
-  if (typeof fullUrl !== "string" || !fullUrl || !Array.isArray(rules)) {
-    return null;
+export function resolveUiAccessFromUrl(fullUrl, config) {
+  const rules = config?.urlProfileRules;
+  if (!Array.isArray(rules) || rules.length === 0) {
+    return { ok: false, code: ACCESS_RESOLVE_CODE.NO_RULES };
   }
+  if (typeof fullUrl !== "string" || !fullUrl.trim()) {
+    return { ok: false, code: ACCESS_RESOLVE_CODE.NO_URL };
+  }
+  const u = fullUrl;
   for (const rule of rules) {
     if (!rule?.matchSubstring) continue;
-    if (fullUrl.includes(rule.matchSubstring)) {
-      return new Set(rule.allowedProfileSlugs || []);
+    if (u.includes(rule.matchSubstring)) {
+      return {
+        ok: true,
+        allowedSlugs: new Set(rule.allowedProfileSlugs || []),
+        showRightSidebar: rule.showRightSidebar !== false,
+      };
     }
   }
-  return null;
+  return { ok: false, code: ACCESS_RESOLVE_CODE.NO_MATCH };
 }
