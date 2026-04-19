@@ -442,7 +442,7 @@ export const PROFILE_WORKSPACE_THEME_CSS = `
   .rt-top-copy-dock:hover .rt-top-copy-dock__panel,
   .rt-top-copy-dock--pinned .rt-top-copy-dock__panel {
     /* Icon area only (labels below tiles via position:absolute; hover does not change height) */
-    max-height: 152px;
+    max-height: 260px;
     min-height: 64px;
     opacity: 1;
     transform: translateY(0) scale(1);

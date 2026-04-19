@@ -46,5 +46,8 @@
       "start_year": "2010",
       "end_year": "2014"
     }
-  ]
+  ],
+  "street": "",
+  "birthday": "",
+  "ssn": ""
 }

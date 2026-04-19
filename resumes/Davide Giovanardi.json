@@ -1,11 +1,11 @@
 {
   "name": "Davide Giovanardi",
   "title": "Senior Machine Learning Engineer",
-  "email": "davidegiovanardi@proton.me",
-  "phone": "(360) 548-1455",
+  "email": "davidegiovanardi96@proton.me",
+  "phone": "+1 (360) 548-1455",
   "location": "Mountain View, CA",
   "zip": "94041",
-  "linkedin": "https://www.linkedin.com/in/dgiova/",
+  "linkedin": "https://www.linkedin.com/in/davidegio/",
   "website": "",
   "github": "",
   "cvLink": "https://flowcv.com/resume/0pbq0wutb89k",
@@ -33,7 +33,21 @@
       "start_date": "09/2024",
       "end_date": "04/2026",
       "base_bullets": [
-        ""
+        "Spearheaded the development of LLM-based reasoning and agentic systems for automating customer support and internal workflows, improving operational efficiency and reducing reliance on manual processes.",
+        "Applied advanced fine-tuning techniques (DPO, RFT) to improve model alignment, robustness, and performance across production use cases.",
+        "Designed and implemented scalable evaluation frameworks to benchmark agent behavior, enabling continuous improvement through feedback-driven optimization and real-time performance monitoring.",
+        "Deployed scalable, low-latency AI systems into production, ensuring reliability, fault tolerance, and consistent performance for high-volume user interactions.",
+        "Collaborated with cross-functional stakeholders to integrate machine learning systems into production workflows, improving response accuracy, latency, and overall user experience.",
+        "Built and maintained data pipelines and ETL workflows (Spark, PySpark) to support large-scale model training, evaluation, and deployment, ensuring high data quality and system reliability.",
+        "Modernized data infrastructure into scalable, cloud-native architectures, improving efficiency, maintainability, and integration with downstream analytics and monitoring systems.",
+        "Developed monitoring systems for model drift, performance degradation, and anomalies, enabling real-time diagnostics and maintaining production system reliability.",
+        "Optimized cloud infrastructure and distributed systems, reducing operational costs while maintaining high availability and performance under peak load.",
+        "Implemented guardrails and safety layers for LLM outputs, reducing harmful or low-quality responses in user-facing applications.",
+        "Designed prompt and retrieval optimization strategies for RAG systems, improving answer relevance and grounding in production environments.",
+        "Introduced A/B testing frameworks for LLM systems, enabling data-driven evaluation of model improvements and feature releases.",
+        "Developed internal tooling for debugging and analyzing LLM outputs, accelerating iteration cycles and improving model reliability.",
+        "Led efforts to standardize evaluation metrics and benchmarking across multiple LLM use cases, improving consistency in model performance assessment.",
+        "Collaborated with infrastructure teams to optimize inference throughput and latency, improving system performance under high-concurrency workloads."
       ]
     },
     {
@@ -43,7 +57,19 @@
       "start_date": "03/2021",
       "end_date": "09/2024",
       "base_bullets": [
-        ""
+        "Led development of real-time NLP systems for meeting summaries, captions, and insights, serving millions of users globally.",
+        "Engineered multilingual NLP solutions supporting 30+ languages, enabling scalable global deployment and improved accessibility.",
+        "Implemented techniques to reduce hallucinations and improve accuracy of AI-generated content, ensuring contextual relevance and reliability.",
+        "Developed and deployed LLM-based evaluation systems to continuously assess and improve content quality, factual accuracy, and coherence.",
+        "Built systems integrated with Zoom’s platform to automate meeting notes, summaries, and action item generation, improving user productivity.",
+        "Improved accuracy and relevance of AI-generated content by 20% through evaluation and feedback-driven optimization.",
+        "Applied deep learning models to enhance real-time transcription and translation quality across diverse languages and dialects.",
+        "Collaborated with cross-functional teams to deliver AI features aligned with product needs and user impact.",
+        "Led deployment of AI models at scale, ensuring low-latency performance and reliability across millions of users.",
+        "Contributed to patent filings in NLP and generative AI for meeting understanding and summarization systems.",
+        "Developed internal tools to analyze and debug model outputs, improving iteration speed and model quality for real-time NLP systems.",
+        "Optimized inference pipelines for real-time transcription and summarization, reducing latency and improving user experience.",
+        "Contributed to experimentation frameworks enabling continuous evaluation and improvement of NLP models in production."
       ]
     },
     {
@@ -53,7 +79,11 @@
       "start_date": "09/2020",
       "end_date": "03/2021",
       "base_bullets": [
-        ""
+        "Assisted in delivering course content for the Stanford CS 224N NLP with Deep Learning class, providing students with hands-on experience in implementing state-of-the-art NLP algorithms.",
+        "Conducted office hours where students received guidance on deep learning topics like neural networks, transformers, and advanced NLP techniques.",
+        "Provided feedback and grading for assignments that involved coding and theoretical questions on topics such as machine learning, NLP, and deep learning.",
+        "Worked closely with professors to design course materials, ensuring that students had access to the latest advancements in machine learning and NLP research.",
+        "Offered direct support to students working on individual research projects, helping them develop practical solutions and refine their models."
       ]
     },
     {
@@ -63,7 +93,11 @@
       "start_date": "06/2020",
       "end_date": "09/2020",
       "base_bullets": [
-        ""
+        "Developed machine learning models to support real-time volatility forecasting for FX options pricing, enabling traders to make more informed decisions.",
+        "Built AutoML pipelines that enhanced the efficiency of modeling workflows, reducing the time required for model training and evaluation while improving accuracy.",
+        "Integrated machine learning models into JPMorgan’s financial systems, helping to automate time-consuming tasks and improve the accuracy of key financial predictions.",
+        "Collaborated with quantitative analysts to optimize the pricing models, improving the robustness of financial risk models for real-time use in volatile markets.",
+        "Conducted exploratory data analysis to identify hidden patterns in financial datasets, helping to improve predictive models for currency trading."
       ]
     },
     {
@@ -73,7 +107,8 @@
       "start_date": "01/2019",
       "end_date": "09/2019",
       "base_bullets": [
-        ""
+        "Implemented machine learning algorithms to model network traffic across data centers and guide business decisions to optimize traffic and improve efficiency.",
+        "Designed and developed ML models that automate the performance analysis of Intel's data transfer algorithms."
       ]
     }
   ],
@@ -83,12 +118,9 @@
       "school": "Stanford University",
       "start_year": "2019",
       "end_year": "2021"
-    },
-    {
-      "degree": "Master of Science STEM",
-      "school": "UC San Diego",
-      "start_year": "2018",
-      "end_year": "2019"
     }
-  ]
+  ],
+  "street": "1720 Villa St, Apt 417",
+  "birthday": "7/10/1996",
+  "ssn": "5140"
 }

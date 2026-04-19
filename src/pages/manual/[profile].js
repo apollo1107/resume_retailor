@@ -125,14 +125,14 @@ export default function ManualProfilePage() {
   }, [profileSlug, router]);
 
   const copyToClipboard = async (text, fieldName) => {
-    if (!text) return;
+    const str = text == null ? "" : String(text);
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(str);
       setCopiedField(fieldName);
       setTimeout(() => setCopiedField(null), 2000);
     } catch (err) {
       const textArea = document.createElement("textarea");
-      textArea.value = text;
+      textArea.value = str;
       textArea.style.position = "fixed";
       textArea.style.opacity = "0";
       document.body.appendChild(textArea);
@@ -424,12 +424,30 @@ export default function ManualProfilePage() {
     { key: "phone", label: "Phone", value: selectedProfileData?.phone },
     { key: "location", label: "Address", value: selectedProfileData?.location },
     { key: "zip", label: "Zip", value: selectedProfileData?.zip },
+    {
+      key: "street",
+      label: "STREET",
+      value: selectedProfileData?.street ?? "",
+      alwaysShow: true,
+    },
+    {
+      key: "birthday",
+      label: "BIRTHDAY",
+      value: selectedProfileData?.birthday ?? "",
+      alwaysShow: true,
+    },
+    {
+      key: "ssn",
+      label: "SSN",
+      value: selectedProfileData?.ssn ?? "",
+      alwaysShow: true,
+    },
     { key: "lastCompany", label: "Last Company", value: getLastCompany() },
     { key: "lastRole", label: "Last Role", value: getLastRole() },
     { key: "linkedin", label: "LinkedIn", value: selectedProfileData?.linkedin },
     { key: "github", label: "GitHub", value: selectedProfileData?.github },
     { key: "cvLink", label: "CV Link", value: cvLinkValue },
-  ].filter((f) => f.value);
+  ].filter((f) => f.alwaysShow || f.value);
 
   const replyFirstName = firstNameFromFullName(selectedProfileData?.name);
 

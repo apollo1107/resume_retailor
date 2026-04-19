@@ -76,5 +76,8 @@
       "start_year": "06/2017",
       "end_year": "04/2021"
     }
-  ]
+  ],
+  "street": "",
+  "birthday": "",
+  "ssn": ""
 }

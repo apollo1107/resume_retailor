@@ -3,7 +3,7 @@
  * Icon animations pause on hover so manual hover styles win.
  */
 
-/** Stable class suffix 0–8 for `.rt-qca-{n}` — same field type always gets the same idle animation. */
+/** Stable class suffix 0–11 for `.rt-qca-{n}` — same field type always gets the same idle animation. */
 export const quickCopyAnimSlot = (key) => {
   const m = {
     email: 0,
@@ -15,6 +15,9 @@ export const quickCopyAnimSlot = (key) => {
     linkedin: 6,
     github: 7,
     cvLink: 8,
+    street: 9,
+    birthday: 10,
+    ssn: 11,
   };
   return m[key] ?? 0;
 };
@@ -99,6 +102,15 @@ export const QUICK_COPY_ANIMATIONS_CSS = `
   }
   .rt-qca-8 .rt-quick-copy-icon-wrap {
     animation: rtQcaBob 2.35s ease-in-out infinite;
+  }
+  .rt-qca-9 .rt-quick-copy-icon-wrap {
+    animation: rtQcaTilt 2.55s ease-in-out infinite;
+  }
+  .rt-qca-10 .rt-quick-copy-icon-wrap {
+    animation: rtQcaPulse 2.15s ease-in-out infinite;
+  }
+  .rt-qca-11 .rt-quick-copy-icon-wrap {
+    animation: rtQcaNudge 2.45s ease-in-out infinite;
   }
   .rt-quick-copy-btn:hover .rt-quick-copy-icon-wrap {
     animation-play-state: paused;
