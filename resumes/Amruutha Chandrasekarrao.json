@@ -1,0 +1,103 @@
+{
+  "name": "Amruutha Rao",
+  "title": "Senior AI Tech Product Manager & Data Scientist",
+  "email": "amruutharao@proton.me",
+  "phone": "+1 (341) 219-9963",
+  "location": "Dallas, TX",
+  "zip": "",
+  "linkedin": "linkedin.com/in/amruutha",
+  "website": "",
+  "github": "",
+  "cvLink": "",
+  "base_skills": [
+    "Product Management Tools: Jira, Confluence, Trello, Monday.com, Asana, Azure DevOps",
+    "Data Science Tools: Python, R, SQL, Apache Spark, Hadoop, NoSQL Databases, Google BigQuery, AWS Redshift, Jupyter, MATLAB",
+    "Cloud Platforms: Amazon Web Services (AWS), Microsoft Azure, Google Cloud Platform (GCP), IBM Watson",
+    "Machine Learning: Supervised & Unsupervised Learning, Deep Learning (TensorFlow, Keras, PyTorch), Natural Language Processing (NLP), Computer Vision, Time Series Forecasting, Recommender Systems",
+    "Data Science & Analytics: Data Preprocessing, Feature Engineering, Model Evaluation, A/B Testing, Statistical Analysis, Data Visualization (Matplotlib, Seaborn, Tableau, Power BI)",
+    "Automation & Integration Tools: Zapier, Make.com, n8n, MuleSoft",
+    "Model Deployment & Monitoring: Docker, Kubernetes, CI/CD Pipelines",
+    "Collaboration & Communication: Slack, Microsoft Teams, Zoom, Google Meet, Figma, Miro",
+    "Agile & Scrum Methodologies: Sprint Planning, Product Backlog Management, Cross-functional Team Leadership, Stakeholder Engagement, Risk Management, Issue Resolution",
+    "AI Ethics & Governance: Bias Mitigation, Fairness in AI, AI Transparency, Data Privacy Compliance (GDPR, CCPA)",
+    "Software Development: API Design, RESTful Services, Microservices, Data Warehousing, ETL Pipelines",
+    "Leadership & Management: Cross-functional Team Leadership, Strategic Planning, Stakeholder Management, Team Coaching, Mentorship, Budget Management"
+  ],
+  "experience": [
+    {
+      "company": "Amazon",
+      "title": "Senior Product Manager Technical",
+      "location": "",
+      "start_date": "10/2024",
+      "end_date": "03/2026",
+      "base_bullets": [
+        "Led a cross-functional team in developing innovative AI-driven features for Hubble, an intelligent dashcam, resulting in improved real-time detection of unsafe driving behaviors, such as close following, drowsiness, and red-light violations. This contributed to significant reductions in road accidents by enhancing driver safety.",
+        "Spearheaded the development of the DMEWS Acute Diarrhea Outbreak Prediction model, leveraging demographic, socio-economic, and climatic data to predict outbreaks, which resulted in more targeted health interventions and more efficient public health management in Texas.",
+        "Conducted market research and competitive analysis, gathering customer feedback and implementing automated test systems to evaluate feature accuracy, ultimately leading to a more customer-centric product with higher user adoption and satisfaction.",
+        "Defined, built, and maintained detailed product roadmaps and technical documentation, ensuring all stakeholders, including business, engineering, and operations teams, were aligned on goals, timelines, and expectations, resulting in improved cross-functional collaboration.",
+        "Managed technical dependencies between embedded systems, backend infrastructure, and annotation teams, facilitating seamless integration, version control, and meeting delivery milestones.",
+        "Played a pivotal role in the deployment of machine learning models across the product lifecycle, optimizing features, which led to a more responsive AI solution that improved user experience.",
+        "Led Agile methodologies, conducting sprint planning, retrospectives, and daily stand-ups to ensure timely and high-quality feature delivery, improving overall project efficiency by 20%.",
+        "Established and maintained strong relationships with cross-functional teams, conducting regular workshops and team-building activities that fostered innovation, improved problem-solving, and optimized collaboration and productivity.",
+        "Mentored and guided junior team members, fostering a culture of knowledge-sharing and hands-on learning within the AI and product management teams, resulting in increased team efficiency and innovation.",
+        "Introduced advanced data visualization tools and feature-tracking processes, providing stakeholders with clear, actionable insights and enabling faster decision-making and issue resolution."
+      ]
+    },
+    {
+      "company": "Walmart",
+      "title": "Senior Product Manager (GenAI)",
+      "location": "",
+      "start_date": "05/2023",
+      "end_date": "06/2024",
+      "base_bullets": [
+        "Managed a portfolio of AI-driven product initiatives, ensuring strategic planning and execution that significantly improved operational efficiency and delivered results faster across high-priority projects.",
+        "Led the integration of HelloDrew, an AI-powered voice agent for 10,000+ real-estate platforms, enhancing lead engagement, improving CRM syncing, and reducing manual effort, which resulted in a 25% increase in lead conversion rates.",
+        "Designed and implemented a comprehensive automated lead management system, integrating Jotform, Make.com, and ActiveCampaign, which improved lead qualification and follow-up efficiency, resulting in a 30% reduction in lead processing time.",
+        "Championed the development of secure, enterprise-grade AI solutions, ensuring full compliance with GDPR and CCPA, and enabling large-scale, secure AI product rollouts that aligned with business and regulatory needs.",
+        "Played a central role in the development of AI product roadmaps, collaborating with design, engineering, and operations teams to ensure successful product launches that met customer needs and aligned with business goals.",
+        "Oversaw the deployment of large-scale machine learning models, optimizing performance through cloud infrastructure, and ensuring scalability and operational excellence.",
+        "Collaborated closely with customers to capture product feedback, translating it into actionable insights that led to feature improvements and a measurable increase in user satisfaction.",
+        "Led sprint cycles and facilitated stand-ups and retrospectives, ensuring alignment across teams and timely delivery of project milestones."
+      ]
+    },
+    {
+      "company": "Ericsson",
+      "title": "Data Scientist",
+      "location": "",
+      "start_date": "09/2019",
+      "end_date": "02/2023",
+      "base_bullets": [
+        "Led AI-driven data science projects aimed at optimizing healthcare operations across 55 communities, utilizing advanced machine learning models to improve patient outcomes and streamline operational workflows.",
+        "Developed and deployed machine learning models that significantly enhanced business KPIs by automating data ingestion, preprocessing, and transformation processes, improving reliability and efficiency in product deployments.",
+        "Collaborated with cross-functional teams to integrate AI-driven features into core product offerings, ensuring that they met both technical feasibility and regulatory standards.",
+        "Implemented predictive maintenance solutions for healthcare infrastructure, utilizing LSTM and XGBoost models to reduce system downtime by 15%, minimize risk, and enhance long-term infrastructure reliability.",
+        "Designed advanced statistical models to forecast potential KPI degradation, enabling proactive system alerts that reduced operational risks and enhanced resource management.",
+        "Leveraged big data tools on Azure to manage, model, and visualize healthcare data, providing stakeholders with real-time insights that guided decision-making and operational planning.",
+        "Oversaw the deployment and optimization of AI models, continuously iterating on solutions based on stakeholder feedback to drive product improvement and increase overall effectiveness.",
+        "Conducted comprehensive A/B testing and hypothesis validation for software updates, ensuring that product enhancements were aligned with market needs and user expectations."
+      ]
+    },
+    {
+      "company": "Tata Consultancy Services",
+      "title": "Product Manager & Data Integration Developer",
+      "location": "",
+      "start_date": "10/2013",
+      "end_date": "01/2018",
+      "base_bullets": [
+        "Developed and optimized complex ETL pipelines, integrating large datasets from multiple sources and ensuring that data transformation and validation processes met business and operational needs.",
+        "Managed the design and architecture of a data warehouse project that supported a new ticketing application, aligning the system architecture with business requirements and driving improved data management practices.",
+        "Enhanced and restructured OLAP cubes for BI reporting, streamlining data from disparate systems to provide deeper insights, enabling better decision-making across departments.",
+        "Led the end-to-end management of a major grant-funded project, overseeing budgets, timelines, recruitment, and stakeholder communications to ensure that the project met all KPIs and goals.",
+        "Designed and developed automated reporting and dashboard solutions, improving internal communication and ensuring key performance data was accessible to decision-makers across the organization."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Masters, Management Information Systems, General",
+      "school": "The University of Texas at Dallas",
+      "start_year": "",
+      "end_year": "2019"
+    }
+  ]
+}
