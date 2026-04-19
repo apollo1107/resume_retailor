@@ -21,7 +21,7 @@
       "start_date": "Jan 2020",
       "end_date": "Present",
       "base_bullets": [
-        "Optional: base bullets. API: same-length details = rewrite each line (≥25 words); else append ≤3 JD bullets. base_skills never removed."
+        "Optional: base bullets. API: 2–3 details lines (each ≥35 words) replace that job’s base bullets on export; base_skills never removed."
       ]
     },
     {
