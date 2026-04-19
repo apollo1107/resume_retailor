@@ -50,6 +50,10 @@ export const profileTemplateMapping = {
     resume: "Ricardo",
     template: "Resume-Executive-Navy",
   },
+  ariel: {
+    resume: "Ariel Berjit",
+    template: "Resume-Executive-Navy",
+  },
   /////////////////////////////////////
   matthew: {
     resume: "Matthew",
