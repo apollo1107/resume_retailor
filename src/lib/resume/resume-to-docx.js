@@ -345,7 +345,9 @@ export async function buildResumeDocxBuffer(templateData) {
         );
       }
 
-      for (const detail of exp.details || []) {
+      for (const detail of (exp.details || []).filter((d) =>
+        String(d ?? "").trim()
+      )) {
         children.push(
           new Paragraph({
             spacing: { after: 72 },

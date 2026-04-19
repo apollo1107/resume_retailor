@@ -20,6 +20,10 @@ import {
   mergeExperienceDetails,
   profileHasPermanentContent,
 } from "@/lib/resume/merge-resume-base";
+import {
+  collectExperienceWordCountFailures,
+  formatExperienceWordCountErrorText,
+} from "@/lib/resume/experience-word-counts";
 import { RESUMES_DIR } from "@/config/project-paths";
 
 export default async function handler(req, res) {
@@ -314,6 +318,17 @@ export default async function handler(req, res) {
       })),
       education: profileData.education,
     };
+
+    const wordCountFailures = collectExperienceWordCountFailures(
+      templateData.experience
+    );
+    if (wordCountFailures.length) {
+      res
+        .status(422)
+        .setHeader("Content-Type", "text/plain; charset=utf-8")
+        .send(formatExperienceWordCountErrorText(wordCountFailures));
+      return;
+    }
 
     const baseName = computeResumeBaseFileName(resumeName, companyName);
     const outFormat =

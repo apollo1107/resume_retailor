@@ -202,18 +202,7 @@ export const createResumeTemplate = (config) => {
             marginLeft: 4,
         },
         expDetailRow: {
-            flexDirection: "row",
-            alignItems: "flex-start",
             marginBottom: 4,
-        },
-        expDetailIcon: {
-            width: 11,
-            marginRight: 6,
-            paddingTop: 3,
-            alignItems: "center",
-        },
-        expDetailText: {
-            flex: 1,
         },
         expDetailItem: {
             fontSize: fonts.expDetailSize || 10,
@@ -370,16 +359,17 @@ export const createResumeTemplate = (config) => {
                                     </Text>
                                     {exp.details && exp.details.length > 0 && (
                                         <View style={styles.expDetails}>
-                                            {exp.details.map((detail, detailIdx) => (
-                                                <View key={detailIdx} style={styles.expDetailRow}>
-                                                    <View style={styles.expDetailIcon}>
-                                                        <PdfListBullet size={5.5} color={INK} />
+                                            {exp.details
+                                                .filter((d) => String(d ?? "").trim())
+                                                .map((detail, detailIdx) => (
+                                                    <View key={detailIdx} style={styles.expDetailRow}>
+                                                        <BoldText
+                                                            text={String(detail)}
+                                                            style={styles.expDetailItem}
+                                                            prefix={"\u2022 "}
+                                                        />
                                                     </View>
-                                                    <View style={styles.expDetailText}>
-                                                        <BoldText text={detail} style={styles.expDetailItem} />
-                                                    </View>
-                                                </View>
-                                            ))}
+                                                ))}
                                         </View>
                                     )}
                                 </View>

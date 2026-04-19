@@ -28,7 +28,7 @@ const stripBoldTags = (str) => {
 
 // Helper component to render text with bold tags
 // Supports <strong>, </strong>, <b>, </b> (case-insensitive, with optional attributes) and **markdown**
-export const BoldText = ({ text, style }) => {
+export const BoldText = ({ text, style, prefix = '' }) => {
   if (!text || typeof text !== 'string') return null;
 
   let normalized = decodeHtmlEntities(String(text));
@@ -38,7 +38,12 @@ export const BoldText = ({ text, style }) => {
 
   const hasBold = /<strong/i.test(normalized);
   if (!hasBold) {
-    return <Text style={style}>{normalized}</Text>;
+    return (
+      <Text style={style}>
+        {prefix}
+        {normalized}
+      </Text>
+    );
   }
 
   const parts = [];
@@ -63,7 +68,12 @@ export const BoldText = ({ text, style }) => {
   }
 
   if (parts.length === 0) {
-    return <Text style={style}>{stripBoldTags(normalized)}</Text>;
+    return (
+      <Text style={style}>
+        {prefix}
+        {stripBoldTags(normalized)}
+      </Text>
+    );
   }
 
   // Use built-in bold font - react-pdf maps Helvetica->Helvetica-Bold, Times->Times-Bold
@@ -73,6 +83,7 @@ export const BoldText = ({ text, style }) => {
 
   return (
     <Text style={style}>
+      {prefix}
       {parts.map((part, idx) =>
         part.type === 'bold' ? (
           <Text key={idx} style={boldStyle}>
