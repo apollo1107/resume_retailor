@@ -12,11 +12,6 @@ function normalizeStringList(arr) {
   return arr.map((s) => String(s).trim()).filter(Boolean);
 }
 
-/** When AI returns enough `details`, at most this many lines are shown per role (replaces base bullets on export). */
-export const MAX_EXPERIENCE_DETAIL_BULLETS = 3;
-/** Minimum `details` count to use AI lines instead of profile `base_bullets` for that role. */
-export const MIN_EXPERIENCE_DETAIL_BULLETS_FOR_REPLACE = 2;
-
 function dedupeSkillsPreserveOrder(primary, secondary) {
   const seen = new Set();
   const out = [];
@@ -140,15 +135,7 @@ export function formatPermanentContextForPrompt(profileData) {
 
   return (
     lines.join("\n").trim() +
-    "\n\n**Merge rules (non-negotiable):** The app **never removes** any `base_skills` line—those always stay. For **each role’s experience bullets:** if you output **" +
-      MIN_EXPERIENCE_DETAIL_BULLETS_FOR_REPLACE +
-      "–" +
-      MAX_EXPERIENCE_DETAIL_BULLETS +
-      "** strings in `experience[].details`, the app shows **only** those lines for that job on PDF/Word (up to **" +
-      MAX_EXPERIENCE_DETAIL_BULLETS +
-      "**), **replacing** the profile’s `base_bullets` for that role—so each line must **fold in** the real accomplishments from the base list and WORK HISTORY (**≥35 words** each, JD-aligned, **no** invented employers/dates). If you output **fewer than " +
-      MIN_EXPERIENCE_DETAIL_BULLETS_FOR_REPLACE +
-      "** `details` strings, the original `base_bullets` are used unchanged. **Never** delete `base_skills`."
+    "\n\n**Merge rules (non-negotiable):** The app **never removes** any `base_skills` line—those always stay. For **experience bullets:** **every** profile `base_bullet` for a role **always remains on the resume** unless you use **same-count rewrite** (see below)—the app **never** drops bullets to a smaller count. (**1**) If your `experience[].details` has the **same length** as that role’s `base_bullets`, those strings **replace** them **one-for-one** (same bullet count, expanded/JD text). (**2**) Otherwise your `details` strings are **appended after** **all** `base_bullets`—final count = **base + new**. **Do not** repeat base text verbatim in `details`. **Never** delete `base_skills`."
   );
 }
 
@@ -180,9 +167,8 @@ export function mergeBaseSkillsIntoAi(baseSkills, aiSkills) {
 }
 
 /**
- * Per job: if `details` has at least MIN_EXPERIENCE_DETAIL_BULLETS_FOR_REPLACE entries, use the first
- * MAX_EXPERIENCE_DETAIL_BULLETS as the only experience bullets (replaces `base_bullets` on export).
- * Otherwise keep `base_bullets`; if none, use whatever `details` exist.
+ * Per job: if `details.length === base_bullets.length` (and base non-empty), AI lines replace base **without
+ * reducing bullet count**. Otherwise `[...base_bullets, ...details]` — **never** fewer base lines than the profile.
  */
 export function mergeExperienceDetails(profileJobs, aiExperience) {
   const jobs = Array.isArray(profileJobs) ? profileJobs : [];
@@ -190,10 +176,9 @@ export function mergeExperienceDetails(profileJobs, aiExperience) {
   return jobs.map((job, idx) => {
     const base = normalizeStringList(job.base_bullets ?? job.base_details);
     const fromAi = normalizeStringList(ai[idx]?.details);
-    if (fromAi.length >= MIN_EXPERIENCE_DETAIL_BULLETS_FOR_REPLACE) {
-      return fromAi.slice(0, MAX_EXPERIENCE_DETAIL_BULLETS);
+    if (base.length > 0 && fromAi.length === base.length) {
+      return fromAi;
     }
-    if (base.length > 0) return base;
-    return fromAi;
+    return [...base, ...fromAi];
   });
 }
