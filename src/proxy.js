@@ -30,6 +30,11 @@ export function proxy(request) {
     return NextResponse.next();
   }
 
+  /* /public files (e.g. /email-snippets.json) — rewriting would serve HTML and break JSON fetch */
+  if (/\.(json|ico|txt|xml|webmanifest|woff2?|ttf|map)$/i.test(pathname)) {
+    return NextResponse.next();
+  }
+
   const segments = pathname.split("/").filter(Boolean);
   if (segments.length !== 1) {
     return NextResponse.next();
@@ -46,5 +51,7 @@ export function proxy(request) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|json|txt|xml|webmanifest|woff2?|ttf|map)$).*)",
+  ],
 };

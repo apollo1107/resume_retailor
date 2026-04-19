@@ -627,7 +627,7 @@ export const PROFILE_WORKSPACE_THEME_CSS = `
     pointer-events: none;
   }
   .rt-right-email-dock__hit {
-    width: 18px;
+    width: 48px;
     flex-shrink: 0;
     align-self: stretch;
     pointer-events: auto;
@@ -662,6 +662,7 @@ export const PROFILE_WORKSPACE_THEME_CSS = `
       box-shadow 0.4s ease;
   }
   .rt-right-email-dock:hover .rt-right-email-dock__panel,
+  .rt-right-email-dock--open .rt-right-email-dock__panel,
   .rt-right-email-dock--pinned .rt-right-email-dock__panel {
     min-width: min(272px, calc(100vw - 36px));
     max-width: min(272px, calc(100vw - 36px));

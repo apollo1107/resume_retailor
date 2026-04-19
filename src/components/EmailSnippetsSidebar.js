@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { DockPinIcon } from "@/lib/ui/quick-copy-icons";
 import { EMAIL_SNIPPET_TOPIC_ORDER } from "@/lib/email/email-snippet-topics";
 
@@ -13,20 +13,44 @@ function buildSnippetClipboardText(snippet, replyFirstName) {
 /**
  * @param {{ replyFirstName?: string }} props — first name appended on a new line after the snippet when copying
  */
+const RAIL_CLOSE_DELAY_MS = 520;
+
 export function EmailSnippetsSidebar({ replyFirstName = "" }) {
   const [snippets, setSnippets] = useState({});
   const [pinned, setPinned] = useState(false);
+  const [railOpen, setRailOpen] = useState(false);
   const [copiedTopic, setCopiedTopic] = useState(null);
   const [loadError, setLoadError] = useState(null);
+  const railCloseTimerRef = useRef(null);
+
+  const clearRailCloseTimer = useCallback(() => {
+    if (railCloseTimerRef.current != null) {
+      clearTimeout(railCloseTimerRef.current);
+      railCloseTimerRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => clearRailCloseTimer();
+  }, [clearRailCloseTimer]);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
         const res = await fetch("/email-snippets.json", { cache: "no-store" });
-        if (!res.ok) throw new Error(res.statusText || String(res.status));
-        const data = await res.json();
+        const raw = await res.text();
         if (cancelled) return;
+        if (!res.ok) {
+          throw new Error(res.statusText || String(res.status));
+        }
+        const trimmed = raw.trimStart();
+        if (trimmed.startsWith("<")) {
+          throw new Error(
+            "Expected JSON from /email-snippets.json but got HTML (often a bad route or proxy rewrite)."
+          );
+        }
+        const data = JSON.parse(raw);
         setSnippets(typeof data === "object" && data !== null && !Array.isArray(data) ? data : {});
         setLoadError(null);
       } catch (e) {
@@ -40,6 +64,20 @@ export function EmailSnippetsSidebar({ replyFirstName = "" }) {
       cancelled = true;
     };
   }, []);
+
+  const openRail = useCallback(() => {
+    clearRailCloseTimer();
+    setRailOpen(true);
+  }, [clearRailCloseTimer]);
+
+  const scheduleCloseRail = useCallback(() => {
+    if (pinned) return;
+    clearRailCloseTimer();
+    railCloseTimerRef.current = setTimeout(() => {
+      railCloseTimerRef.current = null;
+      setRailOpen(false);
+    }, RAIL_CLOSE_DELAY_MS);
+  }, [pinned, clearRailCloseTimer]);
 
   const copyTopic = useCallback(async (topic) => {
     const raw = snippets[topic];
@@ -67,8 +105,16 @@ export function EmailSnippetsSidebar({ replyFirstName = "" }) {
     }
   }, [snippets, replyFirstName]);
 
+  const dockClass =
+    `rt-right-email-dock${pinned ? " rt-right-email-dock--pinned" : ""}` +
+    `${pinned || railOpen ? " rt-right-email-dock--open" : ""}`;
+
   return (
-    <div className={`rt-right-email-dock${pinned ? " rt-right-email-dock--pinned" : ""}`}>
+    <div
+      className={dockClass}
+      onMouseEnter={openRail}
+      onMouseLeave={scheduleCloseRail}
+    >
       <div className="rt-right-email-dock__hit" aria-hidden />
       <aside className="rt-right-email-dock__panel" aria-label="Email reply templates">
         <div className="rt-right-email-dock__head">
@@ -78,7 +124,10 @@ export function EmailSnippetsSidebar({ replyFirstName = "" }) {
             className={`rt-right-email-dock__pin${pinned ? " rt-right-email-dock__pin--active" : ""}`}
             aria-pressed={pinned}
             aria-label={pinned ? "Unpin email templates" : "Pin email templates open"}
-            onClick={() => setPinned((p) => !p)}
+            onClick={() => {
+              clearRailCloseTimer();
+              setPinned((p) => !p);
+            }}
           >
             <DockPinIcon size={16} color="#0f172a" />
           </button>
