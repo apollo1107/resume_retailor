@@ -123,6 +123,21 @@ export const SPARKLE_LANDING_CSS = `
     z-index: 1;
   }
 
+  /* Native select: custom chevron inset from the right (use backgroundColor on the element, not background shorthand) */
+  .rt-home-profile-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding: 14px 42px 14px 16px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23cbd5e1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 18px center;
+    background-size: 14px 14px;
+  }
+  .rt-home-profile-select::-ms-expand {
+    display: none;
+  }
+
   /* Manual link (API home): short label expands on hover */
   .rt-home-manual-link {
     display: inline-flex;

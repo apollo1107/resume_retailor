@@ -18,10 +18,15 @@ export default function Home() {
       setProfilesLoading(true);
       setProfilesError("");
       try {
-        const q = getAccessUrlQuery();
-        const r = await fetch(q ? `/api/profiles?${q}` : "/api/profiles");
+        const r = await fetch(
+          `/api/profiles?${getAccessUrlQuery() || "accessUrl="}`
+        );
         const data = await r.json().catch(() => ({}));
         if (cancelled) return;
+        if (r.status === 404) {
+          router.replace("/404");
+          return;
+        }
         if (!r.ok) {
           setProfilesError(data.error || "Could not load resumes.");
           setProfiles([]);
@@ -40,7 +45,7 @@ export default function Home() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [router]);
 
   const colors = {
     bg: "#0f172a",
@@ -99,7 +104,7 @@ export default function Home() {
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            maxWidth: "800px",
+            maxWidth: "min(960px, 100%)",
             width: "100%",
             margin: "0 auto",
             padding: "16px 4px",
@@ -116,9 +121,9 @@ export default function Home() {
               background: "rgba(15, 23, 42, 0.72)",
               backdropFilter: "blur(14px)",
               WebkitBackdropFilter: "blur(14px)",
-              borderRadius: "12px",
+              borderRadius: "14px",
               border: `1px solid ${colors.cardBorder}`,
-              padding: "clamp(22px, 4vw, 36px)",
+              padding: "clamp(28px, 5vw, 48px)",
               boxSizing: "border-box",
             }}
           >
@@ -131,10 +136,10 @@ export default function Home() {
             <div className="rt-landing-card__content">
               <h1
                 style={{
-                  fontSize: "28px",
+                  fontSize: "32px",
                   fontWeight: "600",
                   color: colors.text,
-                  margin: "0 0 28px 0",
+                  margin: "0 0 32px 0",
                   minWidth: 0,
                 }}
               >
@@ -166,17 +171,17 @@ export default function Home() {
                   </label>
                   <select
                     id="rt-home-profile-select"
+                    className="rt-home-profile-select"
                     value={selectedSlug}
                     onChange={(e) => setSelectedSlug(e.target.value)}
                     disabled={profilesLoading || profiles.length === 0}
                     style={{
                       width: "100%",
                       maxWidth: "100%",
-                      padding: "14px 16px",
                       fontSize: "16px",
                       fontFamily: "inherit",
                       color: colors.text,
-                      background: colors.inputBg,
+                      backgroundColor: colors.inputBg,
                       border: `1px solid ${colors.inputBorder}`,
                       borderRadius: "8px",
                       outline: "none",

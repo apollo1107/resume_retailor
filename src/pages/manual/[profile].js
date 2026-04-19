@@ -60,25 +60,6 @@ export default function ManualProfilePage() {
   const startTimeRef = useRef(null);
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const r = await fetch("/api/ui-config");
-        const data = await r.json().catch(() => ({}));
-        if (cancelled) return;
-        if (r.ok && typeof data?.showRightSidebar === "boolean") {
-          setShowRightSidebar(data.showRightSidebar);
-        }
-      } catch {
-        /* keep default */
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
     if (!profileSlug) return;
 
     const profileNameFromSlug = slugToProfileName(profileSlug);
@@ -93,25 +74,37 @@ export default function ManualProfilePage() {
 
     const loadData = async () => {
       try {
-        const q = getAccessUrlQuery();
-        const profileUrl = `/api/profiles/${encodeURIComponent(profileNameFromSlug)}${
-          q ? `?${q}` : ""
-        }`;
+        const accessQ = getAccessUrlQuery() || "accessUrl=";
+        const cfgRes = await fetch(`/api/ui-config?${accessQ}`);
+        if (cfgRes.status === 404) {
+          router.replace("/404");
+          return;
+        }
+        const cfgData = await cfgRes.json().catch(() => ({}));
+        if (!cfgRes.ok) {
+          router.replace("/404");
+          return;
+        }
+        if (typeof cfgData?.showRightSidebar === "boolean") {
+          setShowRightSidebar(cfgData.showRightSidebar);
+        }
+
+        const profileUrl = `/api/profiles/${encodeURIComponent(profileNameFromSlug)}?${accessQ}`;
         const response = await fetch(profileUrl, {
           credentials: "include",
         });
+        if (response.status === 404) {
+          router.replace("/404");
+          return;
+        }
         if (!response.ok) {
-          if (response.status === 403 || response.status === 404) {
-            router.push("/manual");
-            return;
-          }
           throw new Error(`Failed to fetch profile: ${response.statusText}`);
         }
         const data = await response.json();
         setSelectedProfileData(data);
       } catch (err) {
         console.error("Failed to load profile data:", err);
-        router.push("/manual");
+        router.replace("/404");
       } finally {
         setLoading(false);
       }

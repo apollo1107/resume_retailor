@@ -1,13 +1,18 @@
 {
-  "_readme": "allowedProfileSlugs = keys in profile-template-mapping.js. First matching urlProfileRules wins. showRightSidebar is per rule. If the URL matches no matchSubstring (or accessUrl is missing), APIs return 404.",
+  "_readme": "allowedProfileSlugs = keys in profile-template-mapping.js. First matching urlProfileRules wins. showRightSidebar is per rule. If the URL matches no matchSubstring (or accessUrl is missing), APIs return 404. Commit this file for Vercel — untracked copies never reach production. matchSubstring is checked case-insensitively. Path-style links like https://host/YOUR_TOKEN use middleware so YOUR_TOKEN is not mistaken for a profile slug.",
   "urlProfileRules": [
     {
-      "matchSubstring": ".uNf^o:dnr9eJELN>0pm0V3FucDZMy2)1YCmv09Q_eUG,Jhvez43nr1*Ee*Ksf}@t*NwwKj)iQ4cr5,30v2#%u!])^?_ZU=#Ri6x",
+      "matchSubstring": "Xg54xqBhoUudYvTNWhrvQFApL2mpirmuHvLYK5rJvH1XPtdPiX7gGGdXEB2erPoxg2j82NezQ6W2zZT2L1MdaAgxVowdXCyMcUFn",
+      "allowedProfileSlugs": ["rahulmonga", "davide","deekshith","hasan","kedar","praveen", "swetha", "hardika", "rao","oscar"],
+      "showRightSidebar": true
+    },
+    {
+      "matchSubstring": "N6dNDvfqsaymQgTeMWVAzUbgsTLxGkDZm7hjjdv4sKC89tcBujkd20fKVdA0YLsXnueyCnybhMNxwbN3ogVL2iidUE4NL0gAdZw1",
       "allowedProfileSlugs": ["ariel", "ricardo", "sugar", "maurice"],
       "showRightSidebar": true
     },
     {
-      "matchSubstring": "G]T3,9huUnAzZ>HWNJxiR*Y2uLMT9a@8+uEVPHcR]GKrnxPB0V3+-Wps3,EyT6LmNjNn9aR?i^LBiDJ]+)0Mh=%sqnL@)-]U5eyF",
+      "matchSubstring": "cV6y8R5vDCfJ78bkZKyahK8ZEAhzF9m56TnVMGoMAmx6vUz46EeYwN2aRohDKpUA2dsvFKk20dZxiPBQByGL3f3HjwK2pfryqA5y",
       "allowedProfileSlugs": ["rahulmonga"],
       "showRightSidebar": false
     }

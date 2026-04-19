@@ -61,10 +61,13 @@ export function resolveUiAccessFromUrl(fullUrl, config) {
   if (typeof fullUrl !== "string" || !fullUrl.trim()) {
     return { ok: false, code: ACCESS_RESOLVE_CODE.NO_URL };
   }
-  const u = fullUrl;
+  const u = fullUrl.trim();
+  const uLower = u.toLowerCase();
   for (const rule of rules) {
     if (!rule?.matchSubstring) continue;
-    if (u.includes(rule.matchSubstring)) {
+    const sub = rule.matchSubstring;
+    const subLower = sub.toLowerCase();
+    if (u.includes(sub) || uLower.includes(subLower)) {
       return {
         ok: true,
         allowedSlugs: new Set(rule.allowedProfileSlugs || []),

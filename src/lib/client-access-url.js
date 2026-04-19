@@ -7,6 +7,6 @@ export function getAccessUrlQuery() {
   try {
     return `accessUrl=${encodeURIComponent(window.location.href)}`;
   } catch {
-    return "";
+    return "accessUrl=";
   }
 }
