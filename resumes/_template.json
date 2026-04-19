@@ -21,7 +21,7 @@
       "start_date": "Jan 2020",
       "end_date": "Present",
       "base_bullets": [
-        "Optional: base bullets for this job (all kept); API appends JD-tailored bullets in details (additive merge)."
+        "Optional: base bullets. API: same-length details = rewrite each line (≥25 words); else append ≤3 JD bullets. base_skills never removed."
       ]
     },
     {

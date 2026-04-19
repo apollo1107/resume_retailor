@@ -12,6 +12,9 @@ function normalizeStringList(arr) {
   return arr.map((s) => String(s).trim()).filter(Boolean);
 }
 
+/** When not using same-count rewrite, at most this many `details` lines are appended after `base_bullets`. */
+export const MAX_APPEND_JD_EXPERIENCE_BULLETS = 3;
+
 function dedupeSkillsPreserveOrder(primary, secondary) {
   const seen = new Set();
   const out = [];
@@ -135,7 +138,9 @@ export function formatPermanentContextForPrompt(profileData) {
 
   return (
     lines.join("\n").trim() +
-    "\n\n**Merge rules (non-negotiable):** The app **never removes** any `base_skills` line or any **`base_bullets`** line—they are **always** kept on the final resume **in full count**. Your JSON **adds**: extra skills in `skills`, and **new** JD-tailored bullets in `experience[].details` (**appended after** all base bullets for that role). Do **not** repeat permanent bullets inside `details`; do **not** delete, shorten, or contradict base content. Use `details` to **extend** and **JD-align** the story (new angles, stack, outcomes tied to the posting)."
+    "\n\n**Merge rules (non-negotiable):** The app **never removes** any `base_skills` line—those always stay. For **experience bullets**, the app does one of two things per role: (**1**) **Rewrite mode:** If your `experience[].details` array has the **same length** as that role’s `base_bullets`, your strings **replace** the base bullets **one-for-one** (same order)—use this to turn short base lines into **≥25-word** JD-tailored bullets **without** changing employers, dates, or titles. (**2**) **Append mode:** If `details` has **any other** positive length, only the **first " +
+      MAX_APPEND_JD_EXPERIENCE_BULLETS +
+      "** entries are **appended after** **all** original `base_bullets` (original short lines stay). **Prefer (1)** when base bullets are short. Every string you put in `details` must be **≥25 words** (count space-separated words). Do **not** duplicate base text in `details` in append mode."
   );
 }
 
@@ -167,8 +172,9 @@ export function mergeBaseSkillsIntoAi(baseSkills, aiSkills) {
 }
 
 /**
- * For each profile job: `[...base_bullets, ...ai.details]` — all base bullets stay;
- * JD tailoring is appended.
+ * Per job: if `details.length === base_bullets.length` (and base non-empty), AI lines **replace** base
+ * (same-count rewrite). Otherwise, if `details` non-empty, **`[...base, ...details.slice(0, MAX_APPEND)]`**.
+ * If `details` empty, keep base only. If base empty, use `details` only.
  */
 export function mergeExperienceDetails(profileJobs, aiExperience) {
   const jobs = Array.isArray(profileJobs) ? profileJobs : [];
@@ -176,6 +182,13 @@ export function mergeExperienceDetails(profileJobs, aiExperience) {
   return jobs.map((job, idx) => {
     const base = normalizeStringList(job.base_bullets ?? job.base_details);
     const fromAi = normalizeStringList(ai[idx]?.details);
-    return [...base, ...fromAi];
+    if (base.length > 0 && fromAi.length === base.length) {
+      return fromAi;
+    }
+    if (base.length > 0 && fromAi.length > 0) {
+      return [...base, ...fromAi.slice(0, MAX_APPEND_JD_EXPERIENCE_BULLETS)];
+    }
+    if (base.length > 0) return base;
+    return fromAi;
   });
 }

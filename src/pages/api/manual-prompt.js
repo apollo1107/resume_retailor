@@ -73,8 +73,8 @@ export default async function handler(req, res) {
     const permanentResumeContext =
       formatPermanentContextForPrompt(profileData);
     const experienceBulletGuidance = hasPermanent
-      ? "The app keeps **every** profile `base_bullet` (none removed). In `experience[].details`, **add** **2–5 NEW** JD-tailored bullets per role (**≥25 words each**—count words); for dense JDs you **may add 2–3 more** (up to ~8 new) but **never** output zero new bullets when tailoring. **Do not** paste or lightly reword base bullets in `details`—only **additive** lines that extend/JD-align the role. Strongest JD fit on **work history #1**."
-      : "Per role in `experience[].details`, output **7–10** bullets (**≥25 words each**). Ground in WORK HISTORY; **tightest JD match** on **work history #1**.";
+      ? "**MANDATORY word count:** every string in `experience[].details` must be **≥25 words** (count space-separated English words; **24 or fewer = invalid**). **When `base_bullets` exist for a role — PREFERRED:** output **`details` with exactly the same array length** as `base_bullets` (same order): **rewrite mode** — each line expands/JD-aligns that base bullet; **bullet count unchanged** on PDF but lines become long. **Alternative:** **append mode** — output **1–3** `details` strings only (hard cap **3** appended); base lines stay as in JSON (may stay short). **Never** remove or omit `base_skills`. Strongest JD fit on **work history #1**."
+      : "Per role in `experience[].details`, output **7–10** bullets (**each ≥25 words** — mandatory count). Ground in WORK HISTORY; **tightest JD match** on **work history #1**.";
 
     const prompt = loadPromptForProfile(profileSlug, {
       name: profileData.name,
