@@ -36,7 +36,7 @@ The profile JSON supplies **permanent** content: `base_skills` as a **JSON array
 
 - **Every** base skill and **every** base bullet **always** appears on the final resume. You **must not** remove, omit, shorten, or replace them via your output.
 - In **`skills`**: output **only JD-tailored additions** (new categories and/or new skills). Base categories are merged **first**; your lists are **appended** per category. Do **not** try to “refresh” or re-specify base skills—add complementary JD keywords only.
-- In **`experience[].details`**: output **only new bullets** (25–35 words each) that **add** to the role. Base bullets are **prepended automatically**. Do **not** repeat base bullets in `details`, and do **not** write bullets that would supersede or contradict base facts.
+- In **`experience[].details`**: output **only new bullets** (**minimum 30 words each**, typically **32–45** words) that **add** to the role. Base bullets are **prepended automatically**. Do **not** repeat base bullets in `details`, and do **not** write bullets that would supersede or contradict base facts.
 
 If no permanent block is shown above, generate a full resume from the profile + JD as usual.
 
@@ -51,12 +51,22 @@ If no permanent block is shown above, generate a full resume from the profile + 
 
 ---
 
+### **0b. THREE-PAGE PDF/DOCX TARGET (this app’s export)**
+
+The candidate downloads **PDF and Word** from this application using a **classic full-width layout** (about **10 mm** margins, **~10–11 pt** body text, generous line spacing). Your JSON must be written so that export **typically fills about three A4 pages** (roughly **three** when opened in Word with the same structure)—not a one-page cheat sheet.
+
+- **Primary lever:** `experience[].details` — follow **Bullet counts for experience JSON** with **long** bullets (**§5** word rules). Do **not** compress wording to cram everything onto fewer pages.
+- **Secondary levers:** A **full** multi-line `summary` per **§3** (high word count is expected), plus the **§4** skills footprint. Optional one-line “Selected coursework / honors” only when **§0a** credibility already supports it (do **not** invent credentials).
+- **If you risk a fourth page:** shorten **oldest** roles first (fewer bullets or slightly tighter phrasing) while keeping **work history #1** at the **full** bullet count and **≥30 words** per bullet.
+
+---
+
 ### **1. EXTRACT DOMAIN KEYWORDS** (Critical for 98%+ score)
 
 Analyze JD "About Us" section for **10-15 keywords** specific to company's product/industry:
 
 **WHERE TO USE:**
-- Summary: 3-5 keywords (lines 2-4)
+- Summary: **10-14** JD-aligned keywords distributed across the full **§3** summary (not crammed into one sentence)
 - Skills: 10-15 JD-aligned keywords (only where **§0a** credibility allows)
 - Experience: Each role must land at the **total bullet counts** required by **Bullet counts for experience JSON** + §5, with keywords woven in naturally.
 
@@ -68,16 +78,19 @@ Analyze JD "About Us" section for **10-15 keywords** specific to company's produ
 
 ---
 
-### **3. SUMMARY** (5-6 lines, 8-12 JD keywords)
+### **3. SUMMARY** (7-9 sentences or **~160-220 words**, 10-14 JD keywords woven in)
 
-**Structure:**
-- **Line 1:** {{resumeTitle}} with {{yearsOfExperience}}+ years in [domain from JD] across startup and enterprise environments
-- **Line 2:** Proficient in [3-4 more JD technologies/methodologies]
-- **Line 3:** [Soft skill from JD] professional with experience in [Agile/leadership/collaboration] in fast-paced environments
-- **Line 4:** Strong focus on [2-3 key JD skill areas] and delivering scalable, production-ready solutions
+Write a **substantial** summary block (plain text with spaces; you may use `\n\n` between short paragraphs if needed). This is a major contributor to the **three-page** target in **§0b**—do not output a skinny 3-line blurb.
 
-**Example (FinTech):**
-"Senior Software Engineer with 8+ years building scalable platforms. Expertise in React.js 18, Node.js 20, and PostgreSQL. Proven track record implementing fraud detection algorithms that reduced chargebacks by 40% and processed $500M+ annually. Proficient in AWS infrastructure, Docker, Kubernetes, and KYC/AML compliance frameworks. Collaborative problem-solver with experience leading cross-functional teams in fast-paced startup environments. Strong focus on secure payment infrastructure, regulatory compliance, and delivering high-performance financial applications."
+**Structure (cover every item; expand with concrete nouns from the JD):**
+- **Opening:** {{resumeTitle}} with {{yearsOfExperience}}+ years in [domain from JD] across [company types from JD: startup / enterprise / regulated / etc.]
+- **Stack depth:** Proficient in [4-6 JD technologies/methodologies] with production ownership (build, deploy, operate, or govern—not name-dropping only)
+- **Outcomes:** 1-2 sentences on measurable impact (latency, reliability, revenue, risk, cost, quality, security) tied to JD themes
+- **Ways of working:** [Soft skills from JD] in [Agile / cross-functional / stakeholder-heavy] contexts; scope (team size, geography, user volume) when credible
+- **Focus close:** Strong emphasis on [2-4 JD pillars] and shipping **scalable, production-ready** systems end-to-end
+
+**Example (FinTech — length reference only):**
+"Senior Software Engineer with 8+ years building scalable platforms across high-growth startups and global financial institutions. Expertise in React.js 18, Node.js 20, TypeScript, PostgreSQL, and event-driven services, with hands-on ownership of CI/CD, observability, and on-call operations for customer-facing payment flows. Proven track record implementing fraud detection and rules engines that reduced chargebacks by 40% while processing $500M+ annually with strong audit trails for regulators and partners. Proficient in AWS infrastructure (Lambda, ECS, RDS, CloudFront), Docker, Kubernetes, infrastructure-as-code, and KYC/AML compliance frameworks, partnering closely with risk, legal, and data science to ship controls without blocking product velocity. Collaborative problem-solver who has led cross-functional discovery, shaped technical roadmaps, and mentored engineers in fast-paced environments with ambiguous requirements. Strong focus on secure payment infrastructure, regulatory compliance, performance at scale, and delivering high-reliability financial applications that customers trust every day."
 
 ---
 
@@ -106,7 +119,7 @@ Analyze JD "About Us" section for **10-15 keywords** specific to company's produ
   "Tools": ["Git", "Webpack", "Vite", "Figma", "Jira"]
 }
 ```
-Total: ~40 skills (scannable and professional)
+Total: aim for **60–75** individual skills across categories (see **§4** rules—not a short sample list)
 
 **If relevant, create domain-specific category:**
 - FinTech → "Payment & Compliance"
@@ -120,16 +133,17 @@ Total: ~40 skills (scannable and professional)
 
 **STRICT Requirements (must be followed):**
 - Generate exactly {{experienceCount}} job entries; one entry per job in the work history—no more, no fewer.
-- Word count per bullet: every bullet MUST be 25–35 words. Count words; do not write short 1-line bullets or run-on sentences.
-- If permanent base bullets exist for a role, your `details` array is **only** the extra JD-tailored bullets; **all** base bullets are prepended by the system and **must never be removed or replaced** by anything you output.
+- **Word count per bullet:** every **new** bullet you output MUST be **at least 30 words** (count before finalizing; **32–45** is the sweet spot). Bullets shorter than 30 words are **invalid**. Avoid comma-spliced run-ons—use **two clear clauses** or a **semicolon** where needed.
+- **Bullet substance:** each bullet should combine **(a)** business or technical context, **(b)** what **you** did (verbs: led, built, automated, optimized, migrated, etc.), **(c)** stack or methods, **(d)** scope (users, data volume, teams, SLAs, regions), and **(e)** a **credible** outcome or lesson when the profile supports it. Do **not** emit generic one-clause fragments.
+- If permanent base bullets exist for a role, your `details` array is **only** the extra JD-tailored bullets; **all** base bullets are prepended by the system and **must never be removed or replaced** by anything you output. If a base bullet is shorter than 30 words, **do not** “fix” it in your JSON—you only control **new** bullets in `details`.
 - **JD density:** For **work history #1** (most recent), maximize JD-relevant phrasing and outcomes **without** breaking **§0a** credibility or date-appropriate tech below.
 - For each work experience, ensure all technologies listed were widely available and commonly used in production during that role's time period; do not include tools, frameworks, or practices released after the role ended or unlikely to have been adopted in that era.
 - Include 2-4 JD keywords per bullet where **§0a** allows; do not force keywords from unrelated JD requirements into older roles if it would read false.
 
-**Example Bullet (with domain keywords):**
-"Architected secure payment processing system using PCI-DSS compliant infrastructure with Node.js 20, PostgreSQL, and Redis, implementing fraud detection algorithms and tokenization that processed $500M+ annually while reducing chargebacks by 40% and maintaining 99.99% uptime for 2M+ users."
+**Example Bullet (with domain keywords — length reference):**
+"Architected and operated a secure payment processing platform on PCI-DSS compliant infrastructure using Node.js 20, PostgreSQL, and Redis clusters, partnering with risk and compliance to implement fraud detection, tokenization, and circuit breakers that processed $500M+ annually while reducing chargebacks by 40%, hardening observability and incident playbooks, and maintaining 99.99% uptime for 2M+ monthly active users across multiple regions."
 
 
 Return ONLY valid JSON: {"title":"...","summary":"...","skills":{"Category":["Skill1","Skill2"]},"experience":[{"title":"...","details":["bullet1","bullet2",...]}]}
-**Final bullet rule:** If the profile has **no** permanent base bullets, each `experience[].details` must contain **6–8** bullets. If permanent base bullets exist, each `details` must follow **Bullet counts for experience JSON** (your output is **new** bullets only; merged totals must stay **full**, never pared down). Every bullet must be **25–35** words.
+**Final bullet rule:** If the profile has **no** permanent base bullets, each `experience[].details` must contain **7–9** bullets (prefer **8–9** for dense JDs). If permanent base bullets exist, each `details` must follow **Bullet counts for experience JSON** (your output is **new** bullets only; merged totals must stay **full**, never pared down). Every **new** bullet must be **≥30 words** (target **32–45**).
 

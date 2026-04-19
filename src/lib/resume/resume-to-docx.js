@@ -250,7 +250,7 @@ export async function buildResumeDocxBuffer(templateData) {
     children.push(sectionHeading("SUMMARY"));
     children.push(
       new Paragraph({
-        spacing: { after: 200 },
+        spacing: { after: 240 },
         children: [new TextRun({ text: summary, font: FONT, size: PT(11) })],
       })
     );
@@ -348,7 +348,7 @@ export async function buildResumeDocxBuffer(templateData) {
       for (const detail of exp.details || []) {
         children.push(
           new Paragraph({
-            spacing: { after: 40 },
+            spacing: { after: 72 },
             children: [
               new TextRun({
                 text: "\u25B8 ",
@@ -364,7 +364,7 @@ export async function buildResumeDocxBuffer(templateData) {
           })
         );
       }
-      children.push(new Paragraph({ text: "", spacing: { after: 160 } }));
+      children.push(new Paragraph({ text: "", spacing: { after: 200 } }));
     }
   }
 

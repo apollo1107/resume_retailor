@@ -115,7 +115,7 @@ export const createResumeTemplate = (config) => {
             marginBottom: headerLayout === "split" ? 3 : 0,
         },
         section: {
-            marginBottom: 11,
+            marginBottom: 12,
         },
         sectionTitle: {
             fontSize: fonts.sectionSize || 10.5,
@@ -132,7 +132,7 @@ export const createResumeTemplate = (config) => {
         summary: {
             fontSize: fonts.summarySize || 11,
             fontFamily: fonts.body || "Times-Roman",
-            lineHeight: 1.55,
+            lineHeight: 1.62,
             textAlign: "left",
             color: INK,
         },
@@ -168,7 +168,7 @@ export const createResumeTemplate = (config) => {
             flex: 1,
         },
         expItem: {
-            marginBottom: 12,
+            marginBottom: 14,
         },
         expHeader: {
             flexDirection: "row",
@@ -204,7 +204,7 @@ export const createResumeTemplate = (config) => {
         expDetailRow: {
             flexDirection: "row",
             alignItems: "flex-start",
-            marginBottom: 3,
+            marginBottom: 4,
         },
         expDetailIcon: {
             width: 11,
@@ -218,7 +218,7 @@ export const createResumeTemplate = (config) => {
         expDetailItem: {
             fontSize: fonts.expDetailSize || 10,
             fontFamily: fonts.body || "Times-Roman",
-            lineHeight: 1.5,
+            lineHeight: 1.58,
             color: INK,
         },
         eduItem: {
