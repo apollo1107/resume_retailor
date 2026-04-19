@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import { SPARKLE_LANDING_CSS } from "@/lib/ui/sparkle-ui-css";
+import { getAccessUrlQuery } from "@/lib/client-access-url";
 
 export default function Home() {
   const router = useRouter();
@@ -17,7 +18,8 @@ export default function Home() {
       setProfilesLoading(true);
       setProfilesError("");
       try {
-        const r = await fetch("/api/profiles");
+        const q = getAccessUrlQuery();
+        const r = await fetch(q ? `/api/profiles?${q}` : "/api/profiles");
         const data = await r.json().catch(() => ({}));
         if (cancelled) return;
         if (!r.ok) {
@@ -105,35 +107,6 @@ export default function Home() {
             minWidth: 0,
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
-              justifyContent: "flex-end",
-              gap: "12px",
-              marginBottom: "12px",
-              fontSize: "14px",
-              color: colors.textSecondary,
-            }}
-          >
-            <button
-              type="button"
-              onClick={() => router.push("/admin")}
-              style={{
-                padding: "8px 14px",
-                fontSize: "14px",
-                fontWeight: "600",
-                color: colors.buttonText,
-                background: colors.buttonBg,
-                border: "none",
-                borderRadius: "8px",
-                cursor: "pointer",
-              }}
-            >
-              Admin
-            </button>
-          </div>
           <div
             className="rt-landing-card"
             style={{

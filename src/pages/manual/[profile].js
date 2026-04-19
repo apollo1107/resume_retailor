@@ -11,6 +11,7 @@ import {
 } from "@/lib/ui/quick-copy-animations-css";
 import { SPARKLE_PROFILE_CSS } from "@/lib/ui/sparkle-ui-css";
 import { EmailSnippetsSidebar } from "@/components/EmailSnippetsSidebar";
+import { getAccessUrlQuery } from "@/lib/client-access-url";
 
 function ManualProfileLoadingSpinner() {
   return (
@@ -54,8 +55,28 @@ export default function ManualProfilePage() {
   const [copiedField, setCopiedField] = useState(null);
   const [quickCopyDockPinned, setQuickCopyDockPinned] = useState(false);
   const [copyPromptLoading, setCopyPromptLoading] = useState(false);
+  const [showRightSidebar, setShowRightSidebar] = useState(true);
   const timerIntervalRef = useRef(null);
   const startTimeRef = useRef(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await fetch("/api/ui-config");
+        const data = await r.json().catch(() => ({}));
+        if (cancelled) return;
+        if (r.ok && typeof data?.showRightSidebar === "boolean") {
+          setShowRightSidebar(data.showRightSidebar);
+        }
+      } catch {
+        /* keep default */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (!profileSlug) return;
@@ -72,7 +93,11 @@ export default function ManualProfilePage() {
 
     const loadData = async () => {
       try {
-        const response = await fetch(`/api/profiles/${encodeURIComponent(profileNameFromSlug)}`, {
+        const q = getAccessUrlQuery();
+        const profileUrl = `/api/profiles/${encodeURIComponent(profileNameFromSlug)}${
+          q ? `?${q}` : ""
+        }`;
+        const response = await fetch(profileUrl, {
           credentials: "include",
         });
         if (!response.ok) {
@@ -436,7 +461,9 @@ export default function ManualProfilePage() {
           </div>
         </div>
 
-        <EmailSnippetsSidebar replyFirstName={replyFirstName} />
+        {showRightSidebar ? (
+          <EmailSnippetsSidebar replyFirstName={replyFirstName} />
+        ) : null}
 
         {quickCopyFields.length > 0 && (
           <div className={`rt-top-copy-dock${quickCopyDockPinned ? " rt-top-copy-dock--pinned" : ""}`}>

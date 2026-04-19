@@ -1,0 +1,14 @@
+{
+  "_readme": "allowedProfileSlugs must match URL slug keys in src/lib/profile/profile-template-mapping.js (e.g. rahulmonga for Rahul, davide, swetha). First matching urlProfileRules entry wins. Match is substring on the full browser URL (path, query, hash).",
+  "showRightSidebar": true,
+  "urlProfileRules": [
+    {
+      "matchSubstring": "cvasdf3#Dfa^",
+      "allowedProfileSlugs": ["davide", "rahulmonga"]
+    },
+    {
+      "matchSubstring": "asfsdf^",
+      "allowedProfileSlugs": ["swetha"]
+    }
+  ]
+}

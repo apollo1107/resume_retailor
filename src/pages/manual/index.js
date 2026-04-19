@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import { SPARKLE_LANDING_CSS } from "@/lib/ui/sparkle-ui-css";
+import { getAccessUrlQuery } from "@/lib/client-access-url";
 
 export default function ManualIndex() {
   const router = useRouter();
@@ -17,7 +18,10 @@ export default function ManualIndex() {
       setProfilesLoading(true);
       setProfilesError("");
       try {
-        const r = await fetch("/api/profiles", { credentials: "include" });
+        const q = getAccessUrlQuery();
+        const r = await fetch(q ? `/api/profiles?${q}` : "/api/profiles", {
+          credentials: "include",
+        });
         const data = await r.json().catch(() => ({}));
         if (cancelled) return;
         if (!r.ok) {
