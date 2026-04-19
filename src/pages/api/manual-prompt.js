@@ -1,12 +1,12 @@
 import fs from "fs";
 import path from "path";
-import { getProfileBySlug } from "@/lib/profile/profile-template-mapping";
+import { getProfileBySlug } from "@/lib/profiles/registry";
 import { loadPromptForProfile } from "@/lib/resume/prompt-loader";
 import {
   formatPermanentContextForPrompt,
   profileHasPermanentContent,
 } from "@/lib/resume/merge-resume-base";
-import { RESUMES_DIR } from "@/config/server-paths";
+import { RESUMES_DIR } from "@/config/project-paths";
 
 /**
  * Build the full prompt for manual ChatGPT use (no API key)

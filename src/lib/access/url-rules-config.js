@@ -1,13 +1,14 @@
 import fs from "fs";
 import path from "path";
 
-const CONFIG_PATH = path.join(process.cwd(), "config", "ui-access.json");
+const CONFIG_PATH = path.join(process.cwd(), "config", "url-access.json");
 
 const DEFAULT_CONFIG = {
   urlProfileRules: [],
 };
 
-export const ACCESS_RESOLVE_CODE = {
+/** Machine-readable reasons when `resolveUrlAccess` fails. */
+export const URL_ACCESS_RESOLVE_REASON = {
   NO_RULES: "NO_RULES",
   NO_URL: "NO_URL",
   NO_MATCH: "NO_MATCH",
@@ -33,9 +34,9 @@ function normalizeConfig(raw) {
 }
 
 /**
- * Load `config/ui-access.json` (server-only). Safe defaults if missing or invalid.
+ * Load `config/url-access.json` (server-only). Safe defaults if missing or invalid.
  */
-export function loadUiAccessConfig() {
+export function loadUrlAccessRules() {
   try {
     if (!fs.existsSync(CONFIG_PATH)) return { ...DEFAULT_CONFIG };
     const raw = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf8"));
@@ -46,20 +47,20 @@ export function loadUiAccessConfig() {
 }
 
 /**
- * Resolves access from the full browser URL against `urlProfileRules`.
- * First matching rule wins. If there are no rules, empty URL, or no substring match → not ok (404).
+ * Match the browser-reported full URL against `urlProfileRules`.
+ * First matching rule wins. No rules, empty URL, or no substring match → not ok (404).
  *
  * @param {string} fullUrl
  * @param {{ urlProfileRules: Array<{ matchSubstring: string, allowedProfileSlugs: string[], showRightSidebar?: boolean }> }} config
  * @returns {{ ok: true, allowedSlugs: Set<string>, showRightSidebar: boolean } | { ok: false, code: string }}
  */
-export function resolveUiAccessFromUrl(fullUrl, config) {
+export function resolveUrlAccess(fullUrl, config) {
   const rules = config?.urlProfileRules;
   if (!Array.isArray(rules) || rules.length === 0) {
-    return { ok: false, code: ACCESS_RESOLVE_CODE.NO_RULES };
+    return { ok: false, code: URL_ACCESS_RESOLVE_REASON.NO_RULES };
   }
   if (typeof fullUrl !== "string" || !fullUrl.trim()) {
-    return { ok: false, code: ACCESS_RESOLVE_CODE.NO_URL };
+    return { ok: false, code: URL_ACCESS_RESOLVE_REASON.NO_URL };
   }
   const u = fullUrl.trim();
   const uLower = u.toLowerCase();
@@ -75,5 +76,5 @@ export function resolveUiAccessFromUrl(fullUrl, config) {
       };
     }
   }
-  return { ok: false, code: ACCESS_RESOLVE_CODE.NO_MATCH };
+  return { ok: false, code: URL_ACCESS_RESOLVE_REASON.NO_MATCH };
 }

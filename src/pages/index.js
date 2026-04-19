@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
-import { SPARKLE_LANDING_CSS } from "@/lib/ui/sparkle-ui-css";
+import { LANDING_PAGE_THEME_CSS } from "@/lib/ui/app-shell-theme-css";
 import {
   clearStoredAccessUrl,
   getEffectiveAccessHref,
   rememberValidatedAccessHref,
-} from "@/lib/client-access-url";
+} from "@/lib/access/browser-url-session";
 
 export default function Home() {
   const router = useRouter();
@@ -79,7 +79,7 @@ export default function Home() {
       <Head>
         <title>Resume Tailor</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <style>{SPARKLE_LANDING_CSS}</style>
+        <style>{LANDING_PAGE_THEME_CSS}</style>
       </Head>
 
       <div

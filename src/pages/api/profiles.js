@@ -1,7 +1,7 @@
 import fs from "fs";
-import { RESUMES_DIR } from "@/config/server-paths";
-import { slugForResumeId } from "@/lib/profile/profile-template-mapping";
-import { loadUiAccessConfig, resolveUiAccessFromUrl } from "@/lib/ui-access-config";
+import { RESUMES_DIR } from "@/config/project-paths";
+import { slugForResumeId } from "@/lib/profiles/registry";
+import { loadUrlAccessRules, resolveUrlAccess } from "@/lib/access/url-rules-config";
 
 export default async function handler(req, res) {
   try {
@@ -23,8 +23,8 @@ export default async function handler(req, res) {
 
     const accessUrl =
       typeof req.query.accessUrl === "string" ? req.query.accessUrl : "";
-    const uiAccess = loadUiAccessConfig();
-    const resolved = resolveUiAccessFromUrl(accessUrl, uiAccess);
+    const rules = loadUrlAccessRules();
+    const resolved = resolveUrlAccess(accessUrl, rules);
     if (!resolved.ok) {
       return res.status(404).json({ error: "Not found", code: resolved.code });
     }

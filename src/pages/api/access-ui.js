@@ -1,7 +1,4 @@
-import {
-  loadUiAccessConfig,
-  resolveUiAccessFromUrl,
-} from "@/lib/ui-access-config";
+import { loadUrlAccessRules, resolveUrlAccess } from "@/lib/access/url-rules-config";
 
 export default function handler(req, res) {
   if (req.method !== "GET") {
@@ -9,7 +6,7 @@ export default function handler(req, res) {
   }
   const accessUrl =
     typeof req.query.accessUrl === "string" ? req.query.accessUrl : "";
-  const resolved = resolveUiAccessFromUrl(accessUrl, loadUiAccessConfig());
+  const resolved = resolveUrlAccess(accessUrl, loadUrlAccessRules());
   if (!resolved.ok) {
     return res.status(404).json({ error: "Not found", code: resolved.code });
   }

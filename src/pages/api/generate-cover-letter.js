@@ -3,13 +3,13 @@ import path from "path";
 import React from "react";
 import { renderToStream } from "@react-pdf/renderer";
 import { callAI } from "@/lib/ai/ai-service";
-import { getProfileBySlug } from "@/lib/profile/profile-template-mapping";
+import { getProfileBySlug } from "@/lib/profiles/registry";
 import { buildCoverLetterDocxBuffer } from "@/lib/cover-letter/cover-letter-docx";
 import { computeCoverLetterBaseFileName } from "@/lib/cover-letter/cover-letter-files";
 import { buildCoverLetterPrompt } from "@/lib/cover-letter/cover-letter-prompt";
 import { parseCoverLetterParagraphs } from "@/lib/cover-letter/cover-letter-parse";
 import CoverLetterPdf from "@/lib/pdf-templates/CoverLetterPdf";
-import { RESUMES_DIR } from "@/config/server-paths";
+import { RESUMES_DIR } from "@/config/project-paths";
 
 function formatWorkHistoryForPrompt(experience) {
   if (!Array.isArray(experience) || experience.length === 0) {

@@ -2,20 +2,20 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
-import { slugToProfileName } from "@/lib/profile/profile-template-mapping";
-import { firstNameFromFullName } from "@/lib/profile/profile-utils";
+import { slugToProfileName } from "@/lib/profiles/registry";
+import { firstNameFromFullName } from "@/lib/profiles/name-utils";
 import { QuickCopyIcon, DockPinIcon } from "@/lib/ui/quick-copy-icons";
 import {
   QUICK_COPY_ANIMATIONS_CSS,
   quickCopyAnimSlot,
 } from "@/lib/ui/quick-copy-animations-css";
-import { SPARKLE_PROFILE_CSS } from "@/lib/ui/sparkle-ui-css";
+import { PROFILE_WORKSPACE_THEME_CSS } from "@/lib/ui/app-shell-theme-css";
 import { EmailSnippetsSidebar } from "@/components/EmailSnippetsSidebar";
 import {
   clearStoredAccessUrl,
   getEffectiveAccessHref,
   rememberValidatedAccessHref,
-} from "@/lib/client-access-url";
+} from "@/lib/access/browser-url-session";
 
 function ManualProfileLoadingSpinner() {
   return (
@@ -80,7 +80,7 @@ export default function ManualProfilePage() {
       const accessHref = getEffectiveAccessHref();
       const accessQ = `accessUrl=${encodeURIComponent(accessHref)}`;
       try {
-        const cfgRes = await fetch(`/api/ui-config?${accessQ}`);
+        const cfgRes = await fetch(`/api/access-ui?${accessQ}`);
         if (cfgRes.status === 404) {
           clearStoredAccessUrl();
           router.replace("/404");
@@ -439,7 +439,7 @@ export default function ManualProfilePage() {
         <title>Manual Resume - {profileName}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <style>{QUICK_COPY_ANIMATIONS_CSS}</style>
-        <style>{SPARKLE_PROFILE_CSS}</style>
+        <style>{PROFILE_WORKSPACE_THEME_CSS}</style>
       </Head>
 
       <div

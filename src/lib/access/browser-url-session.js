@@ -1,6 +1,6 @@
 /**
- * Query segment for APIs that enforce `config/ui-access.json` URL rules.
- * After a successful access check, the full URL that matched is kept in
+ * Builds `accessUrl=…` for APIs gated by `config/url-access.json`.
+ * After a successful access check, the full URL that matched is stored in
  * sessionStorage so navigation to `/`, `/rahulmonga`, `/manual`, etc. still
  * sends the same accessUrl to the server.
  */
@@ -28,7 +28,7 @@ function isLikelyAccessPathSegment(segment) {
 }
 
 /**
- * Full URL string used for accessUrl query (current location or last validated).
+ * Full URL string used for the accessUrl query (current location or last validated).
  */
 export function getEffectiveAccessHref() {
   if (typeof window === "undefined") return "";
@@ -54,7 +54,7 @@ export function getEffectiveAccessHref() {
   }
 }
 
-/** Call after /api/profiles or access-gated APIs return 200 with this href. */
+/** Call after access-gated APIs return 200 using this href. */
 export function rememberValidatedAccessHref(href) {
   if (typeof window === "undefined") return;
   try {

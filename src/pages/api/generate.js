@@ -8,7 +8,7 @@ import {
   getTemplateForProfile,
   slugToProfileName,
   getProfileBySlug,
-} from "@/lib/profile/profile-template-mapping";
+} from "@/lib/profiles/registry";
 import { loadPromptForProfile } from "@/lib/resume/prompt-loader";
 import {
   buildResumeDocxBuffer,
@@ -20,7 +20,7 @@ import {
   mergeExperienceDetails,
   profileHasPermanentContent,
 } from "@/lib/resume/merge-resume-base";
-import { RESUMES_DIR } from "@/config/server-paths";
+import { RESUMES_DIR } from "@/config/project-paths";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).send("Method not allowed");

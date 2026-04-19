@@ -6,7 +6,7 @@ import { getTemplate } from "@/lib/pdf-templates";
 import {
   getTemplateForProfile,
   getProfileBySlug,
-} from "@/lib/profile/profile-template-mapping";
+} from "@/lib/profiles/registry";
 import {
   buildResumeDocxBuffer,
   computeResumeBaseFileName,
@@ -15,7 +15,7 @@ import {
   mergeBaseSkillsIntoAi,
   mergeExperienceDetails,
 } from "@/lib/resume/merge-resume-base";
-import { RESUMES_DIR } from "@/config/server-paths";
+import { RESUMES_DIR } from "@/config/project-paths";
 
 /**
  * Generate PDF from manually pasted ChatGPT response (no API key)

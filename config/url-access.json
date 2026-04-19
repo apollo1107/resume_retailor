@@ -1,5 +1,5 @@
 {
-  "_readme": "allowedProfileSlugs = keys in profile-template-mapping.js. First matching urlProfileRules wins. showRightSidebar is per rule. If the URL matches no matchSubstring (or accessUrl is missing), APIs return 404. Commit this file for Vercel — untracked copies never reach production. matchSubstring is checked case-insensitively. Path-style links like https://host/YOUR_TOKEN use middleware so YOUR_TOKEN is not mistaken for a profile slug.",
+  "_readme": "allowedProfileSlugs = keys in src/lib/profiles/registry.js. First matching urlProfileRules wins. showRightSidebar is per rule. If the URL matches no matchSubstring (or accessUrl is missing), APIs return 404. Commit this file for Vercel. matchSubstring is checked case-insensitively. Path-style links like https://host/YOUR_TOKEN use proxy so YOUR_TOKEN is not mistaken for a profile slug.",
   "urlProfileRules": [
     {
       "matchSubstring": "Xg54xqBhoUudYvTNWhrvQFApL2mpirmuHvLYK5rJvH1XPtdPiX7gGGdXEB2erPoxg2j82NezQ6W2zZT2L1MdaAgxVowdXCyMcUFn",

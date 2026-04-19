@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import profileTemplateMapping from "@/lib/profile/profile-template-mapping";
+import profileTemplateMapping from "@/lib/profiles/registry";
 
 const RESERVED_TOP_LEVEL = new Set(["manual", "parse"]);
 

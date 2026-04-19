@@ -1,10 +1,10 @@
 /**
- * Low-motion “center sparkle” backgrounds (opacity + gentle breathing only).
- * SPARKLE_LANDING_CSS: API home + manual entry pages.
- * SPARKLE_PROFILE_CSS: profile + manual profile (main form, top hover dock, right email rail).
+ * Ambient background + layout chrome (low-motion: opacity / soft gradients).
+ * LANDING_PAGE_THEME_CSS — home + manual landing.
+ * PROFILE_WORKSPACE_THEME_CSS — profile editor, hover dock, email rail.
  */
 
-export const SPARKLE_LANDING_CSS = `
+export const LANDING_PAGE_THEME_CSS = `
   .rt-landing-page {
     position: relative;
     min-height: 100vh;
@@ -218,7 +218,7 @@ export const SPARKLE_LANDING_CSS = `
   }
 `;
 
-export const SPARKLE_PROFILE_CSS = `
+export const PROFILE_WORKSPACE_THEME_CSS = `
   .rt-profile-page {
     position: relative;
   }

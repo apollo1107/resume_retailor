@@ -1,5 +1,5 @@
 import fs from "fs";
-import { RESUMES_DIR } from "@/config/server-paths";
+import { RESUMES_DIR } from "@/config/project-paths";
 
 export default function handler(req, res) {
   const resumesDir = RESUMES_DIR;

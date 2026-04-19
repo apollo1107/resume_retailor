@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { RESUME_PROMPTS_DIR } from "@/config/server-paths";
+import { RESUME_PROMPTS_DIR } from "@/config/project-paths";
 
 /**
  * Load and process a prompt template file
