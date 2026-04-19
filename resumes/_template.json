@@ -21,7 +21,7 @@
       "start_date": "Jan 2020",
       "end_date": "Present",
       "base_bullets": [
-        "Optional: many short base bullets for this job; JD export replaces them with 2–3 AI bullets (each ≥25 words) when details are returned."
+        "Optional: base bullets for this job (all kept); API appends JD-tailored bullets in details (additive merge)."
       ]
     },
     {

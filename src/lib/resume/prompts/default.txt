@@ -36,17 +36,17 @@ The profile JSON may supply **`base_skills`** (array of labeled lines or legacy 
 
 **`base_skills` (never dropped):** Every base skill line is **always** kept on the final resume. In your JSON **`skills`**, output **only JD-tailored additions** (new categories and/or new skills). Base categories are merged **first**; your lists are **appended** per category. Do **not** re-specify or delete base skills.
 
-**`experience[].details` (replaces long base bullet lists):** For **each** job, output **exactly 2 or 3** strings in `details` (**never 1**, **never 4+**). **Each string must be at least 25 words** in English—**count space-separated words** before you finish; **24 or fewer words is invalid** and will read as a failed instruction. Each bullet must be a **dense** accomplishment (context → what you did → stack/integrations → scope → outcome), **not** a short single sentence like the bad examples (~11–18 words) users complain about.
+**`base_bullets` (never dropped, never shortened by the AI):** The application **prepends every** `base_bullet` for each role on PDF/Word **in full**—your output **does not remove or replace** them. To **“modify” for the JD**, do it by **adding** rich `experience[].details` lines that **reframe**, **extend**, or **JD-align** the same work (new stack angles, scope, outcomes tied to the posting)—**without** contradicting dates, employers, or titles. **Do not** copy-paste base bullets into `details` (duplicates waste space).
 
-When `details` is **non-empty**, the app shows **only** your `details` as that role’s bullets on PDF/Word (**the many short `base_bullets` are not stacked underneath**). Therefore you **must fold in** the substance of the permanent bullets for that role (technologies, scope, outcomes) **without** inventing employers, dates, titles, or credentials. If you leave `details` empty, the profile’s original base bullets appear unchanged—so for JD tailoring you should **always** supply **2–3** bullets of **≥25 words**.
+**`experience[].details` (JD add-ons, appended after base):** Follow **Bullet counts for experience JSON** below. Each **new** string you add should be **≥25 words** where that block specifies (count space-separated English words); avoid thin **11–20 word** one-liners for **new** bullets. When a role has **no** `base_bullets`, your `details` carry the **full** bullet list for that role (see guidance block).
 
-If no permanent block is shown above, still use **2–3** bullets per role, **≥25 words** each, grounded in WORK HISTORY.
+If no permanent block is shown above, generate full experience from WORK HISTORY per **Bullet counts for experience JSON**.
 
 ---
 
 ### **0a. COUNTS, JD FIT, AND CREDIBILITY (non-negotiable)**
 
-- **Experience counts:** Follow **Bullet counts for experience JSON** above: **2–3 bullets per role only**; **≥25 words per bullet** (mandatory). **Do not** emit many short bullets—the export will use **only** these few lines for each job when `details` is present.
+- **Experience counts:** Follow **Bullet counts for experience JSON**. **Never** aim to **replace** profile `base_bullets`—they always remain; your `details` are **additive** (JD layer). **≥25 words** for each **new** `details` bullet when the guidance block requires long add-ons.
 - **Skills:** Meet the **§4** category and total targets. Never replace the profile’s permanent/base skills with a shorter list, and do not return a **skimpy** `skills` object versus those targets. Additive JD keywords should **expand** coverage, not **shrink** it.
 - **JD skills you “miss” on purpose:** If the JD asks for a tool, stack, license, or domain that is **not credible** from **base_skills + WORK HISTORY + EDUCATION** (no adjacent transfer, no stack overlap, would imply work or credentials the profile does not support), **do not add it** to `skills` or experience bullets. **Never fabricate** experience to cover a JD gap.
 - **Most recent role first:** **WORK HISTORY item #1** is the **first** entry in the numbered list (same order as `experience[0]` in your JSON). Put the **strongest JD alignment** there—dense JD keywords and outcomes that match the posting—while keeping older roles accurate to their dates and plausible tech for each era (see §5).
@@ -57,10 +57,9 @@ If no permanent block is shown above, still use **2–3** bullets per role, **�
 
 The candidate downloads **PDF and Word** from this application using a **classic full-width layout** (about **10 mm** margins, **~10–11 pt** body text, generous line spacing). Your JSON must be written so that export **typically fills about three A4 pages** (roughly **three** when opened in Word with the same structure)—not a one-page cheat sheet.
 
-- **Primary lever:** A **full** `summary` (**§3**) plus **§4** skills—because each role has only **2–3** long experience bullets, the summary and skills carry much of the page depth.
-- **Experience:** Exactly **2–3** bullets per role, **≥25 words** each (**§5**). Do **not** shorten them into ~12–20 word blurbs.
-- **Secondary levers:** Optional one-line “Selected coursework / honors” only when **§0a** credibility already supports it (do **not** invent credentials).
-- **If you risk a fourth page:** tighten summary or skills slightly—**do not** drop below **2 bullets** or below **25 words** on any experience line.
+- **Primary lever:** `experience[].details` — follow **Bullet counts for experience JSON** with **substantial** new bullets (**§5**). Base bullets stay; new lines should still be **readable**, not token-stuffed.
+- **Secondary levers:** A **full** `summary` (**§3**) plus **§4** skills. Optional one-line “Selected coursework / honors” only when **§0a** credibility already supports it (do **not** invent credentials).
+- **If you risk a fourth page:** tighten **summary** or **skills** slightly first; **do not** delete profile `base_bullets` (you cannot from JSON). You may add **slightly fewer** new `details` bullets only if the guidance block allows a range—**never** zero new bullets when the JD calls for tailoring and the block requires adds.
 
 ---
 
@@ -71,7 +70,7 @@ Analyze JD "About Us" section for **10-15 keywords** specific to company's produ
 **WHERE TO USE:**
 - Summary: **10-14** JD-aligned keywords distributed across the full **§3** summary (not crammed into one sentence)
 - Skills: 10-15 JD-aligned keywords (only where **§0a** credibility allows)
-- Experience: Each role = **2–3** bullets, **≥25 words** each, with JD keywords woven in naturally (**Bullet counts for experience JSON** + §5).
+- Experience: **Base bullets stay**; add JD bullets per **Bullet counts for experience JSON** + §5 (new lines **≥25 words** when required).
 
 ---
 
@@ -136,11 +135,11 @@ Total: aim for **60–75** individual skills across categories (see **§4** rule
 
 **STRICT Requirements (must be followed):**
 - Generate exactly {{experienceCount}} job entries; one entry per job in the work history—no more, no fewer.
-- **Bullets per role:** each `experience[].details` must contain **exactly 2 or 3** strings (**not 1**, **not 4+**).
-- **Word count per bullet:** every bullet string MUST be **at least 25 words** (count space-separated English words). Bullets of **11–23 words** are **invalid**—they are the failure mode you must avoid. Aim for **28–45 words** when the material supports it.
-- **Bullet substance:** each bullet should combine **(a)** business or technical context, **(b)** what **you** did (verbs: led, built, automated, optimized, migrated, etc.), **(c)** stack or methods and how they connect, **(d)** scope (users, data volume, teams, SLAs, regions, compliance), and **(e)** a **credible** outcome, metric, or lesson when the profile supports it. Weave **2–4** concrete JD keywords where credible.
-- **Replacing base bullets:** When the profile lists many short `base_bullets`, your **2–3** `details` lines **replace** them on export—**merge** their facts into richer prose; do **not** ignore them; do **not** contradict dates, employers, or titles.
-- **JD density:** For **work history #1** (most recent), maximize JD-relevant phrasing and outcomes **without** breaking **§0a** credibility or date-appropriate tech below.
+- **Merge behavior:** For each role, the resume shows **`[...profile base_bullets, ...your details]`** in order. **Every** base bullet remains; your `details` are **only** JD-tailored **additions** (or the **full** set when that role has no base bullets—see guidance block).
+- **Counts:** Obey **Bullet counts for experience JSON** for how many strings to put in each `details` array—**do not** try to “substitute” for base bullets there.
+- **Word count (new `details` bullets):** Each string you add should be **≥25 words** when the guidance block calls for long add-ons (count space-separated English words). Avoid **11–20 word** fluff lines for new add-ons.
+- **Bullet substance:** each **new** bullet should combine **(a)** business or technical context, **(b)** what **you** did, **(c)** stack or methods, **(d)** scope, **(e)** credible outcome when supported. Weave **2–4** JD keywords where credible.
+- **JD density:** For **work history #1** (most recent), put the **strongest** new JD-aligned bullets **without** breaking **§0a** credibility or date-appropriate tech below.
 - For each work experience, ensure all technologies listed were widely available and commonly used in production during that role's time period; do not include tools, frameworks, or practices released after the role ended or unlikely to have been adopted in that era. Do not force unrelated JD jargon into older roles if it would read false.
 
 **Example Bullet (with domain keywords — length reference):**
@@ -148,5 +147,5 @@ Total: aim for **60–75** individual skills across categories (see **§4** rule
 
 
 Return ONLY valid JSON: {"title":"...","summary":"...","skills":{"Category":["Skill1","Skill2"]},"experience":[{"title":"...","details":["bullet1","bullet2",...]}]}
-**Final bullet rule:** **Exactly 2 or 3** strings in each `experience[].details`. **Each ≥25 words** (count before returning). **Never** return many short bullets (for example 8–15 one-liners). When permanent `base_bullets` exist, your `details` **replace** them on the PDF—your job is to **consolidate** that content into **2–3** long bullets, not to **append** more thin lines.
+**Final bullet rule:** Follow **Bullet counts for experience JSON**. **All** profile `base_bullets` stay on the resume; your `details` **append** JD-tailored bullets (or supply the **full** list for roles with no base bullets). Each **new** `details` bullet should meet the **≥25 word** rule when that block requires it. **Never** duplicate base bullet text in `details`.
 

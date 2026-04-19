@@ -115,8 +115,8 @@ export default async function handler(req, res) {
     const permanentResumeContext =
       formatPermanentContextForPrompt(profileData);
     const experienceBulletGuidance = hasPermanent
-      ? "Per role: `experience[].details` = **exactly 2 or 3** strings only (**never 4+**, **never 1**). **Each string ≥25 words** (count space-separated English words—**24 or fewer is invalid**). These lines **replace** the profile’s `base_bullets` on PDF/Word when present—**fold all key facts** from those base bullets into these few long lines; **do not** stack many short bullets. **base_skills** stay on the resume. Strongest JD fit on **work history #1**."
-      : "Per role: `experience[].details` = **exactly 2 or 3** strings only. **Each string ≥25 words** (mandatory count). Facts from WORK HISTORY only; **tightest JD match** on **work history #1**.";
+      ? "The app keeps **every** profile `base_bullet` (none removed). In `experience[].details`, **add** **2–5 NEW** JD-tailored bullets per role (**≥25 words each**—count words); for dense JDs you **may add 2–3 more** (up to ~8 new) but **never** output zero new bullets when tailoring. **Do not** paste or lightly reword base bullets in `details`—only **additive** lines that extend/JD-align the role. Strongest JD fit on **work history #1**."
+      : "Per role in `experience[].details`, output **7–10** bullets (**≥25 words each**). Ground in WORK HISTORY; **tightest JD match** on **work history #1**.";
 
     // Load prompt template for this profile (using slug)
     const prompt = loadPromptForProfile(profileSlug, {
@@ -162,7 +162,7 @@ export default async function handler(req, res) {
           .replace(/Per category: 8-12 skills/g, "Per category: 6-10 skills")
           .replace(/60–75 total skills/g, "48-58 total skills")
           .replace(/60-75 total skills/g, "48-58 total skills") +
-        "\n\n**Retry (token limit):** Still output **exactly 2 or 3** `details` bullets per role and **≥25 words** in **each** bullet—do **not** shrink to short one-liners. If you must save tokens, only trim the **skills** object slightly.";
+        "\n\n**Retry (token limit):** Do **not** drop below the **minimum new** `details` bullets per role or below **≥25 words** on each new bullet. All profile `base_bullets` must still be assumed present on merge—only trim the **skills** object if needed.";
 
       const retryResponse = await callAI(concisePrompt, provider, model);
       console.log("Retry Response Metadata:");
