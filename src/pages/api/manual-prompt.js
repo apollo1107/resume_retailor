@@ -73,8 +73,8 @@ export default async function handler(req, res) {
     const permanentResumeContext =
       formatPermanentContextForPrompt(profileData);
     const experienceBulletGuidance = hasPermanent
-      ? "Per role in `experience[].details`, output **at least 5 NEW** JD-tailored bullets (**never fewer than 5** per role). For strong JDs, output **6–10** new bullets—you **may add 2–3** beyond a minimal set, but you **must not** reduce counts or emit 1–3 thin bullets to save tokens. Each **new** bullet: **minimum ~42 words**, target **50–65** words (multi-clause: business/technical context; what you owned; stack, integrations, constraints; scope; credible outcome). One-sentence ~15–25 word lines are **invalid**. Base `base_bullets` are prepended automatically—**never** repeat them in `details`; **never** delete/replace base bullets or `base_skills`. Strongest JD fit on **work history #1**."
-      : "Per role in `experience[].details`, output **at least 7 NEW** bullets (**never fewer than 7** per role). For dense JDs, output **8–12**—you **may add 2–3** extra versus a shorter pass, but you **must not** reduce per-role bullet counts. Each bullet: **minimum ~42 words**, target **50–65** words (dense accomplishment: context, actions, stack, scope, measurable/credible outcome). **Additive only** with profile facts; **tightest JD match** on **work history #1**.";
+      ? "Per role: `experience[].details` = **exactly 2 or 3** strings only (**never 4+**, **never 1**). **Each string ≥25 words** (count space-separated English words—**24 or fewer is invalid**). These lines **replace** the profile’s `base_bullets` on PDF/Word when present—**fold all key facts** from those base bullets into these few long lines; **do not** stack many short bullets. **base_skills** stay on the resume. Strongest JD fit on **work history #1**."
+      : "Per role: `experience[].details` = **exactly 2 or 3** strings only. **Each string ≥25 words** (mandatory count). Facts from WORK HISTORY only; **tightest JD match** on **work history #1**.";
 
     const prompt = loadPromptForProfile(profileSlug, {
       name: profileData.name,

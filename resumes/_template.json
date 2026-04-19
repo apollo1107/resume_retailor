@@ -21,7 +21,7 @@
       "start_date": "Jan 2020",
       "end_date": "Present",
       "base_bullets": [
-        "Optional: permanent base bullets (any length) prepended for this job; JD-tailored bullets in API output should be ~42+ words each."
+        "Optional: many short base bullets for this job; JD export replaces them with 2–3 AI bullets (each ≥25 words) when details are returned."
       ]
     },
     {

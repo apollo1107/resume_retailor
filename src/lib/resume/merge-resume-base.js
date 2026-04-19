@@ -135,7 +135,7 @@ export function formatPermanentContextForPrompt(profileData) {
 
   return (
     lines.join("\n").trim() +
-    "\n\n**Merge rules (non-negotiable):** The app **never removes** any `base_skills` line or any `base_bullets` line—they are always kept on the final resume. Your JSON must **only add**: extra skills (in `skills`) and **new** experience bullets (in `experience[].details`). Do **not** repeat permanent bullets inside `details`; do **not** delete, replace, or contradict base content."
+    "\n\n**Merge rules (non-negotiable):** The app **never removes** any `base_skills` line—those always appear on the resume. For **experience**: when you output a non-empty `experience[].details` array for a role, the app shows **only** those strings as that role’s bullets (they **replace** the long `base_bullets` list on PDF/Word). You **must** still preserve every **credible fact** from the permanent bullets and work history inside your 2–3 longer lines—**no invented employers, dates, or credentials**. In `skills`, only **add** JD keywords (merged with base skills). Do **not** paste duplicate one-line base bullets verbatim into `details`—**rewrite into 2–3 bullets of ≥25 words each**."
   );
 }
 
@@ -167,7 +167,9 @@ export function mergeBaseSkillsIntoAi(baseSkills, aiSkills) {
 }
 
 /**
- * For each profile job, `[...base_bullets, ...ai.details]`.
+ * For each profile job: when the model returns non-empty `details`, those strings
+ * **replace** `base_bullets` on export (few long JD-tailored bullets). If `details`
+ * is empty or missing, fall back to profile `base_bullets`.
  */
 export function mergeExperienceDetails(profileJobs, aiExperience) {
   const jobs = Array.isArray(profileJobs) ? profileJobs : [];
@@ -175,6 +177,7 @@ export function mergeExperienceDetails(profileJobs, aiExperience) {
   return jobs.map((job, idx) => {
     const base = normalizeStringList(job.base_bullets ?? job.base_details);
     const fromAi = normalizeStringList(ai[idx]?.details);
-    return [...base, ...fromAi];
+    if (fromAi.length > 0) return fromAi.slice(0, 3);
+    return base;
   });
 }
