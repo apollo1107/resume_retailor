@@ -20,10 +20,6 @@ import {
   mergeExperienceDetails,
   profileHasPermanentContent,
 } from "@/lib/resume/merge-resume-base";
-import {
-  collectExperienceWordCountFailures,
-  formatExperienceWordCountErrorText,
-} from "@/lib/resume/experience-word-counts";
 import { RESUMES_DIR } from "@/config/project-paths";
 
 export default async function handler(req, res) {
@@ -119,8 +115,8 @@ export default async function handler(req, res) {
     const permanentResumeContext =
       formatPermanentContextForPrompt(profileData);
     const experienceBulletGuidance = hasPermanent
-      ? "Follow **all seven rules** in the prompt header. Summary: (**1**) Add **only a few** JD lines in `details` per role (about **1–4**); if more depth needed, use **same-length `details`** vs `base_bullets` to **expand** each base bullet in place. (**2**) **Never** fewer bullets than profile **`base_bullets`** (append or same-count rewrite). (**3**) **≥20 words** on **every** bullet (~two lines). (**4**) For **`experience[0]`** and **`experience[1]`**, include **≥35 words** on **at least 1** bullet (if that job has 1–2 bullets) or **at least 2** bullets (if three+). (**5**) **No new** `%` / `$` / invented counts unless already in **`base_bullets`**. (**6**) **Dense** bullets + full summary/skills—**no** half-page blank gaps. (**7**) **2–3** pages total—not 1 or 4. **`base_skills` never removed.** Strongest JD fit on **work history #1**."
-      : "Follow **all seven rules** in the prompt header. Full `details` per role (**7–10** bullets typical): **≥20 words** each (~two lines); for **`experience[0]`** and **`experience[1]`**, also **≥35 words** on **at least 1** (1–2 bullets/job) or **2** (three+ bullets/job) lines. **No invented metrics** unless in **`base_bullets`** when present. **2–3** pages; fill pages—no sparse blocks. **Tightest JD match** on **work history #1**.";
+      ? "Follow **all seven rules** in the prompt header. Summary: (**1**) Add **only a few** JD lines in `details` per role (about **1–4**); if more depth needed, use **same-length `details`** vs `base_bullets` to **expand** each base bullet in place. (**2**) **Never** fewer bullets than profile **`base_bullets`** (append or same-count rewrite). (**3**) **Most** bullets should read as **~two lines**; **shorter** bullets are fine when clear. (**4**) In **`experience[0]`** and **`experience[1]`**, include **a few** **longer** (≈**35+** word) depth bullets where JD fit is strongest—**not** every line must be that long. (**5**) **No new** `%` / `$` / invented counts unless already in **`base_bullets`**. (**6**) **Dense** bullets + full summary/skills—**no** half-page blank gaps. (**7**) **2–3** pages total—not 1 or 4. **`base_skills` never removed.** Strongest JD fit on **work history #1**."
+      : "Follow **all seven rules** in the prompt header. Full `details` per role (**7–10** bullets typical): **most** bullets **~two lines**; **shorter** lines OK; for **`experience[0]`** and **`experience[1]`**, add **a few** **≈35+** word bullets for depth. **No invented metrics** unless in **`base_bullets`** when present. **2–3** pages; fill pages—no sparse blocks. **Tightest JD match** on **work history #1**.";
 
     // Load prompt template for this profile (using slug)
     const prompt = loadPromptForProfile(profileSlug, {
@@ -166,7 +162,7 @@ export default async function handler(req, res) {
           .replace(/Per category: 8-12 skills/g, "Per category: 6-10 skills")
           .replace(/60–75 total skills/g, "48-58 total skills")
           .replace(/60-75 total skills/g, "48-58 total skills") +
-        "\n\n**Retry (token limit):** Keep **all seven** header rules: never fewer bullets than **`base_bullets`**; **≥20** words per bullet; **`experience[0]`/`[1]`**: enough **≥35-word** depth bullets (1 if 1–2 bullets/job, 2 if three+); **few** appends or **same-count** rewrite; **no** new `%`/`$` metrics unless in **`base_bullets`**; **2–3** pages—trim **skills**/summary only if needed. **Never** drop `base_skills`.";
+        "\n\n**Retry (token limit):** Keep **all seven** header rules: never fewer bullets than **`base_bullets`**; **most** bullets ~two lines (shorter OK); **a few** long depth bullets in **`experience[0]`/`[1]`**; **few** appends or **same-count** rewrite; **no** new `%`/`$` metrics unless in **`base_bullets`**; **2–3** pages—trim **skills**/summary only if needed. **Never** drop `base_skills`.";
 
       const retryResponse = await callAI(concisePrompt, provider, model);
       console.log("Retry Response Metadata:");
@@ -318,17 +314,6 @@ export default async function handler(req, res) {
       })),
       education: profileData.education,
     };
-
-    const wordCountFailures = collectExperienceWordCountFailures(
-      templateData.experience
-    );
-    if (wordCountFailures.length) {
-      res
-        .status(422)
-        .setHeader("Content-Type", "text/plain; charset=utf-8")
-        .send(formatExperienceWordCountErrorText(wordCountFailures));
-      return;
-    }
 
     const baseName = computeResumeBaseFileName(resumeName, companyName);
     const outFormat =
