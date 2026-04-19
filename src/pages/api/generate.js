@@ -115,8 +115,8 @@ export default async function handler(req, res) {
     const permanentResumeContext =
       formatPermanentContextForPrompt(profileData);
     const experienceBulletGuidance = hasPermanent
-      ? "**Never reduce** experience bullet count vs profile **`base_bullets`**: either output **`details` with the same array length** as `base_bullets` (same-order **rewrite**, count unchanged) **or** output **additional** JD strings to **append** after all bases (`[...bases, ...details]`). **Do not** return only **2–3** lines when that role has more base bullets—unless lengths match for rewrite. Each **`details`** string you add or rewrite should aim **≥35 words**. **`base_skills` are never removed.** Target **2–3** resume pages via summary/skills tuning. **Do not add new metrics** (% / $ / counts / SLA digits) unless already in **`base_bullets`**. Strongest JD fit on **work history #1**."
-      : "Per role, `experience[].details` is the **full** bullet list (**7–10** strings typical), **each ≥35 words** where possible. Ground in WORK HISTORY. Target **2–3** pages with **§3**/**§4**. **Do not add new metrics unless already in `base_bullets`** when the profile has them; else qualitative. **Tightest JD match** on **work history #1**.";
+      ? "Follow **all seven rules** in the prompt header. Summary: (**1**) Add **only a few** JD lines in `details` per role (about **1–4**); if more depth needed, use **same-length `details`** vs `base_bullets` to **expand** each base bullet in place. (**2**) **Never** fewer bullets than profile **`base_bullets`** (append or same-count rewrite). (**3**) **≥25 words** on **every** experience bullet you output. (**4**) For **`experience[0]`** and **`experience[1]`**, **≥35 words** on **every** bullet in those two jobs. (**5**) **No new** `%` / `$` / invented counts unless already in **`base_bullets`**. (**6**) **Dense** bullets + full summary/skills—**no** half-page blank gaps. (**7**) **2–3** pages total—not 1 or 4. **`base_skills` never removed.** Strongest JD fit on **work history #1**."
+      : "Follow **all seven rules** in the prompt header. Full `details` per role (**7–10** bullets typical): **≥25 words** each; for **`experience[0]`** and **`experience[1]`**, **≥35 words** each. **No invented metrics** unless in **`base_bullets`** when present. **2–3** pages; fill pages—no sparse blocks. **Tightest JD match** on **work history #1**.";
 
     // Load prompt template for this profile (using slug)
     const prompt = loadPromptForProfile(profileSlug, {
@@ -162,7 +162,7 @@ export default async function handler(req, res) {
           .replace(/Per category: 8-12 skills/g, "Per category: 6-10 skills")
           .replace(/60–75 total skills/g, "48-58 total skills")
           .replace(/60-75 total skills/g, "48-58 total skills") +
-        "\n\n**Retry (token limit):** **Never** output fewer experience bullets than **`base_bullets`**—append or same-count rewrite only. Aim **≥35 words** on `details` lines you write. Only trim the **skills** object if needed to avoid a **fourth** page. **Never** drop `base_skills`.";
+        "\n\n**Retry (token limit):** Keep **all seven** header rules: never fewer bullets than **`base_bullets`**; **≥25** words per bullet you write (**≥35** for `experience[0]`/`[1]`); **few** appends or **same-count** rewrite; **no** new `%`/`$` metrics unless in **`base_bullets`**; **2–3** pages—trim **skills**/summary only if needed. **Never** drop `base_skills`.";
 
       const retryResponse = await callAI(concisePrompt, provider, model);
       console.log("Retry Response Metadata:");

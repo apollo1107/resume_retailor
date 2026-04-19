@@ -21,7 +21,7 @@
       "start_date": "Jan 2020",
       "end_date": "Present",
       "base_bullets": [
-        "Optional: base bullets. API: same-length details = 1:1 rewrite; else details append after all bases (count never reduced). base_skills never removed."
+        "Optional: base bullets. Merge: same-length details = 1:1 rewrite; else append few details after all bases. Prompt: ≥25 words/bullet, ≥35 for first two jobs, no invented %/$, 2–3 pages."
       ]
     },
     {

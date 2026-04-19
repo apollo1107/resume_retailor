@@ -218,7 +218,7 @@ export const createResumeTemplate = (config) => {
         expDetailItem: {
             fontSize: fonts.expDetailSize || 10,
             fontFamily: fonts.body || "Times-Roman",
-            lineHeight: 1.58,
+            lineHeight: 1.65,
             color: INK,
         },
         eduItem: {
@@ -358,25 +358,20 @@ export const createResumeTemplate = (config) => {
                             <Text style={styles.sectionTitle}>{sectionTitles.experience || 'Experience'}</Text>
                             {experience.map((exp, idx) => (
                                 <View key={idx} style={styles.expItem}>
-                                    <View
-                                        wrap={false}
-                                        minPresenceAhead={100}
-                                    >
-                                        <View style={styles.expHeader}>
-                                            <Text style={styles.expTitle}>{exp.title || 'Engineer'}</Text>
-                                            <Text style={styles.expDates}>
-                                                {exp.start_date} – {exp.end_date}
-                                            </Text>
-                                        </View>
-                                        <Text style={styles.expCompany}>
-                                            {exp.company}
-                                            {exp.location && `, ${exp.location}`}
+                                    <View style={styles.expHeader}>
+                                        <Text style={styles.expTitle}>{exp.title || 'Engineer'}</Text>
+                                        <Text style={styles.expDates}>
+                                            {exp.start_date} – {exp.end_date}
                                         </Text>
                                     </View>
+                                    <Text style={styles.expCompany}>
+                                        {exp.company}
+                                        {exp.location && `, ${exp.location}`}
+                                    </Text>
                                     {exp.details && exp.details.length > 0 && (
                                         <View style={styles.expDetails}>
                                             {exp.details.map((detail, detailIdx) => (
-                                                <View key={detailIdx} style={styles.expDetailRow} wrap={false}>
+                                                <View key={detailIdx} style={styles.expDetailRow}>
                                                     <View style={styles.expDetailIcon}>
                                                         <PdfListBullet size={5.5} color={INK} />
                                                     </View>
@@ -397,7 +392,7 @@ export const createResumeTemplate = (config) => {
                             <Text style={styles.sectionTitle}>{sectionTitles.education || 'Education'}</Text>
                             {education.map((edu, idx) => (
                                 <View key={idx} style={styles.eduItem}>
-                                    <View wrap={false} minPresenceAhead={80}>
+                                    <View>
                                         <View style={styles.eduHeader}>
                                             <Text style={styles.eduDegree}>{edu.degree}</Text>
                                             <Text style={styles.eduDates}>

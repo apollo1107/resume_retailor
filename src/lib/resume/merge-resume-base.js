@@ -135,7 +135,7 @@ export function formatPermanentContextForPrompt(profileData) {
 
   return (
     lines.join("\n").trim() +
-    "\n\n**Merge rules (non-negotiable):** The app **never removes** any `base_skills` line—those always stay. For **experience bullets:** **every** profile `base_bullet` for a role **always remains on the resume** unless you use **same-count rewrite** (see below)—the app **never** drops bullets to a smaller count. (**1**) If your `experience[].details` has the **same length** as that role’s `base_bullets`, those strings **replace** them **one-for-one** (same bullet count, expanded/JD text). (**2**) Otherwise your `details` strings are **appended after** **all** `base_bullets`—final count = **base + new**. **Do not** repeat base text verbatim in `details`. **Never** delete `base_skills`."
+    "\n\n**Merge rules (non-negotiable):** The app **never removes** any `base_skills` line—those always stay. For **experience:** (**1**) **Same-count rewrite** — if `experience[].details` has the **same length** as that role’s `base_bullets`, those strings **replace** them **one-for-one** (bullet count **unchanged**, use this to **expand** base text/JD-align). (**2**) **Append** — otherwise your `details` are **appended after** **all** `base_bullets** (`[...bases, ...details]`); keep **few** appended lines (roughly **1–4**). Final bullet count is **never** less than the profile’s `base_bullets` count. **Do not** paste duplicate base lines in `details`."
   );
 }
 
