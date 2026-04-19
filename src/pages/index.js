@@ -3,7 +3,11 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import { SPARKLE_LANDING_CSS } from "@/lib/ui/sparkle-ui-css";
-import { getAccessUrlQuery } from "@/lib/client-access-url";
+import {
+  clearStoredAccessUrl,
+  getEffectiveAccessHref,
+  rememberValidatedAccessHref,
+} from "@/lib/client-access-url";
 
 export default function Home() {
   const router = useRouter();
@@ -18,12 +22,14 @@ export default function Home() {
       setProfilesLoading(true);
       setProfilesError("");
       try {
+        const accessHref = getEffectiveAccessHref();
         const r = await fetch(
-          `/api/profiles?${getAccessUrlQuery() || "accessUrl="}`
+          `/api/profiles?accessUrl=${encodeURIComponent(accessHref)}`
         );
         const data = await r.json().catch(() => ({}));
         if (cancelled) return;
         if (r.status === 404) {
+          clearStoredAccessUrl();
           router.replace("/404");
           return;
         }
@@ -32,6 +38,7 @@ export default function Home() {
           setProfiles([]);
           return;
         }
+        rememberValidatedAccessHref(accessHref);
         setProfiles(Array.isArray(data) ? data : []);
       } catch {
         if (!cancelled) {

@@ -10,7 +10,11 @@ import {
 } from "@/lib/ui/quick-copy-animations-css";
 import { SPARKLE_PROFILE_CSS } from "@/lib/ui/sparkle-ui-css";
 import { EmailSnippetsSidebar } from "@/components/EmailSnippetsSidebar";
-import { getAccessUrlQuery } from "@/lib/client-access-url";
+import {
+  clearStoredAccessUrl,
+  getEffectiveAccessHref,
+  rememberValidatedAccessHref,
+} from "@/lib/client-access-url";
 
 function ProfileLoadingSpinner() {
   return (
@@ -73,15 +77,18 @@ export default function ProfilePage() {
     setProfileName(profileNameFromSlug);
 
     const loadData = async () => {
+      const accessHref = getEffectiveAccessHref();
+      const accessQ = `accessUrl=${encodeURIComponent(accessHref)}`;
       try {
-        const accessQ = getAccessUrlQuery() || "accessUrl=";
         const cfgRes = await fetch(`/api/ui-config?${accessQ}`);
         if (cfgRes.status === 404) {
+          clearStoredAccessUrl();
           router.replace("/404");
           return;
         }
         const cfgData = await cfgRes.json().catch(() => ({}));
         if (!cfgRes.ok) {
+          clearStoredAccessUrl();
           router.replace("/404");
           return;
         }
@@ -94,6 +101,7 @@ export default function ProfilePage() {
           credentials: "include",
         });
         if (response.status === 404) {
+          clearStoredAccessUrl();
           router.replace("/404");
           return;
         }
@@ -102,8 +110,10 @@ export default function ProfilePage() {
         }
         const data = await response.json();
         setSelectedProfileData(data);
+        rememberValidatedAccessHref(accessHref);
       } catch (err) {
         console.error("Failed to load profile data:", err);
+        clearStoredAccessUrl();
         router.replace("/404");
       } finally {
         setLoading(false);
