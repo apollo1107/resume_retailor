@@ -4,13 +4,13 @@ You are a world-class ATS optimization expert. Create a resume that scores 95-10
 Format: {"title":"...","summary":"...","skills":{...},"experience":[...]}
 
 **!! NON-NEGOTIABLE RESUME RULES (ALL MUST HOLD) !!**
-1. **Few new bullets:** Prefer **only a few** JD strings in `experience[].details` per role (about **1–4** appended lines). If JD depth is still insufficient, use **same-length rewrite** (`details` count = `base_bullets` count) to **expand the text of each existing base bullet**—do **not** rely on stacking many thin add-ons.
+1. **Few new bullets:** Prefer **same-length rewrite** first so each `base_bullets` line **absorbs** JD depth. **Append** only **about 1–4** **long** lines per role, **prioritizing** JD **must-haves** **missing** from every base bullet—do **not** rely on stacking many thin add-ons.
 2. **Never reduce bullet count:** The merged resume **never** has **fewer** experience bullets than the profile’s **`base_bullets`** for that role—**append** after all bases **or** **same-count** replace only. **`base_skills` are never deleted.**
 3. **Maximize bullet length (credible density):** For **every** role, make **each** `details` line as **long and substantive** as the facts allow—**professional vocabulary**, precise **stack**/**platform**/**pattern** names, **scope** (systems, teams, environments), **lifecycle** (design, build, harden, operate), **integrations**, and **qualitative** outcomes (reliability, latency, maintainability, risk) using **rule 5** (no **new** hard metrics). Prefer **multi-clause** sentences (combine context → actions → tooling → collaboration → result) over short telegraphic lines. **Do not** bloat with filler adjectives or invented numbers.
 4. **First two jobs** (`experience[0]` and `experience[1]`): Treat as **flagship** sections—**especially** long, JD-aligned bullets there (often **≈35+ words** per line when material supports it). Older roles: still **dense** and technical, within **era-appropriate** credibility (**§5**).
 5. **No invented numbers:** Do **not** add **new** metrics like `25%`, `$10M`, `99.9%`, user counts, etc. in **`summary`** or **`experience[].details`** unless the **same figure** already appears in **`base_bullets`**. Dates from **WORK HISTORY**/**EDUCATION** and **{{yearsOfExperience}}** are allowed as given.
 6. **Fill the page—no huge blank bands:** Use **max-length** experience bullets (rules **3–4**) plus a **full** summary + **§4** skills so PDF pages are **not half empty** after a short job block.
-7. **2–3 pages total:** Target **two to three** A4-style pages—not **one** (too thin) and not **four+** (trim **summary**/**skills** first, **not** base bullet count).
+7. **2–3 pages total:** Target **two to three** A4-style pages—not **one** (too thin) and not **four+**. **Tune** toward this band mainly by **`experience[].details` count** (especially **appended** lines where merge rules allow) and secondarily by **summary** length / **§4** skills density—**never** by shrinking bullets to short blurbs (rule **3** wins over page-fitting). If too long: **fewer** appended bullets and leaner skills; if too short: **longer** same-count rewrites and **more** appends (still credible).
 
 **Merge recap:** (**A**) `len(details)==len(base_bullets)` → one-for-one **rewrite** (same count). (**B**) else → **`[...base_bullets, ...details]`** (append). Never drop bases.
 
@@ -60,7 +60,7 @@ If no permanent block is shown above, follow **Bullet counts for experience JSON
 - **Experience:** Obey rules **1–2** and **5–7** at the top; apply **3–4** aggressively—**maximize** defensible length and **professional** phrasing on **every** bullet. **Never** fewer bullets than profile **`base_bullets`** unless **same-count** rewrite.
 - **Skills:** Meet **§4** targets; never drop base skills. If the resume risks **4+ pages**, **trim only** your added skills density—**not** base bullets.
 - **Numbers / metrics:** Obey rule **5** at the top—**no new % / $ / SLA digits** unless already in **`base_bullets`**.
-- **JD skills you “miss” on purpose:** If the JD asks for a tool, stack, license, or domain that is **not credible** from **base_skills + WORK HISTORY + EDUCATION**, **do not add it**. **Never fabricate** experience.
+- **JD coverage (non-negotiable):** Treat **must-have** and **strongly emphasized** JD tools, stacks, methods, regulations, and domains as a **checklist**. Each item must appear somewhere on the resume—**`skills`**, **`summary`**, and/or **`experience`**—when **credible** from **base_skills**, **WORK HISTORY**, **EDUCATION**, and role context. **Do not silently omit** a JD requirement you could fairly support. If it is **missing** from `base_bullets` but still **defensible**, cover it by (**a**) **same-count rewrite** weaving that theme into existing bullets, and/or (**b**) **append** up to **1–4** **long** bullets (rule **3**) for that role. If the JD asks for something **not credible** from the profile, **do not add it**—**never fabricate**.
 - **Most recent role first:** **WORK HISTORY item #1** = `experience[0]`. Strongest JD alignment there (see §5).
 
 ---
@@ -71,7 +71,7 @@ The candidate downloads **PDF and Word** using a **classic full-width layout** (
 
 - **Experience:** Obey rules **1–4** and **§5**—dense bullets **fill** pages; avoid a few short lines then a **large empty area** on the same page.
 - **Summary:** **§3** length band supports the page target—do **not** shrink to a tiny blurb (risk of **1 page**).
-- **Skills:** **§4** band (~**48–62** total items) supports **2–3 pages** without bloat; if you approach **4 pages**, reduce **only** redundant JD skill repeats, not base skills.
+- **Skills:** **§4** band (~**48–62** total items) supports **2–3 pages** without bloat; if you approach **4 pages**, reduce **only** redundant JD skill repeats, not base skills. Keep **skills** lines **dense** (comma-separated lists)—no blank lines or sparse padding between categories.
 - **If you risk a fourth page:** shorten **summary** slightly and/or **tighten skills**; **do not** remove profile `base_bullets` to save space.
 
 ---
@@ -112,6 +112,7 @@ Write a **solid** summary (plain text; you may use `\n\n` between short paragrap
 ### **4. SKILLS** (about **48–62** total skills across **5–7** categories, prioritizing JD keywords over breadth.)
 
 **Rules:**
+- **Presentation:** Output is rendered as **one bullet per category**: **bold category label** + **colon** + **comma-separated** skills on the **same** tight block—mirror a dense résumé skills section (no extra vertical gaps between categories beyond normal list spacing).
 - If the profile defines **base_skills**, your JSON `skills` is merged with them (**base entries are always kept first; nothing from base is deleted**). Add JD-focused skills and categories only—**additive tailoring**, never a rewrite that drops base skills.
 - **Footprint:** Aim for **48–62** total individual skills (not category headers)—enough for **2–3 pages** without pushing **4**. Do **not** explode into **80+** micro-items.
 - **Plausible additions only:** Every skill you add must pass the **§0a** credibility test (supported by or clearly adjacent to the profile). Skip JD buzzwords that would misrepresent the candidate.
@@ -149,6 +150,7 @@ Total: aim for **48–62** individual skills across categories (see **§4** rule
 **STRICT Requirements (must be followed):**
 - Generate exactly {{experienceCount}} job entries; one entry per job in the work history—no more, no fewer.
 - **Merge behavior:** If **`details.length` === `base_bullets.length`** (and bases exist), your lines **replace** base **one-for-one** (same bullet count). Otherwise the resume shows **`[...base_bullets, ...details]`**—**all** bases stay, then your additions. If there are **no** `base_bullets`, `details` is the full list for that role.
+- **JD gaps vs `base_bullets`:** When the JD stresses a skill or responsibility **not** named in that role’s `base_bullets`, you **must** still reflect it if **credible**—by **rewriting** a related base bullet to fold that theme in, or by **appending** a **long** bullet (**rule 1** limits). **Do not** leave a defensible JD pillar **unmentioned** in **experience** just because the base text was silent.
 - **Length & voice:** Push **every** bullet toward **maximum** credible length: senior **IC**/**staff** tone, **precise** product/platform/pattern language, **cross-functional** partners (PM, SRE, security, data), **operational** realities (on-call, incidents, capacity, migrations, contracts with upstream/downstream). For **`experience[0]`** and **`experience[1]`**, bias to the **longest** lines the facts support (often **multi-line** in PDF). Avoid thin one-clause blurbs.
 - **Bullet substance:** each line should combine **(a)** business/technical context, **(b)** **your** ownership and decisions, **(c)** **stack**/**API**/**data**/**infra** specifics, **(d)** **scope**/**constraints**, **(e)** **qualitative** or **already-sourced** outcomes (rule **5**). Weave **2–5** JD keywords where credible—**never** keyword stuffing that reads false.
 - **JD density:** For **work history #1** (most recent), maximize JD alignment **without** breaking **§0a** credibility or date-appropriate tech below.

@@ -7,7 +7,6 @@ import {
     PdfIconMail,
     PdfIconPhone,
     PdfIconPin,
-    PdfListBullet,
 } from './PdfIcons';
 
 // Classic résumé: black on white
@@ -115,7 +114,7 @@ export const createResumeTemplate = (config) => {
             marginBottom: headerLayout === "split" ? 3 : 0,
         },
         section: {
-            marginBottom: 12,
+            marginBottom: 10,
         },
         sectionTitle: {
             fontSize: fonts.sectionSize || 10.5,
@@ -124,51 +123,31 @@ export const createResumeTemplate = (config) => {
             textTransform: "uppercase",
             letterSpacing: 0.3,
             color: INK,
-            marginBottom: 6,
-            paddingBottom: 3,
+            marginBottom: 4,
+            paddingBottom: 2,
             borderBottomWidth: 1,
             borderBottomColor: INK,
         },
         summary: {
             fontSize: fonts.summarySize || 11,
             fontFamily: fonts.body || "Times-Roman",
-            lineHeight: 1.62,
+            lineHeight: 1.4,
             textAlign: "left",
             color: INK,
         },
+        /** One flowing line per category: bullet + bold label + comma list (no column gap). */
         skillsRow: {
-            flexDirection: "row",
-            alignItems: "flex-start",
-            marginBottom: 5,
+            marginBottom: 2,
             width: "100%",
-        },
-        skillsPrefix: {
-            flexDirection: "row",
-            flexShrink: 0,
-            maxWidth: "38%",
-            alignItems: "flex-start",
-        },
-        skillsBulletWrap: {
-            width: 10,
-            marginRight: 4,
-            paddingTop: 2,
-            alignItems: "center",
-        },
-        skillsCat: {
-            fontSize: fonts.skillsLabelSize || 10,
-            fontFamily: fonts.title || "Times-Bold",
-            fontWeight: "bold",
-            color: INK,
         },
         skillsBody: {
             fontSize: fonts.skillsListSize || 10,
             fontFamily: fonts.body || "Times-Roman",
-            lineHeight: 1.5,
+            lineHeight: 1.15,
             color: INK,
-            flex: 1,
         },
         expItem: {
-            marginBottom: 14,
+            marginBottom: 10,
         },
         expHeader: {
             flexDirection: "row",
@@ -202,12 +181,12 @@ export const createResumeTemplate = (config) => {
             marginLeft: 4,
         },
         expDetailRow: {
-            marginBottom: 4,
+            marginBottom: 2,
         },
         expDetailItem: {
             fontSize: fonts.expDetailSize || 10,
             fontFamily: fonts.body || "Times-Roman",
-            lineHeight: 1.65,
+            lineHeight: 1.28,
             color: INK,
         },
         eduItem: {
@@ -327,15 +306,14 @@ export const createResumeTemplate = (config) => {
                                 const joined = Array.isArray(skillList)
                                     ? skillList.join(", ")
                                     : String(skillList);
+                                const line = `**${category}**: ${joined}`;
                                 return (
-                                    <View key={idx} style={styles.skillsRow} wrap={false}>
-                                        <View style={styles.skillsPrefix}>
-                                            <View style={styles.skillsBulletWrap}>
-                                                <PdfListBullet size={6} color={INK} />
-                                            </View>
-                                            <Text style={styles.skillsCat}>{category}: </Text>
-                                        </View>
-                                        <BoldText text={joined} style={styles.skillsBody} />
+                                    <View key={idx} style={styles.skillsRow}>
+                                        <BoldText
+                                            text={line}
+                                            style={styles.skillsBody}
+                                            prefix={"\u2022 "}
+                                        />
                                     </View>
                                 );
                             })}

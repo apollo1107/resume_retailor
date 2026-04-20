@@ -4,6 +4,7 @@ import {
   convertMillimetersToTwip,
   Document,
   ImageRun,
+  LineRuleType,
   Packer,
   Paragraph,
   TabStopType,
@@ -83,7 +84,7 @@ const sectionRuleBorder = {
 
 function sectionHeading(text) {
   return new Paragraph({
-    spacing: { before: 240, after: 120 },
+    spacing: { before: 200, after: 80 },
     border: sectionRuleBorder,
     children: [
       new TextRun({
@@ -250,7 +251,11 @@ export async function buildResumeDocxBuffer(templateData) {
     children.push(sectionHeading("SUMMARY"));
     children.push(
       new Paragraph({
-        spacing: { after: 240 },
+        spacing: {
+          after: 180,
+          line: 264,
+          lineRule: LineRuleType.AUTO,
+        },
         children: [new TextRun({ text: summary, font: FONT, size: PT(11) })],
       })
     );
@@ -265,10 +270,14 @@ export async function buildResumeDocxBuffer(templateData) {
     for (const [category, list] of skillCategories) {
       children.push(
         new Paragraph({
-          spacing: { after: 60 },
+          spacing: {
+            after: 20,
+            line: 264,
+            lineRule: LineRuleType.AUTO,
+          },
           children: [
             new TextRun({
-              text: "\u25B8 ",
+              text: "\u2022 ",
               font: FONT,
               size: PT(10),
             }),
@@ -287,7 +296,7 @@ export async function buildResumeDocxBuffer(templateData) {
         })
       );
     }
-    children.push(new Paragraph({ text: "", spacing: { after: 120 } }));
+    children.push(new Paragraph({ text: "", spacing: { after: 80 } }));
   }
 
   const experience = templateData.experience || [];
@@ -350,10 +359,14 @@ export async function buildResumeDocxBuffer(templateData) {
       )) {
         children.push(
           new Paragraph({
-            spacing: { after: 72 },
+            spacing: {
+              after: 32,
+              line: 268,
+              lineRule: LineRuleType.AUTO,
+            },
             children: [
               new TextRun({
-                text: "\u25B8 ",
+                text: "\u2022 ",
                 font: FONT,
                 size: PT(10),
               }),
@@ -366,7 +379,7 @@ export async function buildResumeDocxBuffer(templateData) {
           })
         );
       }
-      children.push(new Paragraph({ text: "", spacing: { after: 200 } }));
+      children.push(new Paragraph({ text: "", spacing: { after: 140 } }));
     }
   }
 
