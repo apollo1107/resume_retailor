@@ -20,6 +20,10 @@ import {
   mergeExperienceDetails,
   profileHasPermanentContent,
 } from "@/lib/resume/merge-resume-base";
+import {
+  formatJdExperienceKeywordsBlock,
+  injectJdKeywordsIntoFirstRoleDetails,
+} from "@/lib/resume/jd-experience-keywords";
 import { RESUMES_DIR } from "@/config/project-paths";
 
 export default async function handler(req, res) {
@@ -127,6 +131,9 @@ export default async function handler(req, res) {
     const hasPermanent = profileHasPermanentContent(profileData);
     const permanentResumeContext =
       formatPermanentContextForPrompt(profileData);
+    const jdExperienceKeywords = formatJdExperienceKeywordsBlock(jd, {
+      max: 45,
+    });
     const experienceBulletGuidance = hasPermanent
       ? "Follow **all seven rules** in the prompt header + **rule 2b**. Summary: (**1**) **Every `base_bullets` fact** must appear in **`details`** (you may **merge** base lines into fewer, longer bullets). (**2**) Bullet **count** is **not** fixed vs profile—only **content** is. (**2b**) A bullet that **merged** **≥2** base lines **must** be **≥35 words**. (**3**) **Dense**, **long** bullets (rule **3**). (**4**) **`experience[0]`**/**`[1]`** = flagship. (**5**) **No new** `%` / `$` counts unless in **`base_bullets`**. (**6**) **Dense** layout. (**7**) **2–3** pages—**merge** or **expand** bullets, tune **summary**/**skills**—**never** drop base facts. **JD → experience:** map JD **Responsibilities**, **Requirements**, **role summary**, and **technical** terms into **`experience[].details`** where credible—**summary**/**skills** are **not** enough to carry the JD alone. **`base_skills` never removed.**"
       : "Follow **all seven rules** in the prompt header + **rule 2b**. Full `details` per role: **long**, JD-aligned bullets (**merge** short lines when natural; **merged** bullets **≥35 words**). **JD → experience:** JD **Responsibilities**, **Requirements**, **role summary**, and **technical** terms **must** appear in **`experience[].details`** where credible—not only summary/skills. **No invented metrics** unless in **`base_bullets`**. **2–3** pages—tune **words per bullet** and **merge**; **tightest JD match** on **work history #1**.";
@@ -144,6 +151,7 @@ export default async function handler(req, res) {
       resumeTitle: profileData.title || "Senior Software Engineer",
       permanentResumeContext,
       experienceBulletGuidance,
+      jdExperienceKeywords,
     });
 
     const aiResponse = await callAI(prompt, provider, model);
@@ -322,10 +330,20 @@ export default async function handler(req, res) {
 
     console.log(`Using template: ${templateName}`);
 
-    const mergedDetails = mergeExperienceDetails(
+    let mergedDetails = mergeExperienceDetails(
       profileData.experience,
       resumeContent.experience
     );
+    if (mergedDetails.length > 0) {
+      mergedDetails = [
+        injectJdKeywordsIntoFirstRoleDetails(
+          mergedDetails[0],
+          jd,
+          profileData
+        ),
+        ...mergedDetails.slice(1),
+      ];
+    }
     const mergedSkills = mergeBaseSkillsIntoAi(
       profileData.base_skills,
       resumeContent.skills

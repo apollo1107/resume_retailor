@@ -15,6 +15,7 @@ import {
   mergeBaseSkillsIntoAi,
   mergeExperienceDetails,
 } from "@/lib/resume/merge-resume-base";
+import { injectJdKeywordsIntoFirstRoleDetails } from "@/lib/resume/jd-experience-keywords";
 import { RESUMES_DIR } from "@/config/project-paths";
 
 /**
@@ -30,7 +31,10 @@ export default async function handler(req, res) {
       chatgptResponse: rawResponse,
       companyName = null,
       format = "pdf",
+      jd: jdRaw = null,
     } = req.body;
+    const jd =
+      typeof jdRaw === "string" && jdRaw.trim() ? jdRaw.trim() : null;
 
     if (!profileSlug) return res.status(400).send("Profile slug required");
     if (!rawResponse || typeof rawResponse !== "string") {
@@ -124,10 +128,20 @@ export default async function handler(req, res) {
       throw new Error("Invalid JSON: experience must be an array");
     }
 
-    const mergedDetails = mergeExperienceDetails(
+    let mergedDetails = mergeExperienceDetails(
       profileData.experience,
       resumeContent.experience
     );
+    if (jd && mergedDetails.length > 0) {
+      mergedDetails = [
+        injectJdKeywordsIntoFirstRoleDetails(
+          mergedDetails[0],
+          jd,
+          profileData
+        ),
+        ...mergedDetails.slice(1),
+      ];
+    }
     const mergedSkills = mergeBaseSkillsIntoAi(
       profileData.base_skills,
       resumeContent.skills

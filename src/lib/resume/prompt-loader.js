@@ -38,13 +38,16 @@ export const loadPrompt = (promptName, variables = {}) => {
  */
 const processPromptTemplate = (template, variables) => {
   let processed = template;
-  
+
   // Replace all {{variable}} placeholders with actual values
   for (const [key, value] of Object.entries(variables)) {
-    const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
-    processed = processed.replace(regex, String(value || ''));
+    const regex = new RegExp(`\\{\\{${key}\\}\\}`, "g");
+    processed = processed.replace(regex, String(value || ""));
   }
-  
+
+  // Safe default if a profile-specific template omits a newer placeholder
+  processed = processed.replace(/\{\{jdExperienceKeywords\}\}/g, "");
+
   return processed;
 };
 

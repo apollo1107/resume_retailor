@@ -37,6 +37,7 @@ Format: {"title":"...","summary":"...","skills":{...},"experience":[...]}
 
 ## JOB DESCRIPTION:
 {{jobDescription}}
+{{jdExperienceKeywords}}
 
 ---
 

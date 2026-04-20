@@ -213,6 +213,7 @@ export default function ManualProfilePage() {
           chatgptResponse: chatgptResponse.trim(),
           companyName: companyName.trim() || null,
           format: fmt,
+          jd: jd.trim() || null,
         }),
       });
 
