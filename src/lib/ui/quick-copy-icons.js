@@ -55,18 +55,24 @@ export function QuickCopyIcon({ fieldKey, size = 20, color = "currentColor", cla
     case "lastCompany":
       return (
         <svg {...p}>
-          <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" />
-          <path d="M6 12h12" />
-          <path d="M6 16h12" />
-          <path d="M6 8h12" />
-          <path d="M10 6h4" />
+          <path d="M3 22h18" />
+          <path d="M5 22V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16" />
+          <path d="M9 9h.01" />
+          <path d="M12 9h.01" />
+          <path d="M15 9h.01" />
+          <path d="M9 13h.01" />
+          <path d="M12 13h.01" />
+          <path d="M15 13h.01" />
+          <path d="M11 22v-4h2v4" />
         </svg>
       );
     case "lastRole":
       return (
         <svg {...p}>
-          <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
-          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+          <rect x="3" y="7" width="18" height="12" rx="2" />
+          <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+          <path d="M3 12h18" />
+          <path d="M11 12v2h2v-2" />
         </svg>
       );
     case "linkedin":
@@ -115,10 +121,9 @@ export function QuickCopyIcon({ fieldKey, size = 20, color = "currentColor", cla
     case "ssn":
       return (
         <svg {...p}>
-          <rect width="20" height="14" x="2" y="5" rx="2" />
-          <path d="M2 10h20" />
-          <path d="M6 15h.01" />
-          <path d="M10 15h.01" />
+          <path d="M12 3l7 3v6c0 4.2-2.7 8-7 9-4.3-1-7-4.8-7-9V6l7-3Z" />
+          <rect x="9" y="10" width="6" height="5" rx="1" />
+          <path d="M10.5 10V8.8a1.5 1.5 0 0 1 3 0V10" />
         </svg>
       );
     default:
