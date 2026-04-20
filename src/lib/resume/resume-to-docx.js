@@ -85,7 +85,7 @@ const sectionRuleBorder = {
 
 function sectionHeading(text) {
   return new Paragraph({
-    spacing: { before: 200, after: 80 },
+    spacing: { before: 220, after: 96 },
     border: sectionRuleBorder,
     children: [
       new TextRun({
@@ -106,25 +106,25 @@ export async function buildResumeDocxBuffer(templateData) {
   const children = [];
 
   children.push(
-    new Paragraph({
-      alignment: AlignmentType.CENTER,
-      spacing: { after: 80 },
-      children: [
-        new TextRun({
-          text: safeStr(templateData.name),
-          bold: true,
-          font: FONT,
-          size: PT(22),
-        }),
-      ],
-    })
-  );
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 96 },
+        children: [
+          new TextRun({
+            text: safeStr(templateData.name),
+            bold: true,
+            font: FONT,
+            size: PT(22),
+          }),
+        ],
+      })
+    );
 
   if (templateData.title) {
     children.push(
       new Paragraph({
         alignment: AlignmentType.CENTER,
-        spacing: { after: 120 },
+        spacing: { after: 132 },
         children: [
           new TextRun({
             text: safeStr(templateData.title),
@@ -239,12 +239,12 @@ export async function buildResumeDocxBuffer(templateData) {
     children.push(
       new Paragraph({
         alignment: AlignmentType.CENTER,
-        spacing: { after: 200 },
+        spacing: { after: 220, line: 276, lineRule: LineRuleType.AUTO },
         children: contactRuns,
       })
     );
   } else {
-    children.push(new Paragraph({ text: "", spacing: { after: 120 } }));
+    children.push(new Paragraph({ text: "", spacing: { after: 132 } }));
   }
 
   const summary = safeStr(templateData.summary).trim();
@@ -253,8 +253,8 @@ export async function buildResumeDocxBuffer(templateData) {
     children.push(
       new Paragraph({
         spacing: {
-          after: 180,
-          line: 264,
+          after: 200,
+          line: 292,
           lineRule: LineRuleType.AUTO,
         },
         children: [new TextRun({ text: summary, font: FONT, size: PT(11) })],
@@ -272,8 +272,8 @@ export async function buildResumeDocxBuffer(templateData) {
       children.push(
         new Paragraph({
           spacing: {
-            after: 20,
-            line: 264,
+            after: 36,
+            line: 286,
             lineRule: LineRuleType.AUTO,
           },
           children: [
@@ -297,7 +297,7 @@ export async function buildResumeDocxBuffer(templateData) {
         })
       );
     }
-    children.push(new Paragraph({ text: "", spacing: { after: 80 } }));
+    children.push(new Paragraph({ text: "", spacing: { after: 96 } }));
   }
 
   const experience = templateData.experience || [];
@@ -314,7 +314,7 @@ export async function buildResumeDocxBuffer(templateData) {
           tabStops: [
             { type: TabStopType.RIGHT, position: RIGHT_TAB_POS },
           ],
-          spacing: { after: 40 },
+          spacing: { after: 48 },
           keepNext: true,
           children: [
             new TextRun({
@@ -341,7 +341,7 @@ export async function buildResumeDocxBuffer(templateData) {
       if (companyLine) {
         children.push(
           new Paragraph({
-            spacing: { after: 80 },
+            spacing: { after: 96 },
             widowControl: true,
             children: [
               new TextRun({
@@ -361,8 +361,8 @@ export async function buildResumeDocxBuffer(templateData) {
         children.push(
           new Paragraph({
             spacing: {
-              after: 32,
-              line: 268,
+              after: 48,
+              line: 292,
               lineRule: LineRuleType.AUTO,
             },
             children: [
@@ -380,7 +380,7 @@ export async function buildResumeDocxBuffer(templateData) {
           })
         );
       }
-      children.push(new Paragraph({ text: "", spacing: { after: 140 } }));
+      children.push(new Paragraph({ text: "", spacing: { after: 160 } }));
     }
   }
 
@@ -399,7 +399,7 @@ export async function buildResumeDocxBuffer(templateData) {
           tabStops: [
             { type: TabStopType.RIGHT, position: RIGHT_TAB_POS },
           ],
-          spacing: { after: 40 },
+          spacing: { after: 48 },
           keepNext: true,
           children: [
             new TextRun({
@@ -425,7 +425,11 @@ export async function buildResumeDocxBuffer(templateData) {
       if (schoolBits) {
         children.push(
           new Paragraph({
-            spacing: { after: 160 },
+            spacing: {
+              after: 176,
+              line: 280,
+              lineRule: LineRuleType.AUTO,
+            },
             widowControl: true,
             children: [
               new TextRun({

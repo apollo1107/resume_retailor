@@ -592,7 +592,7 @@ export function formatJdCredibilityGuardBlock(jd, profileData) {
 }
 
 /**
- * Descending word count — flagship roles should lead with densest bullets.
+ * Descending word count (fallback when no JD is available for ordering).
  * @param {string[]} details
  * @returns {string[]}
  */
@@ -605,18 +605,55 @@ export function sortDetailsLongestFirst(details) {
   );
 }
 
+function jdOverlapScore(bullet, jdTerms) {
+  const b = String(bullet ?? "").toLowerCase();
+  let n = 0;
+  for (const t of jdTerms) {
+    const tl = String(t).toLowerCase();
+    if (tl.length < 3) continue;
+    if (b.includes(tl)) n += 1;
+  }
+  return n;
+}
+
 /**
- * Apply longest-first ordering to `experience[0]` and `experience[1]` bullet arrays.
+ * JD-tailored bullets first (substring hits on extracted JD phrases), then longest.
+ * @param {string[]} details
+ * @param {string} jd
+ * @returns {string[]}
+ */
+export function sortDetailsJdFirstThenLength(details, jd) {
+  if (!Array.isArray(details) || details.length < 2) return details;
+  if (!jd || typeof jd !== "string" || !jd.trim()) {
+    return sortDetailsLongestFirst(details);
+  }
+  const terms = extractJdKeywords(jd, { max: 60 });
+  return [...details].sort((a, b) => {
+    const ja = jdOverlapScore(a, terms);
+    const jb = jdOverlapScore(b, terms);
+    if (jb !== ja) return jb - ja;
+    const wa = String(a).trim().split(/\s+/).filter(Boolean).length;
+    const wb = String(b).trim().split(/\s+/).filter(Boolean).length;
+    return wb - wa;
+  });
+}
+
+/**
+ * For **each** role, order bullets JD-first (then length). Manual mode without JD falls back to longest-first.
  * @param {string[][]} mergedDetailsPerJob
+ * @param {string | null | undefined} jd
  * @returns {string[][]}
  */
-export function orderFlagshipBulletsLongestFirst(mergedDetailsPerJob) {
+export function orderAllExperienceBulletsJdFirst(mergedDetailsPerJob, jd) {
   if (!Array.isArray(mergedDetailsPerJob)) return mergedDetailsPerJob;
-  return mergedDetailsPerJob.map((details, idx) => {
-    if (idx !== 0 && idx !== 1) return details;
-    if (!Array.isArray(details)) return details;
-    return sortDetailsLongestFirst(details);
-  });
+  return mergedDetailsPerJob.map((details) =>
+    Array.isArray(details) ? sortDetailsJdFirstThenLength(details, jd) : details
+  );
+}
+
+/** @deprecated Use {@link orderAllExperienceBulletsJdFirst} */
+export function orderFlagshipBulletsLongestFirst(mergedDetailsPerJob) {
+  return orderAllExperienceBulletsJdFirst(mergedDetailsPerJob, null);
 }
 
 function profileCredibilityBlob(profileData) {
