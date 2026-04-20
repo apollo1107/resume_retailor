@@ -4,13 +4,13 @@ import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 const styles = StyleSheet.create({
   page: {
     padding: "25mm",
-    fontFamily: "Times-Roman",
+    fontFamily: "Helvetica",
     fontSize: 11,
     color: "#111111",
     lineHeight: 1.5,
   },
   name: {
-    fontFamily: "Times-Bold",
+    fontFamily: "Helvetica-Bold",
     fontSize: 14,
     marginBottom: 6,
   },

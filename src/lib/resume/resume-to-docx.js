@@ -33,7 +33,8 @@ function safeStr(v) {
   return String(v);
 }
 
-const FONT = "Times New Roman";
+/** Arial: widely ATS-friendly, standard on recruiters’ systems (paired with PDF Helvetica). */
+const FONT = "Arial";
 
 /** Résumé page: A4 with ~1 cm margins (matches PDF density) */
 const PAGE_W_MM = 210;
@@ -99,7 +100,7 @@ function sectionHeading(text) {
 
 /**
  * Build a .docx buffer from the same `templateData` shape used for React-PDF templates.
- * Matches the classic PDF style: Times, section rules, title line | dates, skills with markers.
+ * Matches the classic PDF style: Arial/Helvetica, section rules, title line | dates, skills with markers.
  */
 export async function buildResumeDocxBuffer(templateData) {
   const children = [];

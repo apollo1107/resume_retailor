@@ -33,7 +33,16 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: `Profile file "${resumeName}.json" not found` });
     }
 
-    const profileData = JSON.parse(fs.readFileSync(profilePath, "utf-8"));
+    let profileData;
+    try {
+      profileData = JSON.parse(fs.readFileSync(profilePath, "utf-8"));
+    } catch (parseErr) {
+      return res
+        .status(400)
+        .json({ error: `Invalid profile JSON: ${parseErr.message}` });
+    }
+    if (!Array.isArray(profileData.experience)) profileData.experience = [];
+    if (!Array.isArray(profileData.education)) profileData.education = [];
 
     const calculateYears = (experience) => {
       if (!experience || experience.length === 0) return 0;
@@ -73,8 +82,8 @@ export default async function handler(req, res) {
     const permanentResumeContext =
       formatPermanentContextForPrompt(profileData);
     const experienceBulletGuidance = hasPermanent
-      ? "Follow **all seven rules** in the prompt header. Summary: (**1**) Prefer **same-count** `details` vs `base_bullets` to **expand** each base line; **append** **1–4** **long** lines only for JD **must-haves** still **uncovered**. (**2**) **Never** fewer bullets than profile **`base_bullets`**. (**3**) **Every** bullet **max length** (rule **3**)—never shorten to fit pages. (**4**) **`experience[0]`**/**`[1]`** = flagship. (**5**) **No new** `%` / `$` counts unless in **`base_bullets`**. (**6**) **Dense** layout. (**7**) **2–3** pages—**tune** mainly by **append count** + skills/summary, **not** bullet brevity. **JD checklist:** credible JD requirements must appear in **skills**/**summary**/**experience**; do **not** omit defensible JD items missing from `base_bullets`. **`base_skills` never removed.**"
-      : "Follow **all seven rules** in the prompt header. Full `details` per role (**7–10** bullets typical): **maximize** length on **each** bullet; **`experience[0]`**/**`[1]`** especially long and JD-aligned. **JD checklist** in **skills**/**summary**/**experience** where credible. **No invented metrics** unless in **`base_bullets`**. **2–3** pages—adjust **bullet count** per role if needed; **tightest JD match** on **work history #1**.";
+      ? "Follow **all seven rules** in the prompt header. Summary: (**1**) **Every `base_bullets` fact** must appear in **`details`** (you may **merge** base lines into fewer, longer bullets). (**2**) Bullet **count** is **not** fixed vs profile—only **content** is. (**3**) **Dense**, **long** bullets (rule **3**). (**4**) **`experience[0]`**/**`[1]`** = flagship. (**5**) **No new** `%` / `$` counts unless in **`base_bullets`**. (**6**) **Dense** layout. (**7**) **2–3** pages—**merge** or **expand** bullets, tune **summary**/**skills**—**never** drop base facts. **JD checklist:** credible JD items in **skills**/**summary**/**experience**. **`base_skills` never removed.**"
+      : "Follow **all seven rules** in the prompt header. Full `details` per role: **long**, JD-aligned bullets (**merge** short lines when natural). **JD checklist** in **skills**/**summary**/**experience** where credible. **No invented metrics** unless in **`base_bullets`**. **2–3** pages—tune **words per bullet** and **merge**; **tightest JD match** on **work history #1**.";
 
     const prompt = loadPromptForProfile(profileSlug, {
       name: profileData.name,

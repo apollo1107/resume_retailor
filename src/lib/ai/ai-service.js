@@ -155,16 +155,29 @@ async function callOpenAI(promptOrMessages, model, maxTokens, retries, timeoutMs
         )
       ]);
 
+      const choice0 = response.choices?.[0];
+      const msg = choice0?.message;
+      let textOut = msg?.content;
+      if (Array.isArray(textOut)) {
+        textOut = textOut
+          .map((p) => (typeof p === "object" && p?.text ? p.text : String(p ?? "")))
+          .join("");
+      }
+      if (textOut == null || (typeof textOut === "string" && !textOut.trim())) {
+        throw new Error("OpenAI returned no usable message content");
+      }
+      const finish = choice0?.finish_reason ?? "stop";
+
       // Normalize response format to match Claude's structure
       return {
         provider: "openai",
         model: response.model,
-        content: [{ text: response.choices[0].message.content }],
+        content: [{ text: typeof textOut === "string" ? textOut : String(textOut) }],
         usage: {
-          input_tokens: response.usage.prompt_tokens,
-          output_tokens: response.usage.completion_tokens
+          input_tokens: response.usage?.prompt_tokens,
+          output_tokens: response.usage?.completion_tokens
         },
-        stop_reason: response.choices[0].finish_reason === "length" ? "max_tokens" : "stop"
+        stop_reason: finish === "length" ? "max_tokens" : finish
       };
     } catch (err) {
       retries--;

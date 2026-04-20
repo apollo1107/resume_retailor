@@ -65,7 +65,17 @@ export default async function handler(req, res) {
       return res.status(404).send(`Profile file "${resumeName}.json" not found`);
     }
 
-    const profileData = JSON.parse(fs.readFileSync(profilePath, "utf-8"));
+    let profileData;
+    try {
+      profileData = JSON.parse(fs.readFileSync(profilePath, "utf-8"));
+    } catch (parseErr) {
+      return res
+        .status(400)
+        .send(`Invalid profile JSON in "${resumeName}.json": ${parseErr.message}`);
+    }
+    if (!Array.isArray(profileData.experience)) profileData.experience = [];
+    if (!Array.isArray(profileData.education)) profileData.education = [];
+
     const roleForLetter = (targetRole && String(targetRole).trim()) || profileData.title || "the position";
 
     const prompt = buildCoverLetterPrompt({
@@ -79,7 +89,16 @@ export default async function handler(req, res) {
     });
 
     const aiResponse = await callAI(prompt, provider, model, 3000, 2, 120000);
-    let text = (aiResponse.content[0]?.text || "").trim();
+    const rawAi =
+      typeof aiResponse?.content?.[0]?.text === "string"
+        ? aiResponse.content[0].text
+        : "";
+    let text = rawAi.trim();
+    if (!text) {
+      throw new Error(
+        "The model returned an empty cover letter. Check API keys or try again."
+      );
+    }
 
     const lower = text.toLowerCase();
     if (

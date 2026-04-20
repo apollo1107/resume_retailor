@@ -7,7 +7,7 @@ import {
   TextRun,
 } from "docx";
 
-const FONT = "Times New Roman";
+const FONT = "Arial";
 const PT = (n) => Math.round(n * 2);
 
 const PAGE_W_MM = 210;

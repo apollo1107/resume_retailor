@@ -12,6 +12,104 @@ function normalizeStringList(arr) {
   return arr.map((s) => String(s).trim()).filter(Boolean);
 }
 
+function normalizeForMatch(s) {
+  return String(s ?? "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+const STOPWORDS = new Set([
+  "the",
+  "and",
+  "for",
+  "with",
+  "that",
+  "this",
+  "from",
+  "into",
+  "their",
+  "was",
+  "were",
+  "are",
+  "has",
+  "have",
+  "had",
+  "not",
+  "but",
+  "our",
+  "your",
+  "all",
+  "any",
+  "its",
+  "via",
+  "per",
+  "using",
+  "used",
+  "use",
+]);
+
+function significantTokens(text) {
+  const n = normalizeForMatch(text);
+  return n
+    .split(/[^a-z0-9%+$/]+/i)
+    .map((t) => t.trim())
+    .filter((t) => t.length >= 3 && !STOPWORDS.has(t));
+}
+
+/**
+ * True if `haystack` (one bullet or several joined) still reflects the substance of `baseBullet`.
+ * Used so merged / rewritten bullets do not drop permanent profile facts.
+ */
+function bulletHaystackCoversBase(haystack, baseBullet) {
+  const h = normalizeForMatch(haystack);
+  const b = normalizeForMatch(baseBullet);
+  if (!b || b.length <= 2) return true;
+  if (!h) return false;
+  if (h.includes(b)) return true;
+  if (b.length >= 14 && h.includes(b.slice(0, 14))) return true;
+
+  const tokens = significantTokens(baseBullet);
+  if (tokens.length === 0) return true;
+  let hit = 0;
+  for (const t of tokens) {
+    if (h.includes(t)) hit++;
+  }
+  return hit / tokens.length >= 0.65;
+}
+
+function ensureAiBulletContainsBase(baseBullet, aiBullet) {
+  const ai = String(aiBullet ?? "").trim();
+  const base = String(baseBullet ?? "").trim();
+  if (!base) return ai;
+  if (bulletHaystackCoversBase(ai, base)) return ai;
+  if (!ai) return base;
+  return `${base} ${ai}`.replace(/\s+/g, " ").trim();
+}
+
+/**
+ * Combine profile `base_bullets` with AI `details` for one role.
+ * Bullet *count* may go up or down; every base fact must remain represented (enforced here when the model slips).
+ */
+function mergeDetailsForOneRole(base, fromAi) {
+  if (base.length === 0) return [...fromAi];
+  if (fromAi.length === 0) return [...base];
+
+  if (fromAi.length === base.length) {
+    return base.map((b, i) => ensureAiBulletContainsBase(b, fromAi[i] ?? ""));
+  }
+
+  const union = fromAi.join(" ");
+  const uncovered = base.filter((b) => !bulletHaystackCoversBase(union, b));
+  if (uncovered.length === 0) {
+    return [...fromAi];
+  }
+  if (uncovered.length === base.length) {
+    return [...base, ...fromAi];
+  }
+  return [...fromAi, ...uncovered];
+}
+
 function dedupeSkillsPreserveOrder(primary, secondary) {
   const seen = new Set();
   const out = [];
@@ -135,7 +233,7 @@ export function formatPermanentContextForPrompt(profileData) {
 
   return (
     lines.join("\n").trim() +
-    "\n\n**Merge rules (non-negotiable):** The app **never removes** any `base_skills` line—those always stay. For **experience:** (**1**) **Same-count rewrite** — if `experience[].details` has the **same length** as that role’s `base_bullets`, those strings **replace** them **one-for-one** (bullet count **unchanged**, use this to **expand** base text/JD-align). (**2**) **Append** — otherwise your `details` are **appended after** **all** `base_bullets** (`[...bases, ...details]`); keep **few** appended lines (roughly **1–4**). Final bullet count is **never** less than the profile’s `base_bullets` count. **Do not** paste duplicate base lines in `details`."
+    "\n\n**Merge rules (non-negotiable):** The app **never removes** any `base_skills` line—those always stay. For **experience:** every **fact, tool, scope item, and outcome** that appears in **`base_bullets`** for that role must still appear somewhere in that role’s final **`details`** (you may **merge** several short base lines into **one** longer bullet, or **rewrite** in place—bullet **count** is **not** fixed). Prefer **dense** bullets and **JD alignment**. If you output **`details`** with the **same length** as `base_bullets`, each line must be a **one-for-one expansion/replace** that **still contains** the corresponding base line’s substance (no dropped facts). If you output **additional** lines beyond a rewrite, they are **JD-only additions**—**do not** repeat raw base lines in `details` when the merge layer would duplicate them."
   );
 }
 
@@ -167,8 +265,8 @@ export function mergeBaseSkillsIntoAi(baseSkills, aiSkills) {
 }
 
 /**
- * Per job: if `details.length === base_bullets.length` (and base non-empty), AI lines replace base **without
- * reducing bullet count**. Otherwise `[...base_bullets, ...details]` — **never** fewer base lines than the profile.
+ * Per job: merge AI `details` with `base_bullets` so **no base facts are lost** (heuristic + same-count glue).
+ * Bullet count may differ from the profile when the model merges lines.
  */
 export function mergeExperienceDetails(profileJobs, aiExperience) {
   const jobs = Array.isArray(profileJobs) ? profileJobs : [];
@@ -176,9 +274,6 @@ export function mergeExperienceDetails(profileJobs, aiExperience) {
   return jobs.map((job, idx) => {
     const base = normalizeStringList(job.base_bullets ?? job.base_details);
     const fromAi = normalizeStringList(ai[idx]?.details);
-    if (base.length > 0 && fromAi.length === base.length) {
-      return fromAi;
-    }
-    return [...base, ...fromAi];
+    return mergeDetailsForOneRole(base, fromAi);
   });
 }

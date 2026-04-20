@@ -25,7 +25,7 @@ export const createResumeTemplate = (config) => {
             /** ~1 cm sides; résumé density without oversized margins */
             padding: "10mm",
             fontSize: fonts.baseSize || 11,
-            fontFamily: fonts.body || "Times-Roman",
+            fontFamily: fonts.body || "Helvetica",
             color: INK,
         },
         header: {
@@ -45,7 +45,7 @@ export const createResumeTemplate = (config) => {
         },
         name: {
             fontSize: fonts.nameSize || 22,
-            fontFamily: fonts.title || "Times-Bold",
+            fontFamily: fonts.title || "Helvetica-Bold",
             fontWeight: "bold",
             marginBottom: 4,
             color: INK,
@@ -53,7 +53,7 @@ export const createResumeTemplate = (config) => {
         },
         title: {
             fontSize: fonts.titleSize || 11,
-            fontFamily: fonts.body || "Times-Roman",
+            fontFamily: fonts.body || "Helvetica",
             fontStyle: "italic",
             fontWeight: "normal",
             marginBottom: 6,
@@ -61,14 +61,14 @@ export const createResumeTemplate = (config) => {
         },
         contact: {
             fontSize: fonts.contactSize || 10,
-            fontFamily: fonts.body || "Times-Roman",
+            fontFamily: fonts.body || "Helvetica",
             color: INK,
             lineHeight: 1.45,
             textAlign: headerLayout === "split" ? "right" : "center",
         },
         contactSecond: {
             fontSize: fonts.contactSize || 10,
-            fontFamily: fonts.body || "Times-Roman",
+            fontFamily: fonts.body || "Helvetica",
             color: INK,
             lineHeight: 1.45,
             marginTop: 2,
@@ -105,7 +105,7 @@ export const createResumeTemplate = (config) => {
         },
         contactLineText: {
             fontSize: fonts.contactSize || 10,
-            fontFamily: fonts.body || "Times-Roman",
+            fontFamily: fonts.body || "Helvetica",
             color: INK,
             lineHeight: 1.45,
             maxWidth: "100%",
@@ -118,7 +118,7 @@ export const createResumeTemplate = (config) => {
         },
         sectionTitle: {
             fontSize: fonts.sectionSize || 10.5,
-            fontFamily: fonts.title || "Times-Bold",
+            fontFamily: fonts.title || "Helvetica-Bold",
             fontWeight: "bold",
             textTransform: "uppercase",
             letterSpacing: 0.3,
@@ -130,7 +130,7 @@ export const createResumeTemplate = (config) => {
         },
         summary: {
             fontSize: fonts.summarySize || 11,
-            fontFamily: fonts.body || "Times-Roman",
+            fontFamily: fonts.body || "Helvetica",
             lineHeight: 1.4,
             textAlign: "left",
             color: INK,
@@ -142,7 +142,7 @@ export const createResumeTemplate = (config) => {
         },
         skillsBody: {
             fontSize: fonts.skillsListSize || 10,
-            fontFamily: fonts.body || "Times-Roman",
+            fontFamily: fonts.body || "Helvetica",
             lineHeight: 1.15,
             color: INK,
         },
@@ -157,7 +157,7 @@ export const createResumeTemplate = (config) => {
         },
         expTitle: {
             fontSize: fonts.expTitleSize || 11,
-            fontFamily: fonts.title || "Times-Bold",
+            fontFamily: fonts.title || "Helvetica-Bold",
             fontWeight: "bold",
             color: INK,
             flex: 1,
@@ -165,14 +165,14 @@ export const createResumeTemplate = (config) => {
         },
         expDates: {
             fontSize: fonts.expDatesSize || 10,
-            fontFamily: fonts.title || "Times-Bold",
+            fontFamily: fonts.title || "Helvetica-Bold",
             fontWeight: "bold",
             color: INK,
             flexShrink: 0,
         },
         expCompany: {
             fontSize: fonts.expCompanySize || 10,
-            fontFamily: fonts.body || "Times-Roman",
+            fontFamily: fonts.body || "Helvetica",
             color: INK,
             marginBottom: 4,
             fontStyle: "italic",
@@ -185,7 +185,7 @@ export const createResumeTemplate = (config) => {
         },
         expDetailItem: {
             fontSize: fonts.expDetailSize || 10,
-            fontFamily: fonts.body || "Times-Roman",
+            fontFamily: fonts.body || "Helvetica",
             lineHeight: 1.28,
             color: INK,
         },
@@ -200,7 +200,7 @@ export const createResumeTemplate = (config) => {
         },
         eduDegree: {
             fontSize: fonts.eduDegreeSize || 11,
-            fontFamily: fonts.title || "Times-Bold",
+            fontFamily: fonts.title || "Helvetica-Bold",
             fontWeight: "bold",
             color: INK,
             flex: 1,
@@ -208,14 +208,14 @@ export const createResumeTemplate = (config) => {
         },
         eduDates: {
             fontSize: fonts.eduDatesSize || 10,
-            fontFamily: fonts.title || "Times-Bold",
+            fontFamily: fonts.title || "Helvetica-Bold",
             fontWeight: "bold",
             color: INK,
             flexShrink: 0,
         },
         eduSchool: {
             fontSize: fonts.eduSchoolSize || 10,
-            fontFamily: fonts.body || "Times-Roman",
+            fontFamily: fonts.body || "Helvetica",
             color: INK,
             fontStyle: "italic",
         },

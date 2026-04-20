@@ -52,7 +52,16 @@ export default async function handler(req, res) {
         .send(`Profile file "${resumeName}.json" not found`);
     }
 
-    const profileData = JSON.parse(fs.readFileSync(profilePath, "utf-8"));
+    let profileData;
+    try {
+      profileData = JSON.parse(fs.readFileSync(profilePath, "utf-8"));
+    } catch (parseErr) {
+      return res
+        .status(400)
+        .send(`Invalid profile JSON in "${resumeName}.json": ${parseErr.message}`);
+    }
+    if (!Array.isArray(profileData.experience)) profileData.experience = [];
+    if (!Array.isArray(profileData.education)) profileData.education = [];
 
     // Clean and extract JSON from pasted ChatGPT response
     let content = rawResponse.trim();
@@ -107,6 +116,12 @@ export default async function handler(req, res) {
       throw new Error(
         "Missing required fields (title, summary, skills, or experience). Ensure ChatGPT returned the full JSON."
       );
+    }
+    if (typeof resumeContent.skills !== "object" || resumeContent.skills === null) {
+      throw new Error("Invalid JSON: skills must be an object");
+    }
+    if (!Array.isArray(resumeContent.experience)) {
+      throw new Error("Invalid JSON: experience must be an array");
     }
 
     const mergedDetails = mergeExperienceDetails(
