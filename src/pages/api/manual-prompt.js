@@ -6,7 +6,10 @@ import {
   formatPermanentContextForPrompt,
   profileHasPermanentContent,
 } from "@/lib/resume/merge-resume-base";
-import { formatJdExperienceKeywordsBlock } from "@/lib/resume/jd-experience-keywords";
+import {
+  formatJdExperienceKeywordsBlock,
+  formatJdCredibilityGuardBlock,
+} from "@/lib/resume/jd-experience-keywords";
 import { RESUMES_DIR } from "@/config/project-paths";
 
 /**
@@ -84,10 +87,12 @@ export default async function handler(req, res) {
       formatPermanentContextForPrompt(profileData);
     const jdExperienceKeywords = formatJdExperienceKeywordsBlock(jd, {
       max: 45,
+      profileData,
     });
+    const jdCredibilityGuard = formatJdCredibilityGuardBlock(jd, profileData);
     const experienceBulletGuidance = hasPermanent
-      ? "Follow **all seven rules** in the prompt header + **rule 2b**. Summary: (**1**) **Every `base_bullets` fact** must appear in **`details`** (you may **merge** base lines into fewer, longer bullets). (**2**) Bullet **count** is **not** fixed vs profile—only **content** is. (**2b**) A bullet that **merged** **≥2** base lines **must** be **≥35 words**. (**3**) **Dense**, **long** bullets (rule **3**). (**4**) **`experience[0]`**/**`[1]`** = flagship. (**5**) **No new** `%` / `$` counts unless in **`base_bullets`**. (**6**) **Dense** layout. (**7**) **2–3** pages—**merge** or **expand** bullets, tune **summary**/**skills**—**never** drop base facts. **JD → experience:** map JD **Responsibilities**, **Requirements**, **role summary**, and **technical** terms into **`experience[].details`** where credible—**summary**/**skills** are **not** enough to carry the JD alone. **`base_skills` never removed.**"
-      : "Follow **all seven rules** in the prompt header + **rule 2b**. Full `details` per role: **long**, JD-aligned bullets (**merge** short lines when natural; **merged** bullets **≥35 words**). **JD → experience:** JD **Responsibilities**, **Requirements**, **role summary**, and **technical** terms **must** appear in **`experience[].details`** where credible—not only summary/skills. **No invented metrics** unless in **`base_bullets`**. **2–3** pages—tune **words per bullet** and **merge**; **tightest JD match** on **work history #1**.";
+      ? "Follow **all seven rules** in the prompt header + **rules 2b** + **4b**. Summary: (**1**) **Every `base_bullets` fact** must appear in **`details`** (you may **merge** base lines into fewer, longer bullets). (**2**) Bullet **count** is **not** fixed vs profile—only **content** is. (**2b**) A bullet that **merged** **≥2** base lines **must** be **≥35 words**. (**3**) **Dense**, **long** bullets (rule **3**). (**4**) **`experience[0]`**/**`[1]`** = flagship. (**4b**) Those two roles: **longest** `details` lines **first**. (**5**) **No new** `%` / `$` counts unless in **`base_bullets`**. (**6**) **Dense** layout. (**7**) **2–3** pages—**merge** or **expand** bullets, tune **summary**/**skills**—**never** drop base facts. **JD → experience** only when **profile-supported**; **never** claim **JD REQUIREMENTS NOT SUPPORTED BY PROFILE DATA**. **`base_skills` never removed.**"
+      : "Follow **all seven rules** in the prompt header + **rules 2b** + **4b**. Full `details` per role: **long**, JD-aligned bullets (**merge** short lines when natural; **merged** bullets **≥35 words**). **`experience[0]`**/**`[1]`**: **longest** bullets **first**. **JD → experience** only when **profile-supported**—**never** claim **unsupported must-haves** from the prompt guard block. **No invented metrics** unless in **`base_bullets`**. **2–3** pages; **tightest JD match** on **work history #1**.";
 
     const prompt = loadPromptForProfile(profileSlug, {
       name: profileData.name,
@@ -102,6 +107,7 @@ export default async function handler(req, res) {
       permanentResumeContext,
       experienceBulletGuidance,
       jdExperienceKeywords,
+      jdCredibilityGuard,
     });
 
     res.setHeader("Content-Type", "application/json");

@@ -15,7 +15,10 @@ import {
   mergeBaseSkillsIntoAi,
   mergeExperienceDetails,
 } from "@/lib/resume/merge-resume-base";
-import { injectJdKeywordsIntoFirstRoleDetails } from "@/lib/resume/jd-experience-keywords";
+import {
+  injectJdKeywordsIntoFirstRoleDetails,
+  orderFlagshipBulletsLongestFirst,
+} from "@/lib/resume/jd-experience-keywords";
 import { RESUMES_DIR } from "@/config/project-paths";
 
 /**
@@ -142,6 +145,7 @@ export default async function handler(req, res) {
         ...mergedDetails.slice(1),
       ];
     }
+    mergedDetails = orderFlagshipBulletsLongestFirst(mergedDetails);
     const mergedSkills = mergeBaseSkillsIntoAi(
       profileData.base_skills,
       resumeContent.skills

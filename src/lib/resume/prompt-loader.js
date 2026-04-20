@@ -47,6 +47,7 @@ const processPromptTemplate = (template, variables) => {
 
   // Safe default if a profile-specific template omits a newer placeholder
   processed = processed.replace(/\{\{jdExperienceKeywords\}\}/g, "");
+  processed = processed.replace(/\{\{jdCredibilityGuard\}\}/g, "");
 
   return processed;
 };

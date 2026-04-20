@@ -7,6 +7,8 @@ const RAW_PHRASES = `
 Amazon Web Services
 Google Cloud Platform
 Microsoft Azure
+Azure Databricks
+Databricks
 Machine Learning
 Artificial Intelligence
 Large Language Models
@@ -426,20 +428,195 @@ export function extractJdKeywords(jd, opts = {}) {
  * @param {{ max?: number }} [opts]
  * @returns {string}
  */
+/**
+ * @param {string} jd
+ * @param {{ profileData?: object; max?: number }} [opts]
+ */
 export function formatJdExperienceKeywordsBlock(jd, opts = {}) {
-  const list = extractJdKeywords(jd, opts);
+  const max = opts.max ?? 45;
+  const rawList = extractJdKeywords(jd, { max });
+  const cred = profileCredibilityBlob(opts.profileData);
+  const list =
+    cred.length > 0
+      ? rawList.filter((p) => cred.includes(p.toLowerCase()))
+      : rawList;
   if (list.length === 0) return "";
 
   const lines = list.map((p) => `- ${p}`).join("\n");
   return (
     "\n---\n\n" +
-    "## AUTOMATED JD PHRASES (verbatim substring matches in posting)\n\n" +
-    "These strings were **found inside the job description text** above. " +
-    "**Each** must appear as plain text inside **`experience[].details`** for at least one **credible** role (strongly prefer **`experience[0]`**). " +
+    "## AUTOMATED JD PHRASES (also in profile — must appear in `experience`)\n\n" +
+    "These strings appear in the **job description** and were **found in the candidate profile JSON** (skills, bullets, titles, education). " +
+    "**Each** must appear as plain text inside **`experience[].details`** for at least one appropriate role (strongly prefer **`experience[0]`**). " +
     "Listing them only in **`summary`** or **`skills` is invalid** for this checklist. " +
-    "Weave them into full sentences with scope and ownership.\n\n" +
+    "When the **JD REQUIREMENTS NOT SUPPORTED BY PROFILE DATA** section appears in this prompt, **never** claim those items as hands-on experience.\n\n" +
     `${lines}\n`
   );
+}
+
+/**
+ * Split "Must have A, B, and C experience." style clauses.
+ * @param {string} clause
+ * @returns {string[]}
+ */
+function splitRequirementClause(clause) {
+  return clause
+    .replace(/\s+experience\s*\.?\s*$/i, "")
+    .split(/\s*(?:,|;|\band\b)\s*/i)
+    .map((s) => s.trim().replace(/^[\s\-•*]+/, ""))
+    .filter((s) => s.length > 1);
+}
+
+/**
+ * Lines like "Must have Azure, and Azure Databricks experience."
+ * @param {string} jd
+ * @returns {string[]}
+ */
+export function extractJdMustHavePhrases(jd) {
+  if (!jd || typeof jd !== "string") return [];
+  const out = [];
+  const seen = new Set();
+  const add = (s) => {
+    const t = s.trim();
+    if (t.length < 2) return;
+    const k = t.toLowerCase();
+    if (seen.has(k)) return;
+    seen.add(k);
+    out.push(t);
+  };
+
+  for (const raw of jd.split(/\r?\n/)) {
+    const line = raw
+      .trim()
+      .replace(/^\*+\s*/, "")
+      .replace(/^#+\s*/, "")
+      .replace(/^[-•\s]+/, "");
+    if (!line) continue;
+    let rest = null;
+    if (/^must[\s-]have\b/i.test(line)) {
+      rest = line.replace(/^must[\s-]have\b\s*:?\s*/i, "");
+    } else if (/^required(?:\s+qualifications)?\b/i.test(line)) {
+      rest = line.replace(/^required(?:\s+qualifications)?\b\s*:?\s*/i, "");
+    }
+    if (rest) {
+      for (const p of splitRequirementClause(rest)) add(p);
+    }
+  }
+
+  const inline = jd.matchAll(/\bmust[\s-]have\b\s*:?\s*([^\n]+)/gi);
+  for (const m of inline) {
+    const chunk = String(m[1] ?? "")
+      .replace(/\*\*/g, "")
+      .trim();
+    for (const p of splitRequirementClause(chunk)) add(p);
+  }
+
+  return out;
+}
+
+/**
+ * "Hands-on experience ... in Databricks" style bullets.
+ * @param {string} jd
+ * @returns {string[]}
+ */
+export function extractHandsOnExperiencePhrases(jd) {
+  if (!jd || typeof jd !== "string") return [];
+  const out = [];
+  const seen = new Set();
+  const add = (chunk) => {
+    const t = chunk.trim().replace(/\s+experience\s*$/i, "");
+    if (t.length < 2) return;
+    const k = t.toLowerCase();
+    if (seen.has(k)) return;
+    seen.add(k);
+    out.push(t);
+  };
+
+  const patterns = [
+    /\bhands[-\s]?on\s+experience\s+(?:with|in|using|on)\s+([A-Za-z0-9][A-Za-z0-9 +.\-]{1,72})/gi,
+    /\bhands[-\s]?on\s+experience\s+working\s+in\s+([A-Za-z0-9][A-Za-z0-9 +.\-]{1,72})/gi,
+    /\bhands[-\s]?on\s+experience\s+working\s+with\s+([A-Za-z0-9][A-Za-z0-9 +.\-]{1,72})/gi,
+  ];
+  for (const re of patterns) {
+    let m;
+    while ((m = re.exec(jd)) !== null) add(m[1]);
+  }
+  return out;
+}
+
+/**
+ * JD asks for tools/themes the profile does not contain — model must not fabricate.
+ * @param {string} jd
+ * @param {object} profileData
+ * @returns {string}
+ */
+export function formatJdCredibilityGuardBlock(jd, profileData) {
+  const cred = profileCredibilityBlob(profileData);
+  if (!cred) return "";
+
+  const candidates = new Set([
+    ...extractJdMustHavePhrases(jd),
+    ...extractHandsOnExperiencePhrases(jd),
+    ...extractJdKeywords(jd, { max: 22 }).filter(
+      (p) =>
+        p.includes(" ") ||
+        p.length >= 8 ||
+        /^(aws|gcp|sql|api|etl|ml|ai)$/i.test(p)
+    ),
+  ]);
+
+  const seenAbsent = new Set();
+  const absent = [];
+  for (const p of candidates) {
+    const pl = p.toLowerCase();
+    if (pl.length < 2 || cred.includes(pl)) continue;
+    if (seenAbsent.has(pl)) continue;
+    seenAbsent.add(pl);
+    absent.push(p);
+  }
+  if (absent.length === 0) return "";
+
+  absent.sort((a, b) => b.length - a.length);
+  const lines = absent.map((p) => `- ${p}`).join("\n");
+  return (
+    "\n---\n\n" +
+    "## JD REQUIREMENTS NOT SUPPORTED BY PROFILE DATA\n\n" +
+    "The posting emphasizes the items below (from **must-have** / **required** / **hands-on experience** language and high-signal JD phrases). " +
+    "They do **not** appear anywhere in the candidate’s **profile JSON**, **`base_bullets`**, **`base_skills`**, **WORK HISTORY**, or **EDUCATION** text.\n\n" +
+    `${lines}\n\n` +
+    "**Hard rule:** Do **not** state or imply **employment**, **hands-on production**, or **ownership** of these tools/methods in **`experience`**, **`summary`**, or **`skills`**. " +
+    "Do **not** add them to the **AUTOMATED JD PHRASES** checklist block above (that list is profile-filtered). " +
+    "You may only describe **honestly documented** adjacent work (e.g. generic Spark notebooks on another vendor) **without** renaming it into a missing platform. " +
+    "Silence on unsupported must-haves is **better** than a false match.\n"
+  );
+}
+
+/**
+ * Descending word count — flagship roles should lead with densest bullets.
+ * @param {string[]} details
+ * @returns {string[]}
+ */
+export function sortDetailsLongestFirst(details) {
+  if (!Array.isArray(details) || details.length < 2) return details;
+  return [...details].sort(
+    (a, b) =>
+      String(b).trim().split(/\s+/).filter(Boolean).length -
+      String(a).trim().split(/\s+/).filter(Boolean).length
+  );
+}
+
+/**
+ * Apply longest-first ordering to `experience[0]` and `experience[1]` bullet arrays.
+ * @param {string[][]} mergedDetailsPerJob
+ * @returns {string[][]}
+ */
+export function orderFlagshipBulletsLongestFirst(mergedDetailsPerJob) {
+  if (!Array.isArray(mergedDetailsPerJob)) return mergedDetailsPerJob;
+  return mergedDetailsPerJob.map((details, idx) => {
+    if (idx !== 0 && idx !== 1) return details;
+    if (!Array.isArray(details)) return details;
+    return sortDetailsLongestFirst(details);
+  });
 }
 
 function profileCredibilityBlob(profileData) {
