@@ -12,6 +12,32 @@ function normalizeStringList(arr) {
   return arr.map((s) => String(s).trim()).filter(Boolean);
 }
 
+/**
+ * Split comma-separated skills without breaking commas inside `(...)`.
+ * Naive `.split(",")` turns `AWS (EC2, EKS), Azure (AKS)` into fragments and
+ * causes merged output to repeat the same platforms when joined with full AI lines.
+ */
+function splitSkillsListLine(text) {
+  const s = String(text ?? "").trim();
+  if (!s) return [];
+  const parts = [];
+  let depth = 0;
+  let start = 0;
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (ch === "(") depth++;
+    else if (ch === ")") depth = Math.max(0, depth - 1);
+    else if (ch === "," && depth === 0) {
+      const piece = s.slice(start, i).trim();
+      if (piece) parts.push(piece);
+      start = i + 1;
+    }
+  }
+  const tail = s.slice(start).trim();
+  if (tail) parts.push(tail);
+  return parts;
+}
+
 function normalizeForMatch(s) {
   return String(s ?? "")
     .toLowerCase()
@@ -147,10 +173,7 @@ export function normalizeBaseSkillsToSkillMap(baseSkills) {
         cat = s.slice(0, ci).trim() || "Skills";
         rest = s.slice(ci + 1).trim();
       }
-      const parts = rest
-        .split(",")
-        .map((x) => x.trim())
-        .filter(Boolean);
+      const parts = splitSkillsListLine(rest);
       if (!parts.length) continue;
       if (!out[cat]) out[cat] = [];
       out[cat].push(...parts);
@@ -167,13 +190,7 @@ export function normalizeBaseSkillsToSkillMap(baseSkills) {
       if (Array.isArray(v)) {
         out[k] = dedupeSkillsPreserveOrder(normalizeStringList(v), []);
       } else if (typeof v === "string") {
-        out[k] = dedupeSkillsPreserveOrder(
-          v
-            .split(",")
-            .map((x) => x.trim())
-            .filter(Boolean),
-          []
-        );
+        out[k] = dedupeSkillsPreserveOrder(splitSkillsListLine(v), []);
       }
     }
     return out;
@@ -254,10 +271,7 @@ export function mergeBaseSkillsIntoAi(baseSkills, aiSkills) {
     const a = Array.isArray(rawAi)
       ? normalizeStringList(rawAi)
       : typeof rawAi === "string"
-        ? rawAi
-            .split(",")
-            .map((x) => x.trim())
-            .filter(Boolean)
+        ? splitSkillsListLine(rawAi)
         : [];
     out[cat] = dedupeSkillsPreserveOrder(b, a);
   }
