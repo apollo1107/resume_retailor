@@ -19,8 +19,8 @@
     "Networking: VPC, DNS, PrivateLink, Nginx, Envoy, SSL/TLS",
     "Scripting & Languages: Bash, Python, YAML",
     "Databases & Messaging: PostgreSQL, MySQL, MongoDB, Redis, Kafka, RabbitMQ",
-    "Platform & Tools: Backstage, GitHub, GitLab, Jira, Confluence, Datadog"
-  ],
+    "Collaboration & Tools: GitHub, GitLab, Jira, Confluence, Datadog, Backstage"
+  ],   
   "experience": [
     {
       "company": "Harness",
