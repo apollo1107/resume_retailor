@@ -1,25 +1,4 @@
 {
-  "name": "Kedar Nanda",
-  "title": "Senior Data Engineer | Data Platform Architect",
-  "email": "kedarnanda@proton.me",
-  "phone": "(360) 548-1455",
-  "location": "Queen Creek, AZ",
-  "zip": "85142",
-  "linkedin": "https://www.linkedin.com/in/kedarnanda",
-  "website": "",
-  "github": "",
-  "cvLink": "https://flowcv.com/resume/nmoq54g76eco",
-  "street": "23149 E Twin Acres Dr",
-  "birthday": "05/07/1985",
-  "ssn": "",
-  "base_skills": [
-    "Data Engineering & Platforms: ETL/ELT pipelines, data modeling, dimensional design (star/snowflake), data warehousing, data lakes, data marts, batch and real-time processing, distributed systems, pipeline optimization, fault tolerance, partitioning, performance tuning.",
-    "Cloud & Big Data & Technologies: AWS (S3, Redshift, Lambda, Glue, EMR, Kinesis, SQS, SNS, CloudWatch), Snowflake, Azure (ADF, Databricks, Synapse), GCP (BigQuery, Cloud Storage), Apache Spark (Core, SQL, Streaming), PySpark, Hadoop (HDFS), Hive, Kafka, Sqoop, Cloudera CDP, Athena.",
-    "Streaming & Orchestration: Kafka, AWS Kinesis, Spark Streaming, event-driven architectures, Apache Airflow, Apache NiFi, AWS Glue, Azure Data Factory, Autosys, Control-M, Alteryx.",
-    "Programming & Databases: Python, SQL, PySpark, Scala, Java, Shell scripting, Oracle PL/SQL, UNIX; Oracle, PostgreSQL, MySQL, Snowflake; NoSQL (MongoDB, Cassandra, DynamoDB, Redis); schema design, indexing, query optimization.",
-    "Analytics & AI & Applications: Tableau, QuickSight, Pandas, NumPy, Matplotlib, Seaborn, Plotly; Scikit-learn, TensorFlow, PyTorch, Random Forest, XGBoost, KNN, PCA, K-Means, Neural Networks; GPT-4/3.5, Claude, Gemini, Hugging Face, LangChain, RAG, Pinecone, Weaviate, ChromaDB, PromptLayer; FastAPI, Flask, Streamlit, React.",
-    "DevOps, Governance & Leadership: Jenkins, GitLab CI, CircleCI, Azure DevOps, AWS CodePipeline, Docker, Kubernetes, Helm, Terraform; data quality, lineage, monitoring, governance, IAM, encryption, HIPAA compliance; Agile, team leadership, mentoring, stakeholder management."
-  ],
   "experience": [
     {
       "company": "PRA Health Sciences",
@@ -27,23 +6,21 @@
       "start_date": "01/2021",
       "end_date": "04/2026",
       "base_bullets": [
-        "Designed and implemented highly scalable, cloud-native data architectures leveraging AWS and Snowflake, enabling efficient storage, processing, and analytics for large-scale healthcare datasets across multiple enterprise business domains.",
-        "Engineered robust end-to-end ETL and ELT pipelines using AWS S3, Lambda, Glue, and Redshift, significantly improving ingestion throughput, fault tolerance, and overall processing efficiency for high-volume structured and unstructured data.",
-        "Built and optimized real-time streaming data pipelines using PySpark, Apache Kafka, and AWS services including Kinesis, SQS, and SNS, enabling low-latency event-driven architectures and near real-time analytics capabilities.",
-        "Developed scalable and reusable data visualization and reporting solutions using Tableau and AWS QuickSight, empowering stakeholders with actionable insights derived from complex, high-volume datasets.",
-        "Integrated machine learning models such as Random Forest and XGBoost directly into data pipelines, enabling automated predictive analytics workflows and enhancing data-driven decision-making across business units.",
-        "Designed and implemented advanced LLM-powered data solutions using LangChain, GPT-4, Claude, and vector databases like Pinecone and ChromaDB, enabling semantic search, intelligent querying, and data automation.",
-        "Built and deployed scalable RESTful data APIs using FastAPI and Flask, enabling seamless access to curated datasets and supporting microservices-based data platform architectures.",
-        "Implemented enterprise-grade orchestration frameworks using Apache Airflow, Control-M, and Autosys, ensuring reliable scheduling, dependency management, and monitoring of complex multi-stage data workflows.",
-        "Leveraged Pandas and NumPy extensively for complex data transformations, enrichment, validation, and preprocessing within large-scale distributed data pipelines and analytics workflows.",
-        "Developed internal monitoring, observability, and diagnostics tools using Streamlit, improving visibility into pipeline health, performance bottlenecks, and operational metrics across distributed systems.",
-        "Led and mentored cross-functional teams of data engineers, establishing best practices for scalable data engineering, code quality, system design, and timely delivery of enterprise data initiatives.",
-        "Established CI/CD and MLOps pipelines using Jenkins, GitLab CI, and AWS services, enabling automated testing, deployment, monitoring, and continuous improvement of data and machine learning pipelines.",
-        "Designed and optimized NoSQL data models using DynamoDB and Cassandra, supporting high-throughput, low-latency data access patterns for real-time applications and distributed systems.",
-        "Implemented comprehensive data quality, validation, and lineage frameworks, ensuring high data integrity, traceability, and governance across complex, multi-source data ecosystems.",
-        "Collaborated closely with security and compliance teams to enforce HIPAA-compliant data architectures, implementing encryption, IAM policies, and secure data access patterns across cloud environments.",
-        "Automated infrastructure provisioning and pipeline monitoring using AWS CloudWatch and infrastructure-as-code practices, improving system reliability, scalability, and operational efficiency.",
-        "Designed and optimized scalable data models, partitioning strategies, and schema architectures to support high-performance analytical workloads and large-scale distributed query execution."
+        "Designed and implemented scalable, cloud-native data architectures to handle large-scale data processing systems, leveraging AWS services (S3, Lambda, Glue, Redshift) and Snowflake. This provided a highly efficient and reliable data processing and storage framework that supported the growing needs of the organization’s data analytics and reporting capabilities.",
+        "Built and optimized end-to-end ETL pipelines using PySpark, Apache Kafka, AWS Kinesis, and SQS, ensuring fault-tolerant, high-throughput, and low-latency data ingestion and processing. This helped streamline data flow and reduce bottlenecks across various data sources and systems, ensuring real-time processing of critical data.",
+        "Developed and deployed cloud-native data workflows using AWS Lambda and AWS Glue, enabling automatic scaling for both batch and real-time data ingestion. This reduced manual effort, improved efficiency, and lowered operational costs by eliminating the need for on-premise infrastructure while ensuring high availability and performance of the system.",
+        "Automated complex data transformations with dbt, creating scalable, repeatable, and maintainable transformations. This allowed for smoother data processing and more accurate reporting, significantly improving data integrity and reducing errors in downstream analytics processes.",
+        "Collaborated with cross-functional teams to design and implement high-performance data lakes on AWS S3 and Snowflake, enabling faster and more efficient query execution and enhancing the overall data storage architecture. This allowed the company to better manage large datasets while ensuring optimized data processing speeds.",
+        "Integrated advanced machine learning models and AI-powered systems, using GPT-4, Hugging Face, and LangChain to create intelligent data querying and processing capabilities. This allowed business users to make more data-driven decisions through automated analysis and improved forecasting.",
+        "Designed and built custom APIs using FastAPI and Flask to provide seamless access to curated datasets, enabling internal business systems and third-party applications to easily integrate with the data platform. This improved system interoperability and supported multiple applications across different departments.",
+        "Led efforts to optimize data pipelines by conducting regular performance reviews and implementing changes that resulted in a substantial reduction in processing time. This optimization contributed to the faster delivery of data insights, enhancing the decision-making process across the organization.",
+        "Utilized containerization technologies like Docker and Kubernetes to deploy and scale data engineering solutions in cloud environments, ensuring a consistent and scalable deployment process. This not only improved the maintainability of data engineering workflows but also simplified the integration of new services and systems into the architecture.",
+        "Implemented comprehensive performance tuning strategies for large-scale data workloads by optimizing data access patterns and query execution. This significantly enhanced system throughput, reducing latency in processing and improving user satisfaction with faster data access.",
+        "Instituted automated data quality checks and validation routines, ensuring that data across all systems met strict consistency and reliability standards. These automated checks reduced the risk of data errors and enhanced the trustworthiness of data-driven decisions within the business.",
+        "Collaborated closely with the DevOps team to integrate data pipeline deployment into a fully automated CI/CD pipeline. This ensured faster, more reliable delivery of data engineering solutions, allowing for seamless updates and deployment without downtime or disruption to business operations.",
+        "Optimized data storage solutions by leveraging AWS S3 lifecycle policies and Redshift Spectrum. This strategy helped manage cost-effective data storage solutions, ensuring the long-term scalability of the data architecture while maintaining fast data retrieval times and minimizing unnecessary storage costs.",
+        "Worked on data security and compliance initiatives to meet regulatory standards such as HIPAA and GDPR. This included implementing encryption, data masking, and access control protocols, ensuring that sensitive data was protected while maintaining the integrity and privacy of information across the platform.",
+        "Led the migration of legacy on-premise data systems to a modern cloud infrastructure, overseeing the planning, execution, and validation of the migration process. The successful migration ensured that the company could take full advantage of cloud capabilities, enhancing scalability, flexibility, and data accessibility."
       ]
     },
     {
@@ -63,9 +40,7 @@
         "Optimized database performance using advanced SQL tuning, indexing strategies, and partitioning techniques, significantly reducing query latency and improving analytical workload performance.",
         "Managed and scaled distributed NoSQL databases including Cassandra and DynamoDB to support high-throughput, low-latency applications and large-scale data storage requirements.",
         "Led containerization and deployment efforts using Docker and Kubernetes, enabling scalable, portable, and efficient deployment of data engineering and analytics applications.",
-        "Developed interactive business intelligence dashboards using Tableau, enabling stakeholders to derive insights from complex datasets and improve data-driven decision-making.",
-        "Ensured adherence to data governance, security, and compliance standards, implementing policies and controls to maintain data integrity, privacy, and regulatory compliance.",
-        "Collaborated with cross-functional teams including product, engineering, and business stakeholders to design and deliver scalable, high-performance data solutions aligned with organizational objectives."
+        "Developed interactive business intelligence dashboards using Tableau, enabling stakeholders to derive insights from complex datasets and improve data-driven decision-making."
       ]
     },
     {
@@ -113,14 +88,6 @@
         "Participated in full SDLC lifecycle including design, development, testing, and deployment, contributing to delivery of high-quality software and data solutions.",
         "Collaborated with cross-functional teams to ensure seamless delivery of data-driven solutions aligned with business and technical requirements."
       ]
-    }
-  ],
-  "education": [
-    {
-      "degree": "Bachelor of Technology - BTech",
-      "school": "Biju Patnaik University of Technology, Odisha",
-      "start_year": "06/2003",
-      "end_year": "06/2007"
     }
   ]
 }
