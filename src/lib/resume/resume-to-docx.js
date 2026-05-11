@@ -338,11 +338,15 @@ export async function buildResumeDocxBuffer(templateData) {
         .filter(Boolean)
         .map(safeStr)
         .join(", ");
+      const detailLines = (exp.details || []).filter((d) =>
+        String(d ?? "").trim()
+      );
       if (companyLine) {
         children.push(
           new Paragraph({
             spacing: { after: 96 },
             widowControl: true,
+            keepNext: detailLines.length > 0,
             children: [
               new TextRun({
                 text: companyLine,
@@ -355,9 +359,7 @@ export async function buildResumeDocxBuffer(templateData) {
         );
       }
 
-      for (const detail of (exp.details || []).filter((d) =>
-        String(d ?? "").trim()
-      )) {
+      for (const detail of detailLines) {
         children.push(
           new Paragraph({
             spacing: {

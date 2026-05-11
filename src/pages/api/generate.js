@@ -26,6 +26,7 @@ import {
   injectJdKeywordsIntoFirstRoleDetails,
   orderAllExperienceBulletsJdFirst,
 } from "@/lib/resume/jd-experience-keywords";
+import { splitLongestDetailInFirstRoleForPageFlow } from "@/lib/resume/page-flow-experience";
 import { RESUMES_DIR } from "@/config/project-paths";
 
 export default async function handler(req, res) {
@@ -352,6 +353,7 @@ export default async function handler(req, res) {
       ];
     }
     mergedDetails = orderAllExperienceBulletsJdFirst(mergedDetails, jd);
+    mergedDetails = splitLongestDetailInFirstRoleForPageFlow(mergedDetails);
     const { summary: exportSummary, skills: exportSkills } =
       finalizeExportedResumeSummaryAndSkills(
         profileData.base_skills,

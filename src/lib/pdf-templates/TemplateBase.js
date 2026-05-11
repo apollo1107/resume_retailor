@@ -343,16 +343,22 @@ export const createResumeTemplate = (config) => {
                             <Text style={styles.sectionTitle}>{sectionTitles.experience || 'Experience'}</Text>
                             {experience.map((exp, idx) => (
                                 <View key={idx} style={styles.expItem}>
-                                    <View style={styles.expHeader}>
-                                        <Text style={styles.expTitle}>{exp.title || 'Engineer'}</Text>
-                                        <Text style={styles.expDates}>
-                                            {exp.start_date} – {exp.end_date}
+                                    {/*
+                                      Keep title+dates+company on one page slab so the title row
+                                      cannot print alone at the page foot (see page-flow-experience).
+                                    */}
+                                    <View wrap={false}>
+                                        <View style={styles.expHeader}>
+                                            <Text style={styles.expTitle}>{exp.title || 'Engineer'}</Text>
+                                            <Text style={styles.expDates}>
+                                                {exp.start_date} – {exp.end_date}
+                                            </Text>
+                                        </View>
+                                        <Text style={styles.expCompany}>
+                                            {exp.company}
+                                            {exp.location && `, ${exp.location}`}
                                         </Text>
                                     </View>
-                                    <Text style={styles.expCompany}>
-                                        {exp.company}
-                                        {exp.location && `, ${exp.location}`}
-                                    </Text>
                                     {exp.details && exp.details.length > 0 && (
                                         <View style={styles.expDetails}>
                                             {exp.details
