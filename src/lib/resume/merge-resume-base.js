@@ -150,15 +150,24 @@ function dedupeSkillsPreserveOrder(primary, secondary) {
   return out;
 }
 
+/** Outcome/metrics prose from profile — belongs in Experience bullets, not Summary or Skills. */
+function isImpactHighlightsCategoryName(cat) {
+  const c = String(cat ?? "")
+    .trim()
+    .toLowerCase();
+  if (!c) return false;
+  return /\bimpact\s+highlights?\b/.test(c);
+}
+
 /** Categories that are résumé prose (belong in Summary), not the Skills section. */
 function isNarrativeSkillsCategoryName(cat) {
   const c = String(cat ?? "")
     .trim()
     .toLowerCase();
   if (!c) return false;
+  if (isImpactHighlightsCategoryName(cat)) return false;
   return (
     /\bprofessional\s+summary\b/.test(c) ||
-    /\bimpact\s+highlights?\b/.test(c) ||
     /\bcareer\s+summary\b/.test(c) ||
     /\bexecutive\s+summary\b/.test(c) ||
     /\bprofile\s+summary\b/.test(c) ||
@@ -216,22 +225,31 @@ export function normalizeSummaryToSingleParagraph(text) {
 }
 
 /**
- * Remove narrative categories from a skill map and return their prose for the Summary section.
+ * Remove narrative categories from a skill map: summary prose vs quantified outcome blurbs.
+ * `snippets` fold into exported Summary; `experienceContextSnippets` must be covered in work bullets only.
  */
 export function extractNarrativeSnippetsFromSkillMap(skillMap) {
   const map = skillMap && typeof skillMap === "object" ? { ...skillMap } : {};
   const snippets = [];
+  const experienceContextSnippets = [];
   for (const [cat, val] of Object.entries(map)) {
+    const blob = Array.isArray(val)
+      ? val.map((x) => String(x).trim()).filter(Boolean).join(" ")
+      : typeof val === "string" && val.trim()
+        ? val.trim()
+        : "";
+    if (!blob) continue;
+
+    if (isImpactHighlightsCategoryName(cat)) {
+      delete map[cat];
+      experienceContextSnippets.push(blob);
+      continue;
+    }
     if (!isNarrativeSkillsCategoryName(cat)) continue;
     delete map[cat];
-    if (Array.isArray(val)) {
-      const blob = val.map((x) => String(x).trim()).filter(Boolean).join(" ");
-      if (blob) snippets.push(blob);
-    } else if (typeof val === "string" && val.trim()) {
-      snippets.push(val.trim());
-    }
+    snippets.push(blob);
   }
-  return { skillMap: map, snippets };
+  return { skillMap: map, snippets, experienceContextSnippets };
 }
 
 /**
@@ -257,11 +275,12 @@ export function normalizeBaseSkillsToSkillMap(baseSkills) {
         cat = s.slice(0, ci).trim() || "Skills";
         rest = s.slice(ci + 1).trim();
       }
-      const parts = isNarrativeSkillsCategoryName(cat)
-        ? rest
-          ? [rest]
-          : []
-        : splitSkillsListLine(rest);
+      const parts =
+        isNarrativeSkillsCategoryName(cat) || isImpactHighlightsCategoryName(cat)
+          ? rest
+            ? [rest]
+            : []
+          : splitSkillsListLine(rest);
       if (!parts.length) continue;
       if (!out[cat]) out[cat] = [];
       out[cat].push(...parts);
@@ -276,19 +295,20 @@ export function normalizeBaseSkillsToSkillMap(baseSkills) {
     const out = {};
     for (const [k, v] of Object.entries(baseSkills)) {
       if (Array.isArray(v)) {
-        if (isNarrativeSkillsCategoryName(k)) {
+        if (isNarrativeSkillsCategoryName(k) || isImpactHighlightsCategoryName(k)) {
           const blob = normalizeStringList(v).join(" ").replace(/\s+/g, " ").trim();
           out[k] = blob ? [blob] : [];
         } else {
           out[k] = dedupeSkillsPreserveOrder(normalizeStringList(v), []);
         }
       } else if (typeof v === "string") {
-        out[k] = isNarrativeSkillsCategoryName(k)
-          ? dedupeSkillsPreserveOrder(
-              v.trim() ? [v.replace(/\s+/g, " ").trim()] : [],
-              []
-            )
-          : dedupeSkillsPreserveOrder(splitSkillsListLine(v), []);
+        out[k] =
+          isNarrativeSkillsCategoryName(k) || isImpactHighlightsCategoryName(k)
+            ? dedupeSkillsPreserveOrder(
+                v.trim() ? [v.replace(/\s+/g, " ").trim()] : [],
+                []
+              )
+            : dedupeSkillsPreserveOrder(splitSkillsListLine(v), []);
       }
     }
     return out;
@@ -333,14 +353,25 @@ export function formatPermanentContextForPrompt(profileData) {
   });
 
   const skillMap = normalizeBaseSkillsToSkillMap(profileData.base_skills);
-  const { skillMap: techSkillMap, snippets: narrativeSnippets } =
-    extractNarrativeSnippetsFromSkillMap(skillMap);
+  const {
+    skillMap: techSkillMap,
+    snippets: narrativeSnippets,
+    experienceContextSnippets,
+  } = extractNarrativeSnippetsFromSkillMap(skillMap);
 
   if (narrativeSnippets.length > 0) {
     lines.push(
       "**Base prose for the Summary only** (the exporter folds this into `summary` as one paragraph; do not echo it again under `skills` or as fake skill categories):"
     );
     narrativeSnippets.forEach((t) => lines.push(`- ${t}`));
+    lines.push("");
+  }
+
+  if (experienceContextSnippets.length > 0) {
+    lines.push(
+      "**Profile quantified outcomes** (the exporter does **not** put these in `summary`; weave every fact into **`experience[0]`** and **`experience[1]`** `details` as long bullets—never as `skills` tokens or a second summary paragraph):"
+    );
+    experienceContextSnippets.forEach((t) => lines.push(`- ${t}`));
     lines.push("");
   }
 
@@ -361,7 +392,7 @@ export function formatPermanentContextForPrompt(profileData) {
 
   return (
     lines.join("\n").trim() +
-    "\n\n**Merge rules (non-negotiable):** The app **never drops** permanent profile facts: **`base_skills`** lines that are **classified skills** stay in **`skills`**; any **`Professional Summary` / `Impact Highlights`-style** lines from the profile are **moved into `summary`** automatically (still on the résumé). For **experience:** every **fact, tool, scope item, and outcome** that appears in **`base_bullets`** for that role must still appear somewhere in that role’s final **`details`** (you may **merge** several short base lines into **one** longer bullet, or **rewrite** in place—bullet **count** is **not** fixed). If you **merge** **two or more** base lines into **one** bullet, that bullet **must** be **at least 35 words**. JD **responsibilities**, **requirements**, **role summary**, and **technical** keywords you treat as credible **must** be reflected inside **`details`** bullets—not only in **summary**/**skills**. **Never** claim tools or platforms that the profile cannot support when the main prompt flags **unsupported must-haves**. For **each** role, order **`details`** **JD-first** (JD keyword overlap), then by length—same as PDF/Word export. Prefer **dense** bullets and **JD alignment**. If you output **`details`** with the **same length** as `base_bullets`, each line must be a **one-for-one expansion/replace** that **still contains** the corresponding base line’s substance (no dropped facts). If you output **additional** lines beyond a rewrite, they are **JD-only additions**—**do not** repeat raw base lines in `details` when the merge layer would duplicate them."
+    "\n\n**Merge rules (non-negotiable):** The app **never drops** permanent profile facts: **`base_skills`** lines that are **classified skills** stay in **`skills`**; **`Professional Summary`**, **`Career Summary`**, **etc.** prose lines are **folded into `summary`**. **`Impact Highlights`** (and similar metrics blurbs) are **not** folded into `summary`—you **must** cover them in **`experience[0]`** / **`experience[1]`** `details`. For **experience:** every **fact, tool, scope item, and outcome** that appears in **`base_bullets`** for that role must still appear somewhere in that role’s final **`details`** (you may **merge** several short base lines into **one** longer bullet, or **rewrite** in place—bullet **count** is **not** fixed). If you **merge** **two or more** base lines into **one** bullet, that bullet **must** be **at least 35 words**. JD **responsibilities**, **requirements**, **role summary**, and **technical** keywords you treat as credible **must** be reflected inside **`details`** bullets—not only in **summary**/**skills**. **Never** claim tools or platforms that the profile cannot support when the main prompt flags **unsupported must-haves**. For **each** role, order **`details`** **JD-first** (JD keyword overlap), then by length—same as PDF/Word export. Prefer **dense** bullets and **JD alignment**. If you output **`details`** with the **same length** as `base_bullets`, each line must be a **one-for-one expansion/replace** that **still contains** the corresponding base line’s substance (no dropped facts). If you output **additional** lines beyond a rewrite, they are **JD-only additions**—**do not** repeat raw base lines in `details` when the merge layer would duplicate them."
   );
 }
 
@@ -391,7 +422,7 @@ export function mergeBaseSkillsIntoAi(baseSkills, aiSkills) {
 
 /**
  * Résumé export shape: one Summary paragraph; Skills = classified lists only (no prose categories);
- * duplicate category headers merged; profile "summary" lines stored under base_skills are folded into Summary.
+ * duplicate category headers merged; profile summary-style base_skills fold into Summary (not Impact Highlights).
  */
 export function finalizeExportedResumeSummaryAndSkills(
   baseSkills,
