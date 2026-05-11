@@ -139,8 +139,8 @@ export default async function handler(req, res) {
     });
     const jdCredibilityGuard = formatJdCredibilityGuardBlock(jd, profileData);
     const experienceBulletGuidance = hasPermanent
-      ? "Follow **all seven rules** + **2b**, **4b**, **5a** in the prompt header. (**1**) Every **`base_bullets`** fact in **`details`**. (**2**) Count flexible; (**2b**) merge **≥2** bases → **≥35 words**. (**3**) Dense bullets. (**4**) Flagship: **`experience[0]`** **≥8** lines, **`experience[1]`** **≥6** lines in **`details`** (split/expand with JD context if needed—**no** invented metrics). (**4b**) JD-first `details` order. (**5/5a**) Hard metrics only from **`base_bullets`** or **Profile quantified outcomes**; **never** in **`summary`** or **`skills`**. (**6**) Dense layout. (**7**) **2–3** pages—pad with **experience**, keep **`summary`** **≤5** lines. **Impact Highlights** → **`experience[0]`/`[1]`** only. **JD → experience** when **profile-supported**. **`base_skills` never removed.**"
-      : "Follow **all seven rules** + **2b**, **4b**, **5a**. Full **`details`**: long, JD-first; merged bullets **≥35 words**. **Most recent two roles:** aim **≥8** then **≥6** lines when credible. **No** `%`/`$`/counts in **`summary`**/**`skills`**. **No invented metrics** unless in **`base_bullets`**. **2–3** pages; **summary** **≤5** lines. **JD → experience** when **profile-supported**—**never** claim **unsupported must-haves**.";
+      ? "Follow **all seven rules** + **2b**, **4b**, **5a** in the prompt header. (**1**) Every **`base_bullets`** fact in **`details`**. (**2**) Count flexible; (**2b**) merge **≥2** bases → **≥35 words**. (**3**) Flagship lines **≥40** words typical (**exp[0]**/**[1]**); expand thin lines. (**4**) **`experience[0]`** **≥8** lines, **`experience[1]`** **≥6** lines in **`details`** (split/expand—**no** invented metrics). (**4b**) JD-first order. (**5/5a**) Metrics/tenure digits **never** in **`summary`**/**`skills`**; hard numbers only in **`details`** per rule **5**. (**6**) **Skills** **55–75** items, **title-complete**. (**7**) **2–3** pages; **`summary`** **3–6** lines only (export uses **model summary**—no pasted profile prose). **Impact Highlights** → **`experience[0]`/`[1]`**. **`base_skills` never removed.**"
+      : "Follow **all seven rules** + **2b**, **4b**, **5a**. **`details`**: long, JD-first; flagship **≥40** words/line when credible; merged **≥35 words**. **Recent two roles:** **≥8** / **≥6** lines when credible. **Skills** **55–75** items, **title-complete**. **No** tenure digits or `%`/`$` in **`summary`**/**`skills`**. **2–3** pages; **`summary`** **3–6** lines. **JD → experience** when **profile-supported**—**never** claim **unsupported must-haves**.";
 
     // Load prompt template for this profile (using slug)
     const prompt = loadPromptForProfile(profileSlug, {
@@ -186,9 +186,11 @@ export default async function handler(req, res) {
         prompt
           .replace(/TOTAL: 60-80 skills maximum/g, "TOTAL: 50-60 skills maximum")
           .replace(/Per category: 8-12 skills/g, "Per category: 6-10 skills")
-          .replace(/60–75 total skills/g, "48-58 total skills")
-          .replace(/60-75 total skills/g, "48-58 total skills") +
-        "\n\n**Retry (token limit):** Keep **all seven** header rules + **5a**: **preserve** every **`base_bullets`** fact (merge ok); flagship **`experience[0]`**/**`[1]`** substantive (**≥8**/**≥6** lines when supported); **no** new `%`/`$` unless in **`base_bullets`** or **Profile quantified outcomes**; **no** metrics in **`summary`**/**`skills`**; **`summary`** **≤5** lines; **2–3** pages—trim **skills** if needed. **Never** drop `base_skills`.";
+          .replace(/55–75 total skills/g, "50-62 total skills")
+          .replace(/55-75 total skills/g, "50-62 total skills")
+          .replace(/60–75 total skills/g, "50-62 total skills")
+          .replace(/60-75 total skills/g, "50-62 total skills") +
+        "\n\n**Retry (token limit):** Keep **all seven** header rules + **5a**: **preserve** every **`base_bullets`** fact (merge ok); flagship **`experience[0]`**/**`[1]`** substantive (**≥8**/**≥6** lines, **≥40** words/line typical); **no** new `%`/`$` unless allowed by rule **5**; **no** metrics or tenure digits in **`summary`**/**`skills`**; **`summary`** **3–6** lines; **skills** **55–75** items; **2–3** pages—trim redundant skills if needed. **Never** drop `base_skills`.";
 
       const retryResponse = await callAI(concisePrompt, provider, model);
       console.log("Retry Response Metadata:");

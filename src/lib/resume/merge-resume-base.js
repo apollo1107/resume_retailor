@@ -361,7 +361,7 @@ export function formatPermanentContextForPrompt(profileData) {
 
   if (narrativeSnippets.length > 0) {
     lines.push(
-      "**Base prose for the Summary only** (the exporter folds this into `summary` as one paragraph; do not echo it again under `skills` or as fake skill categories):"
+      "**Base prose for Summary (context only)** — the PDF summary uses **only** your JSON **summary** field; this text is **not** auto-appended. **Distill** it into a **short** **§3** paragraph (**3–6 lines**); **do not** paste it verbatim or duplicate its second half; weave missing facts into **details** and **skills** instead. Do not echo under **skills** as fake categories:"
     );
     narrativeSnippets.forEach((t) => lines.push(`- ${t}`));
     lines.push("");
@@ -392,7 +392,7 @@ export function formatPermanentContextForPrompt(profileData) {
 
   return (
     lines.join("\n").trim() +
-    "\n\n**Merge rules (non-negotiable):** The app **never drops** permanent profile facts: **`base_skills`** lines that are **classified skills** stay in **`skills`**; **`Professional Summary`**, **`Career Summary`**, **etc.** prose lines are **folded into `summary`**. **`Impact Highlights`** (and similar metrics blurbs) are **not** folded into `summary`—you **must** cover them in **`experience[0]`** / **`experience[1]`** `details`. For **experience:** every **fact, tool, scope item, and outcome** that appears in **`base_bullets`** for that role must still appear somewhere in that role’s final **`details`** (you may **merge** several short base lines into **one** longer bullet, or **rewrite** in place—bullet **count** is **not** fixed). If you **merge** **two or more** base lines into **one** bullet, that bullet **must** be **at least 35 words**. JD **responsibilities**, **requirements**, **role summary**, and **technical** keywords you treat as credible **must** be reflected inside **`details`** bullets—not only in **summary**/**skills**. **Never** claim tools or platforms that the profile cannot support when the main prompt flags **unsupported must-haves**. For **each** role, order **`details`** **JD-first** (JD keyword overlap), then by length—same as PDF/Word export. Prefer **dense** bullets and **JD alignment**. If you output **`details`** with the **same length** as `base_bullets`, each line must be a **one-for-one expansion/replace** that **still contains** the corresponding base line’s substance (no dropped facts). If you output **additional** lines beyond a rewrite, they are **JD-only additions**—**do not** repeat raw base lines in `details` when the merge layer would duplicate them."
+    "\n\n**Merge rules (non-negotiable):** The app **never drops** permanent profile facts: **base_skills** classified lines stay in **skills**. **Professional Summary** / **Career Summary** prose is **not** pasted into the exported **summary**—you write a **fresh**, **short** **summary** in JSON (**§3**). **Impact Highlights** are **not** in **summary**—cover them in **experience[0]** / **experience[1]** **details**. For **experience:** every **base_bullets** fact must appear in that role’s **details** (merge/rewrite ok). If you **merge** **≥2** base lines into **one** bullet, that line **must** be **≥35 words**. JD themes must appear in **details**, not only **summary**/**skills**. **Never** claim unsupported must-haves. **details** order: **JD-first**, then length. One-for-one rewrites must **retain** each base line’s substance."
   );
 }
 
@@ -421,8 +421,7 @@ export function mergeBaseSkillsIntoAi(baseSkills, aiSkills) {
 }
 
 /**
- * Résumé export shape: one Summary paragraph; Skills = classified lists only (no prose categories);
- * duplicate category headers merged; profile summary-style base_skills fold into Summary (not Impact Highlights).
+ * Résumé export shape: Summary = model `summary` only when non-empty (profile Professional Summary stays in the prompt, not concatenated here); fallback joins narrative snippets if the model omitted `summary`. Skills = base merged with model lists.
  */
 export function finalizeExportedResumeSummaryAndSkills(
   baseSkills,
@@ -442,10 +441,11 @@ export function finalizeExportedResumeSummaryAndSkills(
   const merged = mergeBaseSkillsIntoAi(baseTech, aiTech);
   const skills = mergeDuplicateSkillCategories(merged);
 
+  const aiSummaryTrim = String(aiSummary ?? "").trim();
   const summary = normalizeSummaryToSingleParagraph(
-    [String(aiSummary ?? "").trim(), ...baseNar, ...aiNar]
-      .filter(Boolean)
-      .join(" ")
+    aiSummaryTrim
+      ? aiSummaryTrim
+      : [...baseNar, ...aiNar].filter(Boolean).join(" ")
   );
 
   return { summary, skills };
