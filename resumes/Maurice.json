@@ -1,91 +1,113 @@
 {
-  "name": "Maurice Williams ",
-  "title": "Senior Software Engineer (Backend, Distributed Systems, Payments Infrastructure)",
-  "email": "mauricewilliams800913@gmail.com",
+  "name": "Maurice Williams",
+  "title": "Senior Full Stack Engineer",
+  "email": "williamjonson565@gmail.com",
   "phone": "+1 (346) 355-6022",
-  "location": "Brooklyn, New York",
+  "location": "New York, NY",
   "zip": "",
-  "linkedin": "https://linkedin.com/in/maurice-williams-264a83402",
+  "linkedin": "https://www.linkedin.com/in/maurice-c-william-746306409",
   "website": "",
   "github": "",
   "cvLink": "",
   "base_skills": [
-    "Backend & Languages: Java (Spring Boot), Node.js, Python (Django), Object-Oriented Programming, Distributed Systems",
-    "Architecture & APIs: Microservices Architecture, RESTful API Design, API Development, API Security, Public API Platforms, System Design",
-    "Cloud & Infrastructure: AWS (ECS, RDS, Lambda, S3), Cloud-Native Architecture, CI/CD Pipelines, Docker, Infrastructure Automation",
-    "Data & Messaging: SQL Databases (PostgreSQL), Schema Design, Query Optimization, Transaction Management, Event-Driven Architecture, Messaging Systems",
-    "Payments & Financial Systems: Payment Systems Integration, Banking APIs, Transaction Processing, Financial Data Systems, Secure Asset Transfer",
-    "Engineering Excellence: Testing Strategies, Code Quality Standards, Continuous Delivery, Production Debugging, Monitoring & Logging",
-    "Soft Skills: Adaptability, Problem Solving, Relationship-building, Resourcefulness, Curiosity, Persistence, Emotional Intelligence"
+    "Professional Summary: 15+ years building scalable SaaS, AI-powered solutions, and enterprise systems with JavaScript, TypeScript, React, Next.js, Node.js, and Python; microservices, cloud-native apps, and high-performance web platforms across fintech, analytics, media streaming, and executive consulting; AI/ML workflows, REST and GraphQL APIs, React Native, team leadership, CI/CD, AWS and Azure.",
+    "Impact Highlights: B2B SaaS at scale; HIPAA-compliant multi-tenant healthcare platform (150K+ annual patient sessions, ~40% clinician intake reduction); fintech systems ($50M+ monthly volume, sub-4s settlement, ~32% cost reduction); cloud modernization (Docker/Kubernetes, ~70% faster deploys, 99.9%+ uptime).",
+    "Backend: Node.js, NestJS, Express.js, Python (FastAPI, Django, Flask), .NET Core, REST APIs, GraphQL",
+    "Frontend: TypeScript, JavaScript, React, Next.js, Angular, React Native, TanStack, Tailwind, MUI",
+    "Cloud and DevOps: AWS, Azure, GCP, Docker, Kubernetes, CI/CD, Terraform",
+    "Architecture: Microservices, Multi-Tenant SaaS, Event-Driven Systems, Kafka, RabbitMQ",
+    "Databases: PostgreSQL, MongoDB, SQL Server, MySQL, Redis",
+    "AI and Automation: Machine Learning, Deep Learning, LLM Integration, Prompt Engineering, Predictive Modeling, Autonomous Workflows",
+    "Testing and QA: Jest, Cypress, React Testing Library, Jasmine, Karma, Protractor, Mocha, PyTest",
+    "Engineering Practices: System Architecture, Security (SOC2, XSS, CORS), Web Accessibility (WCAG), Agile/Scrum, Mentorship, Code Reviews"
   ],
   "experience": [
     {
-      "company": "Raia Labs",
-      "title": "Senior Lead Software Engineer",
-      "location": "Sarasota, FL",
-      "start_date": "08/2020",
-      "end_date": "01/2026",
+      "company": "Roebling",
+      "title": "Senior Full Stack Engineer",
+      "location": "New York, NY",
+      "start_date": "01/2022",
+      "end_date": "02/2026",
       "base_bullets": [
-        "Led architecture and delivery of end-to-end full-stack platforms using React, TypeScript, Node.js (NestJS), and PostgreSQL, powering advanced analytics dashboards and automation systems.",
-        "Directed frontend engineering by building high-performance React and TypeScript applications with reusable component systems and optimized rendering for data-intensive interfaces.",
-        "Orchestrated backend development of scalable microservices, defining modular system design and enforcing clean, maintainable API contracts.",
-        "Implemented dynamic UI solutions with Vue.js, enhancing real-time data visualization and interactive dashboard capabilities.",
-        "Designed and governed RESTful APIs and third-party integrations, ensuring reliability, scalability, and seamless data exchange across systems.",
-        "Integrated AI and LLM-driven features to enable intelligent automation, semantic search, and data classification workflows.",
-        "Optimized database performance through advanced PostgreSQL schema design and indexing strategies, boosting efficiency by 40% under high concurrency.",
-        "Engineered distributed systems using Redis caching and asynchronous background workers to support event-driven processing.",
-        "Drove cloud infrastructure strategy by containerizing services with Docker and deploying to AWS ECS with fully automated CI/CD pipelines via GitHub Actions.",
-        "Partnered cross-functionally with product and design teams to convert complex requirements into scalable, production-ready solutions.",
-        "Mentored engineers and enforced standards through code reviews, architectural guidance, and best practices, strengthening team productivity and code quality.",
-        "Enhanced system observability by implementing robust monitoring and logging frameworks, significantly improving reliability and incident response."
+        "Led development of AI-powered executive assessment platforms using TypeScript, Next.js, Python, and React Native, enabling real-time analytics and intelligent reporting systems.",
+        "Designed scalable backend services with Python and FastAPI integrated with OpenAI-based AI workflows, improving automation efficiency by 40%.",
+        "Built responsive cross-platform mobile applications with React Native for executive coaching and business intelligence solutions.",
+        "Architected cloud-native infrastructure on AWS using Docker and Kubernetes, achieving highly available and secure deployments.",
+        "Developed reusable frontend systems with Next.js and TypeScript, improving maintainability and reducing development time by 30%.",
+        "Implemented CI/CD pipelines with GitHub Actions and automated testing workflows, significantly improving release reliability and deployment frequency.",
+        "Mentored engineering teams on scalable architecture, AI integrations, and modern TypeScript development practices."
       ]
     },
     {
-      "company": "StackOverdrive",
-      "title": "Full Stack Engineer",
-      "location": "New York, NY",
-      "start_date": "05/2016",
-      "end_date": "06/2020",
+      "company": "Napster",
+      "title": "Senior Full Stack Developer",
+      "location": "Los Angeles, CA",
+      "start_date": "03/2016",
+      "end_date": "12/2021",
       "base_bullets": [
-        "Built full-stack platforms using React, TypeScript, Node.js, and PostgreSQL to support financial analytics and reporting systems.",
-        "Developed React-based dashboards and visualization interfaces enabling real-time financial data analysis.",
-        "Designed scalable Node.js backend services and REST APIs handling high-volume ingestion from external financial data providers.",
-        "Implemented backend services using Python (Django) for data processing pipelines and internal automation tools.",
-        "Designed relational data models supporting millions of records, implementing indexing and query optimization strategies.",
-        "Developed asynchronous data ingestion pipelines and background job processing systems.",
-        "Improved API response latency by 35% through database optimization, caching strategies, and query refactoring.",
-        "Containerized applications using Docker and deployed to AWS infrastructure with automated CI/CD pipelines.",
-        "Worked closely with product and data teams to deliver scalable analytics capabilities."
+        "Developed high-performance music streaming and subscription platforms using TypeScript, Next.js, PHP, and Python, serving millions of active users.",
+        "Integrated machine learning recommendation systems to personalize user content and improve engagement metrics by 35%.",
+        "Built scalable RESTful APIs and backend services with Python and PHP, optimizing media delivery and streaming reliability.",
+        "Led frontend modernization initiatives using Next.js and React, improving SEO, rendering performance, and user experience.",
+        "Implemented advanced analytics pipelines and recommendation engines leveraging Python, Pandas, and machine learning frameworks.",
+        "Optimized CI/CD workflows and cloud infrastructure deployments across AWS environments, reducing deployment times by 60%.",
+        "Collaborated with product and design teams to deliver seamless cross-platform digital experiences."
       ]
     },
     {
-      "company": "TechWize",
-      "title": "Full Stack Engineer",
-      "location": "New York, NY",
-      "start_date": "08/2013",
-      "end_date": "04/2016",
+      "company": "Basen",
+      "title": "Full Stack Developer",
+      "location": "San Francisco, CA",
+      "start_date": "02/2012",
+      "end_date": "02/2016",
       "base_bullets": [
-        "Built responsive web applications using JavaScript, React, and modern frontend frameworks.",
-        "Implemented backend services using Java (Spring Boot) and RESTful APIs supporting enterprise applications and reporting systems.",
-        "Developed backend services using Node.js for lightweight API services and integrations.",
-        "Designed relational database schemas and optimized SQL queries for transactional and reporting workloads.",
-        "Built reusable UI components and responsive layouts improving application usability and maintainability.",
-        "Integrated internal platforms with external enterprise systems through API-based integrations.",
-        "Assisted in migrating legacy systems to cloud-based infrastructure environments.",
-        "Contributed to CI/CD automation and deployment pipelines, improving release reliability and development efficiency.",
-        "Supported debugging and performance optimization across distributed application environments."
+        "Engineered enterprise SaaS applications using TypeScript, React, Next.js, Python, and Django for large-scale business clients.",
+        "Developed AI-integrated analytics dashboards and intelligent reporting systems using Python and machine learning libraries.",
+        "Built highly interactive frontend interfaces with React and Next.js while maintaining scalable backend services with Django REST Framework.",
+        "Designed and optimized PostgreSQL and MongoDB database architectures supporting high-volume transactional systems.",
+        "Integrated AI-powered automation tools to streamline reporting and reduce manual processing workloads by 35%.",
+        "Containerized applications using Docker and implemented cloud deployment strategies on AWS.",
+        "Improved application scalability and maintainability through reusable component architectures and modern TypeScript standards."
+      ]
+    },
+    {
+      "company": "Splunk",
+      "title": "Junior Full Stack Developer",
+      "location": "San Jose, CA",
+      "start_date": "06/2007",
+      "end_date": "01/2012",
+      "base_bullets": [
+        "Developed enterprise monitoring and analytics applications using React, TypeScript, and Node.js for large-scale data processing systems.",
+        "Built reusable UI components and dynamic dashboards with React, improving frontend consistency and maintainability.",
+        "Designed RESTful APIs and backend microservices with Node.js and Express.js supporting real-time analytics workflows.",
+        "Integrated authentication and authorization systems using OAuth and JWT security standards.",
+        "Optimized frontend rendering performance and backend query efficiency, reducing application response times by 30%.",
+        "Collaborated with senior engineers in Agile development environments and contributed to code reviews and architecture discussions.",
+        "Assisted in implementation of CI/CD pipelines and automated testing strategies using Jest and Jenkins."
+      ]
+    },
+    {
+      "company": "Nasdaq",
+      "title": "Software Engineering Intern",
+      "location": "New York, NY",
+      "start_date": "05/2006",
+      "end_date": "05/2007",
+      "base_bullets": [
+        "Assisted in the development of internal financial applications using JavaScript, React, and Django.",
+        "Built frontend UI components and dashboards for financial data visualization and reporting systems.",
+        "Supported backend API development and database integration using Django and PostgreSQL.",
+        "Collaborated with engineering teams to improve application usability, reliability, and performance.",
+        "Participated in debugging, testing, and deployment activities within Agile software development environments.",
+        "Contributed to internal documentation and frontend modernization initiatives using modern JavaScript practices."
       ]
     }
   ],
   "education": [
     {
-      "degree": "B.Sc. in Computer Science",
-      "school": "University at Albany (SUNY)",
-      "start_year": "09/2009",
-      "end_year": "08/2013"
+      "degree": "Bachelor's Degree",
+      "school": "Mercy University",
+      "start_year": "08/2002",
+      "end_year": "12/2006"
     }
-  ],
-  "street": "",
-  "birthday": "",
-  "ssn": ""
+  ]
 }
