@@ -16,7 +16,7 @@ import {
 } from "@/lib/resume/resume-to-docx";
 import {
   formatPermanentContextForPrompt,
-  mergeBaseSkillsIntoAi,
+  finalizeExportedResumeSummaryAndSkills,
   mergeExperienceDetails,
   profileHasPermanentContent,
 } from "@/lib/resume/merge-resume-base";
@@ -350,10 +350,12 @@ export default async function handler(req, res) {
       ];
     }
     mergedDetails = orderAllExperienceBulletsJdFirst(mergedDetails, jd);
-    const mergedSkills = mergeBaseSkillsIntoAi(
-      profileData.base_skills,
-      resumeContent.skills
-    );
+    const { summary: exportSummary, skills: exportSkills } =
+      finalizeExportedResumeSummaryAndSkills(
+        profileData.base_skills,
+        resumeContent.summary,
+        resumeContent.skills
+      );
 
     // Prepare data for template
     const templateData = {
@@ -364,8 +366,8 @@ export default async function handler(req, res) {
       location: profileData.location,
       linkedin: profileData.linkedin, // Excluded from resume
       website: null, // Excluded from resume (may contain GitHub)
-      summary: resumeContent.summary,
-      skills: mergedSkills,
+      summary: exportSummary,
+      skills: exportSkills,
       experience: profileData.experience.map((job, idx) => ({
         title: job.title || resumeContent.experience[idx]?.title || "Engineer",
         company: job.company,

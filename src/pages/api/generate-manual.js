@@ -12,7 +12,7 @@ import {
   computeResumeBaseFileName,
 } from "@/lib/resume/resume-to-docx";
 import {
-  mergeBaseSkillsIntoAi,
+  finalizeExportedResumeSummaryAndSkills,
   mergeExperienceDetails,
 } from "@/lib/resume/merge-resume-base";
 import {
@@ -146,10 +146,12 @@ export default async function handler(req, res) {
       ];
     }
     mergedDetails = orderAllExperienceBulletsJdFirst(mergedDetails, jd);
-    const mergedSkills = mergeBaseSkillsIntoAi(
-      profileData.base_skills,
-      resumeContent.skills
-    );
+    const { summary: exportSummary, skills: exportSkills } =
+      finalizeExportedResumeSummaryAndSkills(
+        profileData.base_skills,
+        resumeContent.summary,
+        resumeContent.skills
+      );
 
     const templateData = {
       name: profileData.name,
@@ -159,8 +161,8 @@ export default async function handler(req, res) {
       location: profileData.location,
       linkedin: profileData.linkedin,
       website: profileData.website,
-      summary: resumeContent.summary,
-      skills: mergedSkills,
+      summary: exportSummary,
+      skills: exportSkills,
       experience: profileData.experience.map((job, idx) => ({
         title: job.title || resumeContent.experience[idx]?.title || "Engineer",
         company: job.company,
