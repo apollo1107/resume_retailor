@@ -10,8 +10,6 @@
   "github": "",
   "cvLink": "",
   "base_skills": [
-    "Professional Summary: 15+ years building scalable SaaS, AI-powered solutions, and enterprise systems with JavaScript, TypeScript, React, Next.js, Node.js, and Python; microservices, cloud-native apps, and high-performance web platforms across fintech, analytics, media streaming, and executive consulting; AI/ML workflows, REST and GraphQL APIs, React Native, team leadership, CI/CD, AWS and Azure.",
-    "Impact Highlights: B2B SaaS at scale; HIPAA-compliant multi-tenant healthcare platform (150K+ annual patient sessions, ~40% clinician intake reduction); fintech systems ($50M+ monthly volume, sub-4s settlement, ~32% cost reduction); cloud modernization (Docker/Kubernetes, ~70% faster deploys, 99.9%+ uptime).",
     "Backend: Node.js, NestJS, Express.js, Python (FastAPI, Django, Flask), .NET Core, REST APIs, GraphQL",
     "Frontend: TypeScript, JavaScript, React, Next.js, Angular, React Native, TanStack, Tailwind, MUI",
     "Cloud and DevOps: AWS, Azure, GCP, Docker, Kubernetes, CI/CD, Terraform",

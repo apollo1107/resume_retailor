@@ -341,14 +341,21 @@ export const createResumeTemplate = (config) => {
                     {experience && experience.length > 0 && (
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>{sectionTitles.experience || 'Experience'}</Text>
-                            {experience.map((exp, idx) => (
+                            {experience.map((exp, idx) => {
+                                const detailLines = (exp.details || []).filter((d) =>
+                                    String(d ?? "").trim()
+                                );
+                                const [firstDetail, ...restDetails] = detailLines;
+                                return (
                                 <View key={idx} style={styles.expItem}>
                                     {/*
-                                      Keep title+dates+company on one page slab so the title row
-                                      cannot print alone at the page foot (see page-flow-experience).
+                                      Orphan fix (react-pdf): wrap={false} + minPresenceAhead on the
+                                      header row (see /advanced#page-wrapping). Keep title, dates,
+                                      company, and first bullet in one unbreakable slab so the job
+                                      title cannot sit alone at the page foot.
                                     */}
                                     <View wrap={false}>
-                                        <View style={styles.expHeader}>
+                                        <View style={styles.expHeader} minPresenceAhead={150}>
                                             <Text style={styles.expTitle}>{exp.title || 'Engineer'}</Text>
                                             <Text style={styles.expDates}>
                                                 {exp.start_date} – {exp.end_date}
@@ -358,24 +365,34 @@ export const createResumeTemplate = (config) => {
                                             {exp.company}
                                             {exp.location && `, ${exp.location}`}
                                         </Text>
+                                        {firstDetail && (
+                                            <View style={styles.expDetails}>
+                                                <View style={styles.expDetailRow}>
+                                                    <BoldText
+                                                        text={String(firstDetail)}
+                                                        style={styles.expDetailItem}
+                                                        prefix={"\u2022 "}
+                                                    />
+                                                </View>
+                                            </View>
+                                        )}
                                     </View>
-                                    {exp.details && exp.details.length > 0 && (
+                                    {restDetails.length > 0 && (
                                         <View style={styles.expDetails}>
-                                            {exp.details
-                                                .filter((d) => String(d ?? "").trim())
-                                                .map((detail, detailIdx) => (
-                                                    <View key={detailIdx} style={styles.expDetailRow}>
-                                                        <BoldText
-                                                            text={String(detail)}
-                                                            style={styles.expDetailItem}
-                                                            prefix={"\u2022 "}
-                                                        />
-                                                    </View>
-                                                ))}
+                                            {restDetails.map((detail, detailIdx) => (
+                                                <View key={detailIdx} style={styles.expDetailRow}>
+                                                    <BoldText
+                                                        text={String(detail)}
+                                                        style={styles.expDetailItem}
+                                                        prefix={"\u2022 "}
+                                                    />
+                                                </View>
+                                            ))}
                                         </View>
                                     )}
                                 </View>
-                            ))}
+                                );
+                            })}
                         </View>
                     )}
 
